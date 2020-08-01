@@ -11,6 +11,7 @@ To install the required prerequisites, execute the following from the Terminal w
 ```
 sudo apt-get update
 sudo apt-get install python3 python3-pip python3-picamera
+sudo pip3 install keyboard
 ```
 
 ### Download the code
@@ -30,10 +31,10 @@ To make launching the program more efficient you will want to create an alias to
 cd ~
 sudo nano .bash_aliases
 ```
-... and then add the following code to the .bash_aliases file:   
+... and then add the following code to the .bash_aliases file.   NOTE: The usage of `sudo` in the alias is a prerequisite of the Python keyboard library.      
 ```
 function camera {
-	python3 ./camera/camera.py $@
+	sudo python3 ./camera/camera.py $@
 }
 ```
 Save the file, exit nano.
