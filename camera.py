@@ -1,43 +1,126 @@
+from picamera import PiCamera
 import os
 import argparse
 import time
 import datetime
+import sys
 
-parser = argparse.ArgumentParser()
-parser.addArgument('--exposure', dest='exposure', help='Set the exposure mode')
-parser.addArgument('--iso', dest='iso', help='Set the ISO')
-parser.addArgument('--ev', dest='ev', help='Set the exposure compensation (+/- 10)')
-parser.addArgument('--awb', dest='awb', help='Set the Auto White Balance (AWB) mode')
-parser.add_argument('--outputFolder', dest='outputFolder', help='Folder where images will be saved')
-args = parser.parse_args
+try:
 
-exposure = args.exposure or "auto"
-iso = args.iso or 100
-ev = args.ev = 0
-awb = args.awb or "auto"
-outputFolder = outputFolder or "dcim/"
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--action', dest='action', help='Set the command action')
+	parser.add_argument('--shutter', dest='shutter', help='Set the shutter speed')
+	parser.add_argument('--iso', dest='iso', help='Set the ISO')
+	parser.add_argument('--ev', dest='ev', help='Set the exposure compensation (+/- 10)')
+	parser.add_argument('--awb', dest='awb', help='Set the Auto White Balance (AWB) mode')
+	parser.add_argument('--exposure', dest='exposure', help='Set the exposure mode')
+	parser.add_argument('--outputFolder', dest='outputFolder', help='Set the folder where images will be saved')
+	args = parser.parse_args()
 
-imageCount = 1
+	action = args.action or "capture"
+	action = action.lower()
 
-def GetFileName():
-    now = datetime.datetime.now()
-    datestamp = now.strftime("%Y%m%d")
-    return datestamp + "-" + str(imageCount).zfill(6) + ".jpg"
+	shutter = args.shutter or "auto"
+	if str(shutter).lower() == "auto" or str(shutter) == "0":
+		shutter = 0
+		print(" Shutter Speed: auto")
+	else:
+		shutter = int(float(shutter) * 1000000)
+		print(" Shutter Speed: " + str(shutter))
 
-def CaptureImage():
-    os.system("raspistill --thumb none --iso " + iso + " --exposure " + exposure + " --ev " + ev + " --awb " + awb + " -o " + GetFileName())
 
-def UploadImage():
-    print("Not yet implemented")
+	iso = args.iso or "auto"
+	if str(iso).lower() == "auto" or str(iso) == "0":
+		iso = 0
+		print(" ISO: auto")
+	else: 
+		iso = int(iso)
+		print(" ISO: " + str(iso))
 
-def CreateTimelapse(interval = 5000):
-    while True: 
-        CaptureImage()
-        imageCount += 1
-        time.sleep(interval)
 
-def CaptureAndUploadImage():
-    CaptureImage()
-    time.sleep(1000)
-    UploadImage()
+	exposure = (args.exposure or "auto").lower()
+	print(" Exposure Mode: " + exposure)
 
+
+	ev = args.ev or 0
+	ev = int(ev)
+	if ev > 0:
+		print(" Exposure Compensation: +" + str(ev))
+	elif ev < 0:
+		print(" Exposure Compensation: -" + str(ev))
+	else:
+		print(" Exposure Compensation: +/-" + str(ev)) 
+
+
+	awb = (args.awb or "auto").lower()
+	print(" White Balance Mode: " + awb)
+
+
+	outputFolder = args.outputFolder or "dcim/"
+
+
+
+	# === Initialize Camera ===
+	camera = PiCamera()
+
+	# === Image Capture Methods ===
+
+	imageCount = 1
+
+	def GetFileName():
+		now = datetime.datetime.now()
+		datestamp = now.strftime("%Y%m%d")
+		return datestamp + "-" + str(imageCount).zfill(6) + ".jpg"
+
+	def CaptureImage():
+		print("\n Capturing image...")
+		try:
+			camera.shutter_speed = shutter
+		except: 
+			print(" WARNING: Invalid Shutter Speed! ")
+
+		try:	
+			camera.iso = iso
+		except: 
+			print(" WARNING: Invalid ISO Setting! ")
+
+		try:
+			camera.exposure_mode = exposure
+		except: 
+			print(" WARNING: Invalid Exposure Mode! ")
+
+		try:
+			camera.exposure_compensation = ev
+		except: 
+			print(" WARNING: Invalid Exposure Compensation Setting! ")
+
+		try:
+			camera.awb_mode = awb
+		except: 
+			print(" WARNING: Invalid Auto White Balance Mode! ")
+		
+		camera.start_preview(fullscreen=False, window = (20, 20, 800, 600))
+		time.sleep(20)
+
+	def UploadImage():
+		print("Not yet implemented")
+
+	def CreateTimelapse(interval = 5000):
+		while True: 
+			CaptureImage()
+			imageCount += 1
+			time.sleep(interval)
+
+	def CaptureAndUploadImage():
+		CaptureImage()
+		time.sleep(1000)
+		UploadImage()
+
+
+	print(" Action: " + action)
+	if action == "capture" or action=="image" or action=="captureimage":
+		CaptureImage()
+
+
+except KeyboardInterrupt:
+	sys.exit(1)
