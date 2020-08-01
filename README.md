@@ -1,6 +1,6 @@
 # Camera
 
-This program makes use of the Raspberry Pi cameras a little more friendly by adding some error handling and presetting some common settings.
+This program makes use of a Raspberry Pi camera a little more friendly by adding some error handling and presetting common settings.
 
 ---
 ## Installation
