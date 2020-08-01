@@ -3,9 +3,19 @@
 This program makes use of the Raspberry Pi cameras a little more friendly by adding some error handling and presetting some common settings.
 
 ---
+## Installation
 
-## Git and run
+### Prerequisites
 
+To install the required prerequisites, execute the following from the Terminal window:
+```
+sudo apt-get update
+sudo apt-get install python3 python3-pip python3-picamera
+```
+
+### Download the code
+
+To download the code and set the required permissions, execute the following from the Terminal window:
 ```
 cd ~
 sudo git clone https://github.com/eat-sleep-code/camera
@@ -15,17 +25,18 @@ sudo chmod +x camera.py
 ```
 ### Add an alias
 
+To make launching the program more efficient you will want to create an alias to the program.   To do this, execute the following from the Terminal window:
 ```
 cd ~
 sudo nano .bash_aliases
 ```
-
-Add the following code to the .bash_aliases.   
+... and then add the following code to the .bash_aliases file:   
 ```
 function camera {
-	python ./camera/camera.py $@
+	python3 ./camera/camera.py $@
 }
 ```
+Save the file, exit nano.
 Restart your computer to allow the alias to take effect.
 
 ---
