@@ -51,7 +51,7 @@ camera <options>
 + _--action_ : Set the camera action     *(default: capture)*
 + _--shutter_ : Set the shutter speed     *(default: auto)*
 + _--iso_ : Set the ISO     *(default: auto)*
-+ _--ev_' : Set the exposure compensation (+/-10)     *(default: 0)*
-+ _--awb_' : Set the Auto White Balance (AWB) mode      *(default: auto)*
++ _--ev_ : Set the exposure compensation (+/-10)     *(default: 0)*
++ _--awb_ : Set the Auto White Balance (AWB) mode      *(default: auto)*
 + _--exposure_ : Set the exposure mode     *(default: auto)*
 + _--outputFolder_ : Set the folder where images will be saved     *(default: dcim/)* 
