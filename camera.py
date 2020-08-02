@@ -334,16 +334,12 @@ try:
 
 				# Shutter				
 				elif keyboard.is_pressed('s+up'):
-					print("Requested faster shutter speed than " + str(shutter))
 					if shutter == 0:
 						shutter = shutterShort
-						print("shutter was 0, setting to " + str(shutterShort))
 					if shutter > shutterShort and shutter <= shutterLong:					
 						shutter = int(shutter / 2)
-						print("shutter was not 0, setting to " + str(shutter))
 					setShutter(shutter, 0.25)
 				elif keyboard.is_pressed('s+down'):
-					print("Requested slower shutter speed than " + str(shutter))
 					if shutter == 0:						
 						shutter = shutterLong
 					elif shutter < shutterLong and shutter >= shutterShort:					
