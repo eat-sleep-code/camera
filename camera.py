@@ -8,7 +8,7 @@ import subprocess
 import time
 
 camera = PiCamera()
-version = "2020.08.01"
+version = "2020.08.05"
 
 # === Argument Handling ========================================================
 
@@ -22,37 +22,60 @@ parser.add_argument('--bracket', dest='bracket', help='Set the exposure bracketi
 parser.add_argument('--awb', dest='awb', help='Set the Auto White Balance (AWB) mode')
 parser.add_argument('--outputFolder', dest='outputFolder', help='Set the folder where images will be saved')
 parser.add_argument('--timer', dest='timer', help='Set self-timer or interval')
+parser.add_argument('--previewWidth', dest='previewWidth', help='Set the preview window width')
+parser.add_argument('--previewHeight', dest='previewHeight', help='Set the preview window height')
 args = parser.parse_args()
+
+
+previewVisible = False
+try:
+	previewWidth = args.previewWidth or 800
+	previewWidth = int(previewWidth)
+	previewHeight = args.previewHeight or 600
+	previewHeight = int(previewHeight)
+except: 
+	previewWidth = 800
+	previewHeight = 600
+	
 
 action = args.action or "capture"
 action = action.lower()
+
 
 shutter = args.shutter or "auto"
 shutterLong = 32000
 shutterShort = 100
 
+
 iso = args.iso or "auto"
 isoMin = 100
 isoMax = 1600
 
+
 exposure = (args.exposure or "auto").lower()
+
 
 ev = args.ev or 0
 evMin = -25
 evMax = 25
 
+
 bracket = args.bracket or 0
 bracketLow = 0
 bracketHigh = 0
 
+
 awb = (args.awb or "auto").lower()
+
 
 outputFolder = args.outputFolder or "dcim/"
 if outputFolder.endswith('/') == False:
 	outputFolder = outputFolder+"/"
 
+
 timer = args.timer or 0
 timer = int(timer)
+
 
 # === Echo Control =============================================================
 
@@ -77,7 +100,8 @@ def showInstructions(clearFirst = False, wait = 0):
 	print("\n Press i+\u25B2 or i+\u25BC to change ISO")
 	print("\n Press c+\u25B2 or c+\u25BC to change exposure compensation")
 	print("\n Press b+\u25B2 or b+\u25BC to change exposure bracketing")
-	
+	print("\n Press [p] to toggle the preview window")
+
 	if action == "timelapse":			 		
 		print("\n Press the [space] bar to begin a timelapse ")
 	else:
@@ -234,15 +258,34 @@ def GetFilePath(timestamped = True):
 	else:
 		return outputFolder + GetFileName(timestamped)
 
+# ------------------------------------------------------------------------------
 
+def showPreview(x = 0, y = 0, w = 800, h = 600):
+	global previewVisible
+	camera.start_preview(fullscreen=False, window = (x, y, w, h))	
+	previewVisible = True;
+	time.sleep(0.25)
+	return
+	
+# ------------------------------------------------------------------------------
 
-# === Image Capture Methods ====================================================
+def hidePreview():
+	global previewVisible
+	camera.stop_preview()
+	previewVisible = False;
+	time.sleep(0.25)
+	return
+
+# === Image Capture ============================================================
 
 try:
 	echoOff()
 	imageCount = 1
 
 	def Capture(mode = "persistent", timer = 0):
+		global previewVisible
+		global previewWidth
+		global previewHeight
 		global shutter
 		global shutterLong
 		global shutterShort
@@ -268,13 +311,14 @@ try:
 		setAWB(awb, 0)
 		
 		showInstructions(False, 0)
-		camera.start_preview(fullscreen=False, window = (20, 20, 800, 600))
+		showPreview(0, 0, previewWidth, previewHeight)
 		
 		
 		# print("Key Pressed: " + keyboard.read_hotkey())
 		while True:
 			try:
 				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc'):
+					# clear()
 					echoOn()
 					break
 
@@ -331,6 +375,13 @@ try:
 						camera.capture(filepath)
 						echoOn()
 						break
+
+				# Preview Toggle				
+				elif keyboard.is_pressed('p'):
+					if previewVisible == True:
+						hidePreview()
+					else:
+						showPreview(0, 0, previewWidth, previewHeight)
 
 				# Shutter				
 				elif keyboard.is_pressed('s+up'):
