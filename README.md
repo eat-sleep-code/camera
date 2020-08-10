@@ -8,7 +8,7 @@ This program makes use of a Raspberry Pi HQ camera a little more powerful and us
 Installation of the program, any prerequisites, as well as DNG support can be completed with the following install script.
 
 ```
-wget https://raw.githubusercontent.com/eat-sleep-code/camera/master/install-camera.sh -O ~/install-camera.sh
+wget -q https://raw.githubusercontent.com/eat-sleep-code/camera/master/install-camera.sh -O ~/install-camera.sh
 sudo chmod +x ~/install-camera.sh && ~/install-camera.sh
 ```
 
