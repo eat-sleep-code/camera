@@ -10,7 +10,6 @@ Installation of the script, any prerequisites, as well as DNG support can be com
 ```
 wget https://raw.githubusercontent.com/eat-sleep-code/camera/master/install-camera.sh -O ~/install-camera.sh
 sudo chmod +x ~/install-camera.sh && sudo ~/install-camera.sh
-
 ```
 
 ---
