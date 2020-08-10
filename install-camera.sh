@@ -2,7 +2,7 @@
 cd ~
 echo -e ''
 echo -e '\033[32mCamera [Installation Script] \033[0m'
-echo  -e '\033[32m-------------------------------------------------------------------------- \033[0m'
+echo -e '\033[32m-------------------------------------------------------------------------- \033[0m'
 echo -e ''
 echo -e '\033[93mUpdating package repositories... \033[0m'
 sudo apt update
@@ -38,7 +38,7 @@ sudo sed -i '$ a function camera { sudo python3 ~/camera/camera.py $@; }' ~/.bas
 echo -e 'You may use \e[1mcamera <options>\e[0m to launch the program.'
 
 echo ''
-echo  -e '\033[32m-------------------------------------------------------------------------- \033[0m'
-echo  -e '\033[32mInstallation completed. \033[0m'
+echo -e '\033[32m-------------------------------------------------------------------------- \033[0m'
+echo -e '\033[32mInstallation completed. \033[0m'
 echo ''
 bash
