@@ -1,4 +1,6 @@
 from picamera import PiCamera
+from pydng.core import RPICAM2DNG
+import threading
 import argparse
 import datetime
 import keyboard
@@ -8,7 +10,9 @@ import subprocess
 import time
 
 camera = PiCamera()
-version = "2020.08.05"
+dng = RPICAM2DNG()
+
+version = "2020.08.10"
 
 # === Argument Handling ========================================================
 
@@ -21,12 +25,12 @@ parser.add_argument('--ev', dest='ev', help='Set the exposure compensation (+/-2
 parser.add_argument('--bracket', dest='bracket', help='Set the exposure bracketing value')
 parser.add_argument('--awb', dest='awb', help='Set the Auto White Balance (AWB) mode')
 parser.add_argument('--outputFolder', dest='outputFolder', help='Set the folder where images will be saved')
+parser.add_argument('--raw', dest='raw', help='Set whether DNG files are created in addition to JPEG files')
 parser.add_argument('--timer', dest='timer', help='Set self-timer or interval')
 parser.add_argument('--previewWidth', dest='previewWidth', help='Set the preview window width')
 parser.add_argument('--previewHeight', dest='previewHeight', help='Set the preview window height')
 args = parser.parse_args()
-
-
+	
 previewVisible = False
 try:
 	previewWidth = args.previewWidth or 800
@@ -75,6 +79,9 @@ if outputFolder.endswith('/') == False:
 
 timer = args.timer or 0
 timer = int(timer)
+
+
+raw = args.raw or True
 
 
 # === Echo Control =============================================================
@@ -264,7 +271,7 @@ def showPreview(x = 0, y = 0, w = 800, h = 600):
 	global previewVisible
 	camera.start_preview(fullscreen=False, window = (x, y, w, h))	
 	previewVisible = True;
-	time.sleep(0.25)
+	time.sleep(0.1)
 	return
 	
 # ------------------------------------------------------------------------------
@@ -273,16 +280,32 @@ def hidePreview():
 	global previewVisible
 	camera.stop_preview()
 	previewVisible = False;
-	time.sleep(0.25)
+	time.sleep(0.1)
 	return
+
+# ------------------------------------------------------------------------------
+
+def captureImage(filepath, raw = True):
+	camera.capture(filepath, quality=100, bayer=raw)
+	t = threading.Thread(target=captureImageThreaded, args=(filepath, raw,))
+	t.start()
+
+# ------------------------------------------------------------------------------		
+
+def captureImageThreaded(filepath, raw = True):
+	if raw == True:
+		dng.convert(filepath)
 
 # === Image Capture ============================================================
 
 try:
 	echoOff()
 	imageCount = 1
-
+	
 	def Capture(mode = "persistent", timer = 0):
+		# print(str(camera.resolution))
+		camera.resolution = (4056, 3040)
+	
 		global previewVisible
 		global previewWidth
 		global previewHeight
@@ -298,6 +321,7 @@ try:
 		global evMax
 		global bracket
 		global awb
+		global raw
 		global imageCount
 
 		print("\n Camera " + version )
@@ -333,9 +357,8 @@ try:
 						# Normal photo
 						filepath = GetFilePath(True)
 						print(" Capturing image: " + filepath + "\n")
-						camera.capture(filepath)
+						captureImage(filepath, raw)
 						imageCount += 1
-						time.sleep(0.01);
 				
 						if (bracket != 0):
 							baseEV = ev
@@ -343,17 +366,15 @@ try:
 							setEV(baseEV + bracketLow, 0, False)
 							filepath = GetFilePath(True)
 							print(" Capturing image: " + filepath + "  [" + str(bracketLow) + "]\n")
-							camera.capture(filepath)
+							captureImage(filepath, raw)
 							imageCount += 1
-							time.sleep(0.01);
 
 							# Take overexposed photo
 							setEV(baseEV + bracketHigh, 0, False)
 							filepath = GetFilePath(True)
 							print(" Capturing image: " + filepath + "  [" + str(bracketHigh) + "]\n")
-							camera.capture(filepath)
-							imageCount += 1
-							time.sleep(0.01);						
+							captureImage(filepath, raw)
+							imageCount += 1						
 							
 							# Reset EV to base photo's value
 							setEV(baseEV, 0, False)
@@ -365,14 +386,14 @@ try:
 						while True:
 							filepath = GetFilePath(True)
 							print(" Capturing timelapse image: " + filepath + "\n")
-							camera.capture(filepath)
+							captureImage(filepath, raw)
 							imageCount += 1
 							time.sleep(timer) 					
 					else:
 						# Single photo and then exit
 						filepath = GetFilePath(True)
 						print(" Capturing single image: " + filepath + "\n")
-						camera.capture(filepath)
+						captureImage(filepath, raw)
 						echoOn()
 						break
 
