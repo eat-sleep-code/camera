@@ -30,6 +30,16 @@ sudo chown -R $USER:$USER camera
 cd camera
 sudo chmod +x camera.py
 
+echo ''
+echo -e '\033[93mDownloading color profiles... \033[0m'
+cd ~
+sudo rm -Rf ~/camera/profiles
+mkdir ~/camera/profiles
+sudo chown -R $USER:$USER ~/camera/profiles
+wget https://github.com/davidplowman/Colour_Profiles/raw/master/imx477/PyDNG_profile.dcp -o ~/camera/profiles/basic.dcp
+wget https://github.com/davidplowman/Colour_Profiles/raw/master/imx477/Raspberry%20Pi%20High%20Quality%20Camera%20Lumariver%202860k-5960k%20Neutral%20Look.dcp -o ~/camera/profiles/neutral.dcp
+wget https://github.com/davidplowman/Colour_Profiles/raw/master/imx477/Raspberry%20Pi%20High%20Quality%20Camera%20Lumariver%202860k-5960k%20Skin%2BSky%20Look.dcp -o ~/camera/profiles/skin-and-sky.dcp
+
 cd ~
 echo ''
 echo -e '\033[93mSetting up alias... \033[0m'
