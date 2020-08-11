@@ -3,9 +3,18 @@
 This program makes the use of a Raspberry Pi HQ camera a little more powerful and user-friendly.   It unleashes easy exposure bracketing, timelapse functionality, etc.   It also adds additional error handling and presets some common settings.
 
 ---
+## Getting Started
+
+- Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
+  - Set the Memory Split value to a value of at least 192MB
+  - Enable the CSI camera interface
+  - Set up your WiFi connection
+- Connect the Raspberry Pi HQ Camera to your Raspberry Pi
+
+
 ## Installation
 
-Installation of the program, any prerequisites, as well as DNG support can be completed with the following two-line install script.
+Installation of the program, any software prerequisites, as well as DNG support can be completed with the following two-line install script.
 
 ```
 wget -q https://raw.githubusercontent.com/eat-sleep-code/camera/master/install-camera.sh -O ~/install-camera.sh
