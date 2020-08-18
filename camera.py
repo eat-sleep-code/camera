@@ -9,7 +9,7 @@ import sys
 import subprocess
 import time
 
-version = "2020.08.11"
+version = "2020.08.18"
 
 camera = PiCamera()
 camera.resolution = camera.MAX_RESOLUTION
