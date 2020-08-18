@@ -246,7 +246,7 @@ def setAWB(input, wait = 0):
 
 # ------------------------------------------------------------------------------
 
-def GetFileName(timestamped = True, isVideo = False):
+def getFileName(timestamped = True, isVideo = False):
 	now = datetime.datetime.now()
 	datestamp = now.strftime("%Y%m%d")
 	if isVideo==True:
@@ -261,7 +261,7 @@ def GetFileName(timestamped = True, isVideo = False):
 
 # ------------------------------------------------------------------------------
 
-def GetFilePath(timestamped = True, isVideo = False):
+def getFilePath(timestamped = True, isVideo = False):
 	try:
 		os.makedirs(outputFolder, exist_ok = True)
 	except OSError:
@@ -269,7 +269,7 @@ def GetFilePath(timestamped = True, isVideo = False):
 		echoOn()
 		quit()
 	else:
-		return outputFolder + GetFileName(timestamped, isVideo)
+		return outputFolder + getFileName(timestamped, isVideo)
 
 # ------------------------------------------------------------------------------
 
@@ -364,7 +364,7 @@ try:
 					
 					if mode == "persistent":
 						# Normal photo
-						filepath = GetFilePath(True)
+						filepath = getFilePath(True)
 						print(" Capturing image: " + filepath + "\n")
 						captureImage(filepath, raw)
 						
@@ -374,14 +374,14 @@ try:
 							baseEV = ev
 							# Take underexposed photo
 							setEV(baseEV + bracketLow, 0, False)
-							filepath = GetFilePath(True)
+							filepath = getFilePath(True)
 							print(" Capturing image: " + filepath + "  [" + str(bracketLow) + "]\n")
 							captureImage(filepath, raw)
 							imageCount += 1
 
 							# Take overexposed photo
 							setEV(baseEV + bracketHigh, 0, False)
-							filepath = GetFilePath(True)
+							filepath = getFilePath(True)
 							print(" Capturing image: " + filepath + "  [" + str(bracketHigh) + "]\n")
 							captureImage(filepath, raw)
 							imageCount += 1						
@@ -394,7 +394,7 @@ try:
 						if timer < 0:
 							timer = 1
 						while True:
-							filepath = GetFilePath(False)
+							filepath = getFilePath(False)
 							print(" Capturing timelapse image: " + filepath + "\n")
 							captureImage(filepath, raw)
 							imageCount += 1
@@ -408,7 +408,7 @@ try:
 							isRecording = False
 							time.sleep(1)
 						else:
-							filepath = GetFilePath(True, True)
+							filepath = getFilePath(True, True)
 							print(" Capturing video: " + filepath + "\n")
 							isRecording = True							
 							camera.resolution = (1920, 1080)
@@ -420,7 +420,7 @@ try:
 							
 					else:
 						# Single photo and then exit
-						filepath = GetFilePath(True)
+						filepath = getFilePath(True)
 						print(" Capturing single image: " + filepath + "\n")
 						captureImage(filepath, raw)
 						echoOn()
