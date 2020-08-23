@@ -44,7 +44,7 @@ cd ~
 echo ''
 echo -e '\033[93mSetting up alias... \033[0m'
 sudo sed -i '/\b\(function camera\)\b/d' ~/.bash_aliases
-sudo sed -i '$ a function camera { sudo python3 ~/camera/camera.py $@; }' ~/.bash_aliases
+sudo sed -i '$ a function camera { sudo python3 ~/camera/camera.py "$@"; }' ~/.bash_aliases
 echo -e 'You may use \e[1mcamera <options>\e[0m to launch the program.'
 
 echo ''
