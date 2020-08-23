@@ -265,7 +265,7 @@ def getFilePath(timestamped = True, isVideo = False):
 	try:
 		os.makedirs(outputFolder, exist_ok = True)
 	except OSError:
-		print (" ERROR: Creation of the output folder %s failed." % path)
+		print (" ERROR: Creation of the output folder " + outputFolder + " failed! ")
 		echoOn()
 		quit()
 	else:
