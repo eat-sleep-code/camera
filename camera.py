@@ -164,7 +164,7 @@ def setISO(input, wait = 0):
 			iso = isoMax	
 	try:	
 		camera.iso = iso
-		#print(str(camera.iso) + "|" + str(iso))
+		# print(str(camera.iso) + "|" + str(iso))
 		if iso == 0:
 			print(" ISO: auto")
 		else:	
