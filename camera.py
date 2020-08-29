@@ -9,7 +9,8 @@ import sys
 import subprocess
 import time
 
-version = "2020.08.18"
+
+version = "2020.08.28"
 
 camera = PiCamera()
 camera.resolution = camera.MAX_RESOLUTION
@@ -49,9 +50,8 @@ action = action.lower()
 
 
 shutter = args.shutter or "auto"
-shutterLong = 32000
+shutterLong = 100000
 shutterShort = 100
-
 
 iso = args.iso or "auto"
 isoMin = 100
@@ -127,6 +127,7 @@ def setShutter(input, wait = 0):
 	global shutterLong
 	global shutterShort
 
+
 	if str(input).lower() == "auto" or str(input) == "0":
 		shutter = 0
 	else:
@@ -163,7 +164,7 @@ def setISO(input, wait = 0):
 			iso = isoMax	
 	try:	
 		camera.iso = iso
-		# print(str(camera.iso) + "|" + str(iso))
+		#print(str(camera.iso) + "|" + str(iso))
 		if iso == 0:
 			print(" ISO: auto")
 		else:	
@@ -308,11 +309,8 @@ try:
 	echoOff()
 	imageCount = 1
 	isRecording = False
-
 	
 	def Capture(mode = "persistent"):
-		# print(str(camera.resolution))
-		
 		global previewVisible
 		global previewWidth
 		global previewHeight
@@ -333,8 +331,13 @@ try:
 		global imageCount
 		global isRecording
 
+		# print(str(camera.resolution))
+		camera.sensor_mode = 3
+
 		print("\n Camera " + version )
 		print("\n ----------------------------------------------------------------------")
+		time.sleep(2)
+
 		
 		setShutter(shutter, 0)		
 		setISO(iso, 0)
@@ -345,7 +348,6 @@ try:
 		
 		showInstructions(False, 0)
 		showPreview(0, 0, previewWidth, previewHeight)
-		
 		
 		# print("Key Pressed: " + keyboard.read_hotkey())
 		while True:
@@ -401,6 +403,7 @@ try:
 							time.sleep(timer) 	
 
 					elif mode == "video":
+						camera.sensor_mode = 0
 						if isRecording == True:
 							camera.stop_recording()			
 							camera.video_stabilization = False							
