@@ -4,13 +4,14 @@ import threading
 import argparse
 import datetime
 import keyboard
+import fractions
 import os
 import sys
 import subprocess
 import time
 
 
-version = "2020.08.28"
+version = '2020.09.10'
 
 camera = PiCamera()
 camera.resolution = camera.MAX_RESOLUTION
@@ -45,20 +46,23 @@ except:
 	previewHeight = 600
 	
 
-action = args.action or "capture"
+action = args.action or 'capture'
 action = action.lower()
 
 
-shutter = args.shutter or "auto"
-shutterLong = 100000
+shutter = args.shutter or 'auto'
+shutterLong = 1000000
+shutterLongThreshold = 100000
 shutterShort = 100
+defaultFramerate = 30
 
-iso = args.iso or "auto"
+
+iso = args.iso or 'auto'
 isoMin = 100
 isoMax = 1600
 
 
-exposure = (args.exposure or "auto").lower()
+exposure = (args.exposure or 'auto').lower()
 
 
 ev = args.ev or 0
@@ -71,12 +75,12 @@ bracketLow = 0
 bracketHigh = 0
 
 
-awb = (args.awb or "auto").lower()
+awb = (args.awb or 'auto').lower()
 
 
-outputFolder = args.outputFolder or "dcim/"
+outputFolder = args.outputFolder or 'dcim/'
 if outputFolder.endswith('/') == False:
-	outputFolder = outputFolder+"/"
+	outputFolder = outputFolder+'/'
 
 
 timer = args.timer or 0
@@ -103,20 +107,20 @@ def showInstructions(clearFirst = False, wait = 0):
 	if clearFirst == True:
 		clear()
 	else:
-		print(" ----------------------------------------------------------------------")
+		print(' ----------------------------------------------------------------------')
 
-	print("\n Press s+\u25B2 or s+\u25BC to change shutter speed")
-	print("\n Press i+\u25B2 or i+\u25BC to change ISO")
-	print("\n Press c+\u25B2 or c+\u25BC to change exposure compensation")
-	print("\n Press b+\u25B2 or b+\u25BC to change exposure bracketing")
-	print("\n Press [p] to toggle the preview window")
+	print('\n Press s+\u25B2 or s+\u25BC to change shutter speed')
+	print('\n Press i+\u25B2 or i+\u25BC to change ISO')
+	print('\n Press c+\u25B2 or c+\u25BC to change exposure compensation')
+	print('\n Press b+\u25B2 or b+\u25BC to change exposure bracketing')
+	print('\n Press [p] to toggle the preview window')
 
-	if action == "timelapse":			 		
-		print("\n Press the [space] bar to begin a timelapse ")
+	if action == 'timelapse':			 		
+		print('\n Press the [space] bar to begin a timelapse ')
 	else:
-		print("\n Press the [space] bar to take photos ")
+		print('\n Press the [space] bar to take photos ')
 
-	print("\n Press \u241B to exit ")
+	print('\n Press \u241B to exit ')
 	time.sleep(wait)
 	return
 
@@ -125,10 +129,11 @@ def showInstructions(clearFirst = False, wait = 0):
 def setShutter(input, wait = 0):
 	global shutter
 	global shutterLong
+	global shutterLongThreshold
 	global shutterShort
-
-
-	if str(input).lower() == "auto" or str(input) == "0":
+	global defaultFramerate
+	
+	if str(input).lower() == 'auto' or str(input) == '0':
 		shutter = 0
 	else:
 		shutter = int(float(input))
@@ -137,16 +142,26 @@ def setShutter(input, wait = 0):
 		elif shutter > shutterLong:
 			shutter = shutterLong 
 	try:
+		if camera.framerate == defaultFramerate and shutter > shutterLongThreshold:
+			camera.framerate=fractions.Fraction(1, 10)
+		elif camera.framerate != defaultFramerate and shutter <= shutterLongThreshold:
+			camera.framerate = defaultFramerate
+
 		camera.shutter_speed = shutter
-		# print(str(camera.shutter_speed) + "|" + str(shutter))
+		# print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))		
 		if shutter == 0:
-			print(" Shutter Speed: auto")
+			print(' Shutter Speed: auto')
 		else:	
-			print(" Shutter Speed: " + str(shutter))
+			floatingShutter = float(shutter/100000)
+			roundedShutter = '{:.3f}'.format(floatingShutter)
+			if shutter > shutterLongThreshold:
+				print(' Shutter Speed: ' + str(roundedShutter)  + 's [Long Exposure Mode]')
+			else:
+				print(' Shutter Speed: ' + str(roundedShutter) + 's')
 		time.sleep(wait)
 		return
-	except: 
-		print(" WARNING: Invalid Shutter Speed! ")
+	except:
+		print(' WARNING: Invalid Shutter Speed!')
 
 # ------------------------------------------------------------------------------				
 
@@ -154,7 +169,7 @@ def setISO(input, wait = 0):
 	global iso
 	global isoMin
 	global isoMax
-	if str(input).lower() == "auto" or str(input) == "0":
+	if str(input).lower() == 'auto' or str(input) == '0':
 		iso = 0
 	else: 
 		iso = int(input)
@@ -164,15 +179,15 @@ def setISO(input, wait = 0):
 			iso = isoMax	
 	try:	
 		camera.iso = iso
-		# print(str(camera.iso) + "|" + str(iso))
+		#print(str(camera.iso) + '|' + str(iso))
 		if iso == 0:
-			print(" ISO: auto")
+			print(' ISO: auto')
 		else:	
-			print(" ISO: " + str(iso))
+			print(' ISO: ' + str(iso))
 		time.sleep(wait)
 		return
 	except: 
-		print(" WARNING: Invalid ISO Setting! " + iso)
+		print(' WARNING: Invalid ISO Setting! ' + iso)
 
 # ------------------------------------------------------------------------------
 
@@ -181,11 +196,11 @@ def setExposure(input, wait = 0):
 	exposure = input
 	try:	
 		camera.exposure_mode = exposure
-		print(" Exposure Mode: " + exposure)
+		print(' Exposure Mode: ' + exposure)
 		time.sleep(wait)
 		return
 	except: 
-		print(" WARNING: Invalid Exposure Mode! ")
+		print(' WARNING: Invalid Exposure Mode! ')
 				
 # ------------------------------------------------------------------------------
 
@@ -194,20 +209,20 @@ def setEV(input, wait = 0, displayMessage = True):
 	global bracket
 	ev = input
 	ev = int(ev)
-	evPrefix = "+/-"
+	evPrefix = '+/-'
 	if ev > 0:
-		evPrefix = "+"
+		evPrefix = '+'
 	elif ev < 0:
-		evPrefix = ""
+		evPrefix = ''
 	try:
 		camera.exposure_compensation = ev
-		# print(str(camera.exposure_compensation) + "|" + str(ev))
+		# print(str(camera.exposure_compensation) + '|' + str(ev))
 		if displayMessage == True:
-			print(" Exposure Compensation: " + evPrefix + str(ev))
+			print(' Exposure Compensation: ' + evPrefix + str(ev))
 		time.sleep(wait)
 		return
 	except: 
-		print(" WARNING: Invalid Exposure Compensation Setting! ")	
+		print(' WARNING: Invalid Exposure Compensation Setting! ')	
 		
 # ------------------------------------------------------------------------------				
 
@@ -226,11 +241,11 @@ def setBracket(input, wait = 0, displayMessage = True):
 		if bracketHigh > evMax:
 			bracketHigh = evMax
 		if displayMessage == True:
-			print(" Exposure Bracketing: " + str(bracket))
+			print(' Exposure Bracketing: ' + str(bracket))
 		time.sleep(wait)
 		return
 	except: 
-		print(" WARNING: Invalid Exposure Bracketing Value! ")
+		print(' WARNING: Invalid Exposure Bracketing Value! ')
 
 # ------------------------------------------------------------------------------
 
@@ -239,26 +254,26 @@ def setAWB(input, wait = 0):
 	awb = input
 	try:	
 		camera.awb_mode = awb
-		print(" White Balance Mode: " + awb)
+		print(' White Balance Mode: ' + awb)
 		time.sleep(wait)
 		return
 	except: 
-		print(" WARNING: Invalid Auto White Balance Mode! ")
+		print(' WARNING: Invalid Auto White Balance Mode! ')
 
 # ------------------------------------------------------------------------------
 
 def getFileName(timestamped = True, isVideo = False):
 	now = datetime.datetime.now()
-	datestamp = now.strftime("%Y%m%d")
+	datestamp = now.strftime('%Y%m%d')
 	if isVideo==True:
-		extension = ".h264"
+		extension = '.h264'
 	else:
-		extension = ".jpg"
+		extension = '.jpg'
 	if timestamped == True:
-		timestamp = now.strftime("%H%M%S")
-		return datestamp + "-" + timestamp + "-" + str(imageCount).zfill(2) + extension
+		timestamp = now.strftime('%H%M%S')
+		return datestamp + '-' + timestamp + '-' + str(imageCount).zfill(2) + extension
 	else:
-		return datestamp + "-" + str(imageCount).zfill(8) + extension
+		return datestamp + '-' + str(imageCount).zfill(8) + extension
 
 # ------------------------------------------------------------------------------
 
@@ -266,7 +281,7 @@ def getFilePath(timestamped = True, isVideo = False):
 	try:
 		os.makedirs(outputFolder, exist_ok = True)
 	except OSError:
-		print (" ERROR: Creation of the output folder " + outputFolder + " failed! ")
+		print (' ERROR: Creation of the output folder ' + outputFolder + ' failed! ')
 		echoOn()
 		quit()
 	else:
@@ -310,7 +325,7 @@ try:
 	imageCount = 1
 	isRecording = False
 	
-	def Capture(mode = "persistent"):
+	def Capture(mode = 'persistent'):
 		global previewVisible
 		global previewWidth
 		global previewHeight
@@ -334,8 +349,8 @@ try:
 		# print(str(camera.resolution))
 		camera.sensor_mode = 3
 
-		print("\n Camera " + version )
-		print("\n ----------------------------------------------------------------------")
+		print('\n Camera ' + version )
+		print('\n ----------------------------------------------------------------------')
 		time.sleep(2)
 
 		
@@ -349,7 +364,7 @@ try:
 		showInstructions(False, 0)
 		showPreview(0, 0, previewWidth, previewHeight)
 		
-		# print("Key Pressed: " + keyboard.read_hotkey())
+		# print('Key Pressed: ' + keyboard.read_hotkey())
 		while True:
 			try:
 				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc'):
@@ -364,10 +379,10 @@ try:
 				# Capture
 				elif keyboard.is_pressed('space'):
 					
-					if mode == "persistent":
+					if mode == 'persistent':
 						# Normal photo
 						filepath = getFilePath(True)
-						print(" Capturing image: " + filepath + "\n")
+						print(' Capturing image: ' + filepath + '\n')
 						captureImage(filepath, raw)
 						
 						imageCount += 1
@@ -377,32 +392,32 @@ try:
 							# Take underexposed photo
 							setEV(baseEV + bracketLow, 0, False)
 							filepath = getFilePath(True)
-							print(" Capturing image: " + filepath + "  [" + str(bracketLow) + "]\n")
+							print(' Capturing image: ' + filepath + '  [' + str(bracketLow) + ']\n')
 							captureImage(filepath, raw)
 							imageCount += 1
 
 							# Take overexposed photo
 							setEV(baseEV + bracketHigh, 0, False)
 							filepath = getFilePath(True)
-							print(" Capturing image: " + filepath + "  [" + str(bracketHigh) + "]\n")
+							print(' Capturing image: ' + filepath + '  [' + str(bracketHigh) + ']\n')
 							captureImage(filepath, raw)
 							imageCount += 1						
 							
 							# Reset EV to base photo's value
 							setEV(baseEV, 0, False)
 							
-					elif mode == "timelapse":
+					elif mode == 'timelapse':
 						# Timelapse photo series
 						if timer < 0:
 							timer = 1
 						while True:
 							filepath = getFilePath(False)
-							print(" Capturing timelapse image: " + filepath + "\n")
+							print(' Capturing timelapse image: ' + filepath + '\n')
 							captureImage(filepath, raw)
 							imageCount += 1
 							time.sleep(timer) 	
 
-					elif mode == "video":
+					elif mode == 'video':
 						camera.sensor_mode = 0
 						if isRecording == True:
 							camera.stop_recording()			
@@ -412,7 +427,7 @@ try:
 							time.sleep(1)
 						else:
 							filepath = getFilePath(True, True)
-							print(" Capturing video: " + filepath + "\n")
+							print(' Capturing video: ' + filepath + '\n')
 							isRecording = True							
 							camera.resolution = (1920, 1080)
 							camera.video_stabilization = True
@@ -424,7 +439,7 @@ try:
 					else:
 						# Single photo and then exit
 						filepath = getFilePath(True)
-						print(" Capturing single image: " + filepath + "\n")
+						print(' Capturing single image: ' + filepath + '\n')
 						captureImage(filepath, raw)
 						echoOn()
 						break
@@ -494,7 +509,7 @@ try:
 
 
 	def UploadImage():
-		print(" INFO: Not yet implemented")
+		print(' INFO: Not yet implemented')
 
 
 	def CaptureAndUploadImage():
@@ -503,15 +518,15 @@ try:
 		UploadImage()
 
 
-	# print(" Action: " + action)
-	if action == "capture" or action == "image" or action == "photo":
+	# print(' Action: ' + action)
+	if action == 'capture' or action == 'image' or action == 'photo':
 		Capture()
-	elif action == "capturesingle" or action == "single":
-		Capture("single")
-	elif action == "timelapse":
-		Capture("timelapse")
-	elif action == "video":
-		Capture("video")
+	elif action == 'capturesingle' or action == 'single':
+		Capture('single')
+	elif action == 'timelapse':
+		Capture('timelapse')
+	elif action == 'video':
+		Capture('video')
 	else:
 		echoOn()
 		sys.exit(0)
