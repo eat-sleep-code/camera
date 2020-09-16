@@ -43,6 +43,7 @@ wget -q https://github.com/davidplowman/Colour_Profiles/raw/master/imx477/Raspbe
 cd ~
 echo ''
 echo -e '\033[93mSetting up alias... \033[0m'
+sudo touch ~/.bash_aliases
 sudo sed -i '/\b\(function camera\)\b/d' ~/.bash_aliases
 sudo sed -i '$ a function camera { sudo python3 ~/camera/camera.py "$@"; }' ~/.bash_aliases
 echo -e 'You may use \e[1mcamera <options>\e[0m to launch the program.'
