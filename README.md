@@ -6,7 +6,7 @@ This program makes the use of a Raspberry Pi HQ camera a little more powerful an
 ## Getting Started
 
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
-  - Set the Memory Split value to a value of at least 192MB
+  - Set the Memory Split value to a value of at least 256MB
   - Enable the CSI camera interface
   - Set up your WiFi connection
 - Connect the Raspberry Pi HQ Camera to your Raspberry Pi
