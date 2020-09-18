@@ -51,3 +51,21 @@ camera <options>
 + Press [p] to toggle the preview window
 + Press the [space] bar to take photos or begin a timelapse
 + Press &#x241B; to exit
+
+---
+
+## Infrared Cameras
+If you are using an infrared (IR) camera, you will need to modify the Auto White Balance (AWB) mode at boot time.
+
+This can be achieved by executing `sudo nano /boot/config.txt` and adding the following lines.
+
+```
+# Camera Settings 
+awb_auto_is_greyworld=1
+```
+
+Also note, that while IR cameras utilize "invisible" (outside the spectrum of the human eye) light, they can not magically see in the dark.   You will need to illuminate night scenes with one or more [IR emitting LEDs](https://www.adafruit.com/product/387) to take advantage of an Infrared Camera.
+
+---
+
+:information_source: This application was developed using a Raspberry Pi HQ (2020) camera and Raspberry Pi 3B+ and Raspberry Pi 4B boards.   Issues may arise if you are using either third party or older hardware.
