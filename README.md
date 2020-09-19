@@ -31,7 +31,7 @@ camera <options>
 ### Options
 
 + _--action_ : Set the camera action     *(default: capture)*
-+ _--shutter_ : Set the shutter speed     *(default: auto)*
++ _--shutter_ : Set the shutter speed in milliseconds     *(default: auto)*
 + _--iso_ : Set the ISO     *(default: auto)*
 + _--exposure_ : Set the exposure mode     *(default: auto)*
 + _--ev_ : Set the exposure compensation (+/-10)     *(default: 0)*
@@ -39,7 +39,7 @@ camera <options>
 + _--awb_ : Set the Auto White Balance (AWB) mode      *(default: auto)*
 + _--outputFolder_ : Set the folder where images will be saved     *(default: dcim/)* 
 + _--raw_ : Set whether DNG files are created in addition to JPEG files	    *(default: True)*
-+ _--timer_ : Set the interval for timelapse mode     *(default: 0)* 
++ _--timer_ : Set the interval for timelapse mode in seconds     *(default: 0)* 
 + _--previewWidth_ : Set the preview window width     *(default: 800)*
 + _--previewHeight_ : Set the preview window height    *(default: 600)*
 
