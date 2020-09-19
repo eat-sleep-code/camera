@@ -41,7 +41,7 @@ try:
 	previewWidth = int(previewWidth)
 	previewHeight = args.previewHeight or 600
 	previewHeight = int(previewHeight)
-except: 
+except Exception as ex: 
 	previewWidth = 800
 	previewHeight = 600
 	
@@ -163,7 +163,7 @@ def setShutter(input, wait = 0):
 		time.sleep(wait)
 		return
 	except Exception as ex:
-		print(' WARNING: Invalid Shutter Speed!' + str(ex))
+		print(' WARNING: Invalid Shutter Speed!' + str(shutter))
 
 # ------------------------------------------------------------------------------				
 
@@ -188,8 +188,8 @@ def setISO(input, wait = 0):
 			print(' ISO: ' + str(iso))
 		time.sleep(wait)
 		return
-	except: 
-		print(' WARNING: Invalid ISO Setting! ' + iso)
+	except Exception as ex:
+		print(' WARNING: Invalid ISO Setting! ' + str(iso))
 
 # ------------------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ def setExposure(input, wait = 0):
 		print(' Exposure Mode: ' + exposure)
 		time.sleep(wait)
 		return
-	except: 
+	except Exception as ex:
 		print(' WARNING: Invalid Exposure Mode! ')
 				
 # ------------------------------------------------------------------------------
@@ -223,7 +223,7 @@ def setEV(input, wait = 0, displayMessage = True):
 			print(' Exposure Compensation: ' + evPrefix + str(ev))
 		time.sleep(wait)
 		return
-	except: 
+	except Exception as ex: 
 		print(' WARNING: Invalid Exposure Compensation Setting! ')	
 		
 # ------------------------------------------------------------------------------				
@@ -246,7 +246,7 @@ def setBracket(input, wait = 0, displayMessage = True):
 			print(' Exposure Bracketing: ' + str(bracket))
 		time.sleep(wait)
 		return
-	except: 
+	except Exception as ex:
 		print(' WARNING: Invalid Exposure Bracketing Value! ')
 
 # ------------------------------------------------------------------------------
@@ -259,7 +259,7 @@ def setAWB(input, wait = 0):
 		print(' White Balance Mode: ' + awb)
 		time.sleep(wait)
 		return
-	except: 
+	except Exception as ex:
 		print(' WARNING: Invalid Auto White Balance Mode! ')
 
 # ------------------------------------------------------------------------------
@@ -458,7 +458,7 @@ try:
 					else:
 						showPreview(0, 0, previewWidth, previewHeight)
 
-				# Shutter				
+				# Shutter Speed	
 				elif keyboard.is_pressed('s+up'):
 					if shutter == 0:
 						shutter = shutterShort
@@ -511,19 +511,13 @@ try:
 						setBracket(bracket, 0.25)
 
 			except Exception as ex:
-				print(ex)
+				print(str(ex))
 				pass
-
-
-	def UploadImage():
-		print(' INFO: Not yet implemented')
-
 
 	def CaptureAndUploadImage():
 		Capture()
 		time.sleep(1000)
-		UploadImage()
-
+		# Not yet implemented
 
 	# print(' Action: ' + action)
 	if action == 'capture' or action == 'image' or action == 'photo':
