@@ -326,6 +326,11 @@ try:
 	echoOff()
 	imageCount = 1
 	isRecording = False
+
+	try:
+		os.chdir('/home/pi') 
+	except:
+		pass
 	
 	def Capture(mode = 'persistent'):
 		global previewVisible
