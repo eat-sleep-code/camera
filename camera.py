@@ -11,7 +11,7 @@ import subprocess
 import time
 
 
-version = '2020.09.10'
+version = '2020.09.19'
 
 camera = PiCamera()
 camera.resolution = camera.MAX_RESOLUTION
@@ -22,7 +22,7 @@ dng = RPICAM2DNG()
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--action', dest='action', help='Set the command action')
-parser.add_argument('--shutter', dest='shutter', help='Set the shutter speed')
+parser.add_argument('--shutter', dest='shutter', help='Set the shutter speed (milliseconds)')
 parser.add_argument('--iso', dest='iso', help='Set the ISO')
 parser.add_argument('--exposure', dest='exposure', help='Set the exposure mode')
 parser.add_argument('--ev', dest='ev', help='Set the exposure compensation (+/-25)')
@@ -30,7 +30,7 @@ parser.add_argument('--bracket', dest='bracket', help='Set the exposure bracketi
 parser.add_argument('--awb', dest='awb', help='Set the Auto White Balance (AWB) mode')
 parser.add_argument('--outputFolder', dest='outputFolder', help='Set the folder where images will be saved')
 parser.add_argument('--raw', dest='raw', help='Set whether DNG files are created in addition to JPEG files')
-parser.add_argument('--timer', dest='timer', help='Set self-timer or interval')
+parser.add_argument('--timer', dest='timer', help='Set self-timer or interval (seconds)')
 parser.add_argument('--previewWidth', dest='previewWidth', help='Set the preview window width')
 parser.add_argument('--previewHeight', dest='previewHeight', help='Set the preview window height')
 args = parser.parse_args()
@@ -51,9 +51,9 @@ action = action.lower()
 
 
 shutter = args.shutter or 'auto'
-shutterLong = 1000000
-shutterLongThreshold = 100000
-shutterShort = 100
+shutterLong = 30000
+shutterLongThreshold = 1000
+shutterShort = 0
 defaultFramerate = 30
 
 
@@ -143,16 +143,18 @@ def setShutter(input, wait = 0):
 			shutter = shutterLong 
 	try:
 		if camera.framerate == defaultFramerate and shutter > shutterLongThreshold:
-			camera.framerate=fractions.Fraction(1, 10)
+			camera.framerate=fractions.Fraction(5, 1000)
 		elif camera.framerate != defaultFramerate and shutter <= shutterLongThreshold:
 			camera.framerate = defaultFramerate
-
-		camera.shutter_speed = shutter
-		# print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))		
+	
 		if shutter == 0:
+			camera.shutter_speed = 0
+			#print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))	
 			print(' Shutter Speed: auto')
-		else:	
-			floatingShutter = float(shutter/100000)
+		else:
+			camera.shutter_speed = shutter * 1000
+			#print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))		
+			floatingShutter = float(shutter/1000)
 			roundedShutter = '{:.3f}'.format(floatingShutter)
 			if shutter > shutterLongThreshold:
 				print(' Shutter Speed: ' + str(roundedShutter)  + 's [Long Exposure Mode]')
@@ -160,8 +162,8 @@ def setShutter(input, wait = 0):
 				print(' Shutter Speed: ' + str(roundedShutter) + 's')
 		time.sleep(wait)
 		return
-	except:
-		print(' WARNING: Invalid Shutter Speed!')
+	except Exception as ex:
+		print(' WARNING: Invalid Shutter Speed!' + str(ex))
 
 # ------------------------------------------------------------------------------				
 
@@ -456,13 +458,13 @@ try:
 					if shutter == 0:
 						shutter = shutterShort
 					if shutter > shutterShort and shutter <= shutterLong:					
-						shutter = int(shutter / 2)
+						shutter = int(shutter / 1.5)
 					setShutter(shutter, 0.25)
 				elif keyboard.is_pressed('s+down'):
 					if shutter == 0:						
 						shutter = shutterLong
 					elif shutter < shutterLong and shutter >= shutterShort:					
-						shutter = int(shutter * 2)
+						shutter = int(shutter * 1.5)
 					elif shutter == shutterShort:
 						shutter = 0
 					setShutter(shutter, 0.25)
