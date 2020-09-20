@@ -14,6 +14,7 @@ import time
 version = '2020.09.20'
 
 camera = PiCamera()
+PiCamera.CAPTURE_TIMEOUT = 1500
 camera.resolution = camera.MAX_RESOLUTION
 dng = RPICAM2DNG()
 
