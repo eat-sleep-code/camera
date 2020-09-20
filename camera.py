@@ -3,15 +3,15 @@ from pydng.core import RPICAM2DNG
 import threading
 import argparse
 import datetime
-import keyboard
 import fractions
+import keyboard
 import os
 import sys
 import subprocess
 import time
 
 
-version = '2020.09.19'
+version = '2020.09.20'
 
 camera = PiCamera()
 camera.resolution = camera.MAX_RESOLUTION
