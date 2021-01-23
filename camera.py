@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from PIL import Image, ImageTk
+
 from picamera import PiCamera
 from pydng.core import RPICAM2DNG
+from controls import OnScreenControls, Buttons
 import threading
 import argparse
 import datetime
@@ -11,10 +12,8 @@ import keyboard
 import os
 import sys
 import subprocess
+import threading
 import time
-import camera.controls as controls
-
-
 
 
 version = '2021.02.22'
@@ -23,12 +22,11 @@ camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
 camera.resolution = camera.MAX_RESOLUTION
 dng = RPICAM2DNG()
-
-controls = tk.Tk()
-controls.title('Camera Controls')
-controls.wm_attributes('-type', 'splash')
-controls.geometry(str(screenWidth) + 'x110+0+' + str(screenHeight - 110))
-controls['background'] = '#111111'
+running = False
+onScreen = OnScreenControls()
+onScreenButtons = Buttons()
+statusDictionary = {'message': ''}
+buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'capture': False}
 
 
 # === Argument Handling ========================================================
@@ -52,11 +50,11 @@ previewVisible = False
 try:
 	previewWidth = args.previewWidth or 800
 	previewWidth = int(previewWidth)
-	previewHeight = args.previewHeight or 600
+	previewHeight = args.previewHeight or 460
 	previewHeight = int(previewHeight)
 except Exception as ex: 
 	previewWidth = 800
-	previewHeight = 600
+	previewHeight = 460
 	
 
 action = args.action or 'capture'
@@ -101,17 +99,6 @@ timer = int(timer)
 
 raw = args.raw or True
 
-shutterSpeedUpButtonPressed = False
-shutterSpeedDownButtonPressed = False
-isoUpButtonPressed = False
-isoDownButtonPressed = False
-exposureCompensationUpButtonPressed = False
-exposureCompensationDownButtonPressed = False
-exposureBracketingUpButtonPressed = False
-exposureBracketingDownButtonPressed = False
-captureButtonPressed = False
-exitButtonPressed = False
-
 
 # === Echo Control =============================================================
 
@@ -124,24 +111,6 @@ def clear():
 clear()
 
 
-# === On-Screen Control Button Styles ==========================================
-
-buttonStyle = ttk.Style()
-buttonStyle.configure('default.TButton', background = '#111111', bordercolor = '#111111', borderwidth=0)
-buttonWidth = 80
-buttonHeight = 80
-borderLeft = 0
-if (screenWidth > 800): # Keep capture button to the far right
-    borderLeft = screenWidth - 800
-
-
-# === On-Screen Control Label Styles ===========================================
-
-labelStyle = ttk.Style()
-labelStyle.configure('default.TLabel', background='#000000', foreground='#EEEEEE')
-labelStyle.configure('warning.TLabel', background='#880000', foreground='#EEEEEE')
-labelStyle.configure('primary.TLabel', background='#00DDF1', foreground='#111111')
-labelHeight = 30
 
 # === Functions ================================================================
 
@@ -174,6 +143,7 @@ def setShutter(input, wait = 0):
 	global shutterLongThreshold
 	global shutterShort
 	global defaultFramerate
+	global statusDictionary
 	
 	if str(input).lower() == 'auto' or str(input) == '0':
 		shutter = 0
@@ -193,6 +163,7 @@ def setShutter(input, wait = 0):
 			camera.shutter_speed = 0
 			#print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))	
 			print(' Shutter Speed: auto')
+			statusDictionary.update({'message': 'Shutter Speed: auto'})
 		else:
 			camera.shutter_speed = shutter * 1000
 			#print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))		
@@ -200,8 +171,10 @@ def setShutter(input, wait = 0):
 			roundedShutter = '{:.3f}'.format(floatingShutter)
 			if shutter > shutterLongThreshold:
 				print(' Shutter Speed: ' + str(roundedShutter)  + 's [Long Exposure Mode]')
+				statusDictionary.update({'message': ' Shutter Speed: ' + str(roundedShutter)  + 's [Long Exposure Mode]'})
 			else:
 				print(' Shutter Speed: ' + str(roundedShutter) + 's')
+				statusDictionary.update({'message': ' Shutter Speed: ' + str(roundedShutter) + 's'})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -213,6 +186,8 @@ def setISO(input, wait = 0):
 	global iso
 	global isoMin
 	global isoMax
+	global statusDictionary
+
 	if str(input).lower() == 'auto' or str(input) == '0':
 		iso = 0
 	else: 
@@ -226,8 +201,10 @@ def setISO(input, wait = 0):
 		#print(str(camera.iso) + '|' + str(iso))
 		if iso == 0:
 			print(' ISO: auto')
+			statusDictionary.update({'message': ' ISO: auto'})
 		else:	
 			print(' ISO: ' + str(iso))
+			statusDictionary.update({'message': ' ISO: ' + str(iso)})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -237,10 +214,13 @@ def setISO(input, wait = 0):
 
 def setExposure(input, wait = 0):
 	global exposure
+	global statusDictionary
+
 	exposure = input
 	try:	
 		camera.exposure_mode = exposure
 		print(' Exposure Mode: ' + exposure)
+		statusDictionary.update({'message': ' Exposure Mode: ' + exposure})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -251,6 +231,8 @@ def setExposure(input, wait = 0):
 def setEV(input, wait = 0, displayMessage = True):
 	global ev 
 	global bracket
+	global statusDictionary
+
 	ev = input
 	ev = int(ev)
 	evPrefix = '+/-'
@@ -263,6 +245,7 @@ def setEV(input, wait = 0, displayMessage = True):
 		# print(str(camera.exposure_compensation) + '|' + str(ev))
 		if displayMessage == True:
 			print(' Exposure Compensation: ' + evPrefix + str(ev))
+			statusDictionary.update({'message': ' Exposure Compensation: ' + evPrefix + str(ev)})
 		time.sleep(wait)
 		return
 	except Exception as ex: 
@@ -276,6 +259,8 @@ def setBracket(input, wait = 0, displayMessage = True):
 	global bracketHigh
 	global evMax
 	global evMin
+	global statusDictionary
+
 	bracket = int(input)
 	try:
 		bracketLow = camera.exposure_compensation - bracket
@@ -286,6 +271,7 @@ def setBracket(input, wait = 0, displayMessage = True):
 			bracketHigh = evMax
 		if displayMessage == True:
 			print(' Exposure Bracketing: ' + str(bracket))
+			statusDictionary.update({'message': ' Exposure Bracketing: ' + str(bracket)})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -295,10 +281,13 @@ def setBracket(input, wait = 0, displayMessage = True):
 
 def setAWB(input, wait = 0):
 	global awb
+	global statusDictionary
+
 	awb = input
 	try:	
 		camera.awb_mode = awb
 		print(' White Balance Mode: ' + awb)
+		statusDictionary.update({'message': ' White Balance Mode: ' + awb})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -362,41 +351,21 @@ def captureImage(filepath, raw = True):
 def convertBayerDataToDNG(filepath):
 	dng.convert(filepath)
 
+
 # ------------------------------------------------------------------------------
-
-def handleOnScreenhandleOnScreenButtonClick(e):
-    # print('Button: {} was clicked, sending keypress'.format(e))
-
-    if 'shutterSpeedUpButton' == e:
-        shutterSpeedUpButtonPressed = True
-    elif 'shutterSpeedUpButton' == e:
-        shutterSpeedDownButtonPressed = True
-    elif 'isoUpButton' == e:
-        isoUpButtonPressed = True
-    elif 'isoDownButton' == e:
-        isoDownButtonPressed = True
-    elif 'exposureCompensationUpButton' == e:
-        exposureCompensationUpButtonPressed = True
-    elif 'exposureCompensationDownButton' == e:
-       exposureCompensationDownButtonPressed = True
-    elif 'exposureBracketingUpButton' == e:
-        exposureBracketingUpButtonPressed = True
-    elif 'exposureBracketingDownButton' == e:
-        exposureBracketingDownButtonPressed = True
-    elif 'captureButton' == e:
-        captureButtonPressed = True
-    elif 'exitButton' == e:
-        exitButtonPressed = True
-        
-
-    time.sleep(0.2)
+def createControls():
+	global running
+	global statusDictionary	
+	global buttonDictionary
+	
+	running = True
+	onScreen.create(running, statusDictionary, buttonDictionary)
+	
 # === Image Capture ============================================================
 
-try:
-	controls.createControls(borderLeft, buttonHeight, buttonWidth, labelHeight)
-except:
-	print (' ERROR: Unable to create on screen controls! ')
-	pass
+controlsThread = threading.Thread(target=createControls)
+controlsThread.start()
+
 
 try:
 	echoOff()
@@ -428,18 +397,9 @@ try:
 		global raw
 		global imageCount
 		global isRecording
-		global shutterSpeedUpButtonPressed
-		global shutterSpeedDownButtonPressed
-		global isoUpButtonPressed
-		global isoDownButtonPressed
-		global exposureCompensationUpButtonPressed
-		global exposureCompensationDownButtonPressed
-		global exposureBracketingUpButtonPressed
-		global exposureBracketingDownButtonPressed
-		global captureButtonPressed
-		global exitButtonPressed
-
-
+		global statusDictionary
+		global buttonDictionary
+		
 
 		# print(str(camera.resolution))
 		camera.sensor_mode = 3
@@ -462,18 +422,18 @@ try:
 		# print('Key Pressed: ' + keyboard.read_hotkey())
 		while True:
 			try:
-				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc') or exitButtonPressed == True:
-					controls.destroy()
+				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc') or buttonDictionary['exit'] == True:
 					# clear()
 					echoOn()
+					sys.exit(1)
 					break
-
+					
 				# Help
 				elif keyboard.is_pressed('/') or keyboard.is_pressed('shift+/'):
 					showInstructions(True, 0.5)	
 
 				# Capture
-				elif keyboard.is_pressed('space') or captureButtonPressed == True:
+				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True:
 					
 					if mode == 'persistent':
 						# Normal photo
@@ -540,7 +500,7 @@ try:
 						echoOn()
 						break
 
-					captureButtonPressed = False
+					buttonDictionary.update({'capture': False})
 
 				# Preview Toggle				
 				elif keyboard.is_pressed('p'):
@@ -550,14 +510,14 @@ try:
 						showPreview(0, 0, previewWidth, previewHeight)
 
 				# Shutter Speed	
-				elif keyboard.is_pressed('s+up') or shutterSpeedUpButtonPressed == True:
+				elif keyboard.is_pressed('s+up') or buttonDictionary['shutterUp'] == True:
 					if shutter == 0:
 						shutter = shutterShort
 					if shutter > shutterShort and shutter <= shutterLong:					
 						shutter = int(shutter / 1.5)
 					setShutter(shutter, 0.25)
-					shutterSpeedUpButtonPressed = False
-				elif keyboard.is_pressed('s+down') or shutterSpeedDownButtonPressed == True:
+					buttonDictionary.update({'shutterUp': False})
+				elif keyboard.is_pressed('s+down') or buttonDictionary['shutterDown'] == True:
 					if shutter == 0:						
 						shutter = shutterLong
 					elif shutter < shutterLong and shutter >= shutterShort:					
@@ -565,17 +525,17 @@ try:
 					elif shutter == shutterShort:
 						shutter = 0
 					setShutter(shutter, 0.25)
-					shutterSpeedDownButtonPressed = False
+					buttonDictionary.update({'shutterDown': False})
 
 				# ISO
-				elif keyboard.is_pressed('i+up') or isoUpButtonPressed == True:
+				elif keyboard.is_pressed('i+up') or buttonDictionary['isoUp'] == True:
 					if iso == 0:
 						iso = isoMin
 					if iso >= isoMin and iso < isoMax:					
 						iso = int(iso * 2)
 					setISO(iso, 0.25)
-					isoUpButtonPressed = False
-				elif keyboard.is_pressed('i+down') or isoDownButtonPressed == True:
+					buttonDictionary.update({'isoUp': False})
+				elif keyboard.is_pressed('i+down') or buttonDictionary['isoDown'] == True:
 					if iso == 0:
 						iso = isoMax
 					elif iso <= isoMax and iso > isoMin:					
@@ -583,31 +543,34 @@ try:
 					elif iso == isoMin:
 						iso = 0
 					setISO(iso, 0.25)
-					isoDownButtonPressed = False
+					buttonDictionary.update({'isoDown': False})
 
 				# Exposure Compensation
-				elif keyboard.is_pressed('c+up') or exposureCompensationUpButtonPressed == True:
+				elif keyboard.is_pressed('c+up') or buttonDictionary['evUp'] == True:
 					if ev >= evMin and ev < evMax:					
 						ev = int(ev + 1)
 						setEV(ev, 0.25)
-						exposureCompensationUpButtonPressed = False
-				elif keyboard.is_pressed('c+down') or exposureCompensationDownButtonPressed == True:
+						buttonDictionary.update({'evUp': False})
+				elif keyboard.is_pressed('c+down') or buttonDictionary['evDown'] == True:
 					if ev <= evMax and ev > evMin:					
 						ev = int(ev - 1)
 						setEV(ev, 0.25)
-						exposureCompensationDownButtonPressed = False
+						buttonDictionary.update({'evDown': False})
 				# Exposure Bracketing
-				elif keyboard.is_pressed('b+up') or exposureBracketingUpButtonPressed == True:
+				elif keyboard.is_pressed('b+up') or buttonDictionary['bracketUp'] == True:
 					if bracket < evMax:
 						bracket = int(bracket + 1)
 						setBracket(bracket, 0.25)
-						exposureBracketingUpButtonPressed = False
-				elif keyboard.is_pressed('b+down') or exposureBracketingDownButtonPressed == True:
+						buttonDictionary.update({'bracketUp': False})
+				elif keyboard.is_pressed('b+down') or buttonDictionary['bracketDown'] == True:
 					if bracket > 0:					
 						bracket = int(bracket - 1)
 						setBracket(bracket, 0.25)
-						exposureBracketingDownButtonPressed = False
-
+						buttonDictionary.update({'bracketDown': False})
+			except SystemExit:
+				running = False
+				print('Attempting exit, but controls thread active: ' + str(controlsThread.is_alive()))
+				sys.exit(0)
 			except Exception as ex:
 				print(str(ex))
 				pass
