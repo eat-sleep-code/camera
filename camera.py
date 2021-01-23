@@ -10,8 +10,9 @@ import datetime
 import fractions
 import keyboard
 import os
-import sys
+import signal
 import subprocess
+import sys
 import threading
 import time
 
@@ -569,7 +570,9 @@ try:
 						buttonDictionary.update({'bracketDown': False})
 			except SystemExit:
 				running = False
-				print('Attempting exit, but controls thread active: ' + str(controlsThread.is_alive()))
+				hidePreview()
+				time.sleep(5)				
+				os.kill(os.getpid(), signal.SIGSTOP)
 				sys.exit(0)
 			except Exception as ex:
 				print(str(ex))
