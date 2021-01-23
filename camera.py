@@ -1,3 +1,6 @@
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
 from picamera import PiCamera
 from pydng.core import RPICAM2DNG
 import threading
@@ -9,14 +12,23 @@ import os
 import sys
 import subprocess
 import time
+import camera.controls as controls
 
 
-version = '2020.09.20'
+
+
+version = '2021.02.22'
 
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
 camera.resolution = camera.MAX_RESOLUTION
 dng = RPICAM2DNG()
+
+controls = tk.Tk()
+controls.title('Camera Controls')
+controls.wm_attributes('-type', 'splash')
+controls.geometry(str(screenWidth) + 'x110+0+' + str(screenHeight - 110))
+controls['background'] = '#111111'
 
 
 # === Argument Handling ========================================================
@@ -87,8 +99,18 @@ if outputFolder.endswith('/') == False:
 timer = args.timer or 0
 timer = int(timer)
 
-
 raw = args.raw or True
+
+shutterSpeedUpButtonPressed = False
+shutterSpeedDownButtonPressed = False
+isoUpButtonPressed = False
+isoDownButtonPressed = False
+exposureCompensationUpButtonPressed = False
+exposureCompensationDownButtonPressed = False
+exposureBracketingUpButtonPressed = False
+exposureBracketingDownButtonPressed = False
+captureButtonPressed = False
+exitButtonPressed = False
 
 
 # === Echo Control =============================================================
@@ -101,6 +123,25 @@ def clear():
 	subprocess.call('clear' if os.name == 'posix' else 'cls')
 clear()
 
+
+# === On-Screen Control Button Styles ==========================================
+
+buttonStyle = ttk.Style()
+buttonStyle.configure('default.TButton', background = '#111111', bordercolor = '#111111', borderwidth=0)
+buttonWidth = 80
+buttonHeight = 80
+borderLeft = 0
+if (screenWidth > 800): # Keep capture button to the far right
+    borderLeft = screenWidth - 800
+
+
+# === On-Screen Control Label Styles ===========================================
+
+labelStyle = ttk.Style()
+labelStyle.configure('default.TLabel', background='#000000', foreground='#EEEEEE')
+labelStyle.configure('warning.TLabel', background='#880000', foreground='#EEEEEE')
+labelStyle.configure('primary.TLabel', background='#00DDF1', foreground='#111111')
+labelHeight = 30
 
 # === Functions ================================================================
 
@@ -321,7 +362,41 @@ def captureImage(filepath, raw = True):
 def convertBayerDataToDNG(filepath):
 	dng.convert(filepath)
 
+# ------------------------------------------------------------------------------
+
+def handleOnScreenhandleOnScreenButtonClick(e):
+    # print('Button: {} was clicked, sending keypress'.format(e))
+
+    if 'shutterSpeedUpButton' == e:
+        shutterSpeedUpButtonPressed = True
+    elif 'shutterSpeedUpButton' == e:
+        shutterSpeedDownButtonPressed = True
+    elif 'isoUpButton' == e:
+        isoUpButtonPressed = True
+    elif 'isoDownButton' == e:
+        isoDownButtonPressed = True
+    elif 'exposureCompensationUpButton' == e:
+        exposureCompensationUpButtonPressed = True
+    elif 'exposureCompensationDownButton' == e:
+       exposureCompensationDownButtonPressed = True
+    elif 'exposureBracketingUpButton' == e:
+        exposureBracketingUpButtonPressed = True
+    elif 'exposureBracketingDownButton' == e:
+        exposureBracketingDownButtonPressed = True
+    elif 'captureButton' == e:
+        captureButtonPressed = True
+    elif 'exitButton' == e:
+        exitButtonPressed = True
+        
+
+    time.sleep(0.2)
 # === Image Capture ============================================================
+
+try:
+	controls.createControls(borderLeft, buttonHeight, buttonWidth, labelHeight)
+except:
+	print (' ERROR: Unable to create on screen controls! ')
+	pass
 
 try:
 	echoOff()
@@ -353,6 +428,18 @@ try:
 		global raw
 		global imageCount
 		global isRecording
+		global shutterSpeedUpButtonPressed
+		global shutterSpeedDownButtonPressed
+		global isoUpButtonPressed
+		global isoDownButtonPressed
+		global exposureCompensationUpButtonPressed
+		global exposureCompensationDownButtonPressed
+		global exposureBracketingUpButtonPressed
+		global exposureBracketingDownButtonPressed
+		global captureButtonPressed
+		global exitButtonPressed
+
+
 
 		# print(str(camera.resolution))
 		camera.sensor_mode = 3
@@ -375,7 +462,8 @@ try:
 		# print('Key Pressed: ' + keyboard.read_hotkey())
 		while True:
 			try:
-				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc'):
+				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc') or exitButtonPressed == True:
+					controls.destroy()
 					# clear()
 					echoOn()
 					break
@@ -385,7 +473,7 @@ try:
 					showInstructions(True, 0.5)	
 
 				# Capture
-				elif keyboard.is_pressed('space'):
+				elif keyboard.is_pressed('space') or captureButtonPressed == True:
 					
 					if mode == 'persistent':
 						# Normal photo
@@ -452,6 +540,8 @@ try:
 						echoOn()
 						break
 
+					captureButtonPressed = False
+
 				# Preview Toggle				
 				elif keyboard.is_pressed('p'):
 					if previewVisible == True:
@@ -460,13 +550,14 @@ try:
 						showPreview(0, 0, previewWidth, previewHeight)
 
 				# Shutter Speed	
-				elif keyboard.is_pressed('s+up'):
+				elif keyboard.is_pressed('s+up') or shutterSpeedUpButtonPressed == True:
 					if shutter == 0:
 						shutter = shutterShort
 					if shutter > shutterShort and shutter <= shutterLong:					
 						shutter = int(shutter / 1.5)
 					setShutter(shutter, 0.25)
-				elif keyboard.is_pressed('s+down'):
+					shutterSpeedUpButtonPressed = False
+				elif keyboard.is_pressed('s+down') or shutterSpeedDownButtonPressed == True:
 					if shutter == 0:						
 						shutter = shutterLong
 					elif shutter < shutterLong and shutter >= shutterShort:					
@@ -474,15 +565,17 @@ try:
 					elif shutter == shutterShort:
 						shutter = 0
 					setShutter(shutter, 0.25)
+					shutterSpeedDownButtonPressed = False
 
 				# ISO
-				elif keyboard.is_pressed('i+up'):
+				elif keyboard.is_pressed('i+up') or isoUpButtonPressed == True:
 					if iso == 0:
 						iso = isoMin
 					if iso >= isoMin and iso < isoMax:					
 						iso = int(iso * 2)
 					setISO(iso, 0.25)
-				elif keyboard.is_pressed('i+down'):
+					isoUpButtonPressed = False
+				elif keyboard.is_pressed('i+down') or isoDownButtonPressed == True:
 					if iso == 0:
 						iso = isoMax
 					elif iso <= isoMax and iso > isoMin:					
@@ -490,26 +583,30 @@ try:
 					elif iso == isoMin:
 						iso = 0
 					setISO(iso, 0.25)
+					isoDownButtonPressed = False
 
 				# Exposure Compensation
-				elif keyboard.is_pressed('c+up'):
+				elif keyboard.is_pressed('c+up') or exposureCompensationUpButtonPressed == True:
 					if ev >= evMin and ev < evMax:					
 						ev = int(ev + 1)
 						setEV(ev, 0.25)
-				elif keyboard.is_pressed('c+down'):
+						exposureCompensationUpButtonPressed = False
+				elif keyboard.is_pressed('c+down') or exposureCompensationDownButtonPressed == True:
 					if ev <= evMax and ev > evMin:					
 						ev = int(ev - 1)
 						setEV(ev, 0.25)
-
+						exposureCompensationDownButtonPressed = False
 				# Exposure Bracketing
-				elif keyboard.is_pressed('b+up'):
+				elif keyboard.is_pressed('b+up') or exposureBracketingUpButtonPressed == True:
 					if bracket < evMax:
 						bracket = int(bracket + 1)
 						setBracket(bracket, 0.25)
-				elif keyboard.is_pressed('b+down'):
+						exposureBracketingUpButtonPressed = False
+				elif keyboard.is_pressed('b+down') or exposureBracketingDownButtonPressed == True:
 					if bracket > 0:					
 						bracket = int(bracket - 1)
 						setBracket(bracket, 0.25)
+						exposureBracketingDownButtonPressed = False
 
 			except Exception as ex:
 				print(str(ex))
