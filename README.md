@@ -1,6 +1,6 @@
 # Camera
 
-This program makes the use of a Raspberry Pi HQ camera a little more powerful and user-friendly.   It unleashes easy exposure bracketing, timelapse functionality, etc.   It also adds additional error handling and presets some common settings.
+This program makes the use of a Raspberry Pi HQ camera a little more powerful and user-friendly.   It unleashes easy exposure bracketing, timelapse functionality, etc.   It also adds on-screen controls for use with touch screens, additional error handling, and presets for some common settings.
 
 ---
 ## Getting Started
@@ -41,7 +41,7 @@ camera <options>
 + _--raw_ : Set whether DNG files are created in addition to JPEG files	    *(default: True)*
 + _--timer_ : Set the interval for timelapse mode in seconds     *(default: 0)* 
 + _--previewWidth_ : Set the preview window width     *(default: 800)*
-+ _--previewHeight_ : Set the preview window height    *(default: 600)*
++ _--previewHeight_ : Set the preview window height    *(default: 460)*
 
 ### Keyboard Controls
 + Press s+&#x25B2; or s+&#x25BC; to change shutter speed
