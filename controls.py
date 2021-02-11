@@ -32,6 +32,8 @@ class Buttons():
 		    buttonDictionary.update({'bracketDown': True})
 		elif e == 'capture':
 		   	buttonDictionary.update({'capture': True})
+		elif e == 'captureVideo':
+		   	buttonDictionary.update({'captureVideo': True})
 		elif e == 'exit':
 			buttonDictionary.update({'exit': True})			
 		
@@ -86,18 +88,31 @@ class OnScreenControls():
 		statusVariable.set(statusDictionary['message'])		
 		statusLabel.place(x=0,y=buttonHeight+labelHeight,width=str(root.winfo_screenwidth()),height=labelHeight)
 				
-
+				
 		# Exit
-		image = Image.open(os.path.join(currentDirectory, 'images/exit.png'))
-		exitImage = ImageTk.PhotoImage(image)
-		exitButton = ttk.Button(root, compound=tk.CENTER, image=exitImage, command=lambda: Buttons.handler(buttonDictionary, 'exit'))
-		exitButton['style'] = 'default.TButton'
-		exitButton.place(x=borderLeft,y=0,width=buttonWidth,height=buttonHeight)
+		# image = Image.open(os.path.join(currentDirectory, 'images/exit.png'))
+		# exitImage = ImageTk.PhotoImage(image)
+		# exitButton = ttk.Button(root, compound=tk.CENTER, image=exitImage, command=lambda: Buttons.handler(buttonDictionary, 'exit'))
+		# exitButton['style'] = 'default.TButton'
+		# exitButton.place(x=borderLeft,y=0,width=buttonWidth,height=buttonHeight)
 
-		exitLabel = ttk.Label(root, compound=tk.CENTER, text='Exit')
-		exitLabel['style'] = 'warning.TLabel'
-		exitLabel.configure(anchor='center')
-		exitLabel.place(x=borderLeft,y=buttonHeight,width=buttonWidth,height=labelHeight)
+		# exitLabel = ttk.Label(root, compound=tk.CENTER, text='Exit')
+		# exitLabel['style'] = 'warning.TLabel'
+		# exitLabel.configure(anchor='center')
+		# exitLabel.place(x=borderLeft,y=buttonHeight,width=buttonWidth,height=labelHeight)
+
+
+		# Capture Video
+		image = Image.open(os.path.join(currentDirectory, 'images/capture-video.png'))
+		captureVideoImage = ImageTk.PhotoImage(image)
+		captureVideoButton = ttk.Button(root, compound=tk.CENTER, image=captureVideoImage, command=lambda: Buttons.handler(buttonDictionary, 'captureVideo'))
+		captureVideoButton['style'] = 'default.TButton'
+		captureVideoButton.place(x=borderLeft+(buttonWidth*9),y=0,width=buttonWidth,height=buttonHeight)
+
+		captureVideoLabel = ttk.Label(root, compound=tk.CENTER, text='Record')
+		captureVideoLabel['style'] = 'primary.TLabel'
+		captureVideoLabel.configure(anchor='center')
+		captureVideoLabel.place(x=borderLeft+(buttonWidth*9),y=buttonHeight,width=buttonWidth,height=labelHeight)
 
 		# Shutter Speed 
 		image = Image.open(os.path.join(currentDirectory, 'images/shutter-speed-up.png'))
@@ -176,7 +191,7 @@ class OnScreenControls():
 
 
 		# Capture
-		image = Image.open(os.path.join(currentDirectory, 'images/capture.png'))
+		image = Image.open(os.path.join(currentDirectory, 'images/capture-photo.png'))
 		captureImage = ImageTk.PhotoImage(image)
 		captureButton = ttk.Button(root, compound=tk.CENTER, image=captureImage, command=lambda: Buttons.handler(buttonDictionary, 'capture'))
 		captureButton['style'] = 'default.TButton'

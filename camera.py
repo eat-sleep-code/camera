@@ -17,7 +17,7 @@ import threading
 import time
 
 
-version = '2021.02.22'
+version = '2021.02.13'
 
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
@@ -99,7 +99,7 @@ timer = args.timer or 0
 timer = int(timer)
 
 raw = args.raw or True
-
+isRecording == False
 
 # === Echo Control =============================================================
 
@@ -326,7 +326,7 @@ def getFilePath(timestamped = True, isVideo = False):
 def showPreview(x = 0, y = 0, w = 800, h = 600):
 	global previewVisible
 	camera.start_preview(fullscreen=False, resolution=(w, h), window=(x, y, w, h))	
-	previewVisible = True;
+	previewVisible = True
 	time.sleep(0.1)
 	return
 	
@@ -335,7 +335,7 @@ def showPreview(x = 0, y = 0, w = 800, h = 600):
 def hidePreview():
 	global previewVisible
 	camera.stop_preview()
-	previewVisible = False;
+	previewVisible = False
 	time.sleep(0.1)
 	return
 
@@ -400,6 +400,7 @@ try:
 		global isRecording
 		global statusDictionary
 		global buttonDictionary
+		global isRecording
 		
 
 		# print(str(camera.resolution))
@@ -434,9 +435,25 @@ try:
 					showInstructions(True, 0.5)	
 
 				# Capture
-				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True:
+				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True or buttonDictionary['captureVideo'] == True:
 					
-					if mode == 'persistent':
+					if mode = 'video' or buttonDictionary['captureVideo'] == True:
+						# Video
+						if isRecording == False:
+							isRecording == True
+							filepath = getFilePath(True, True)
+							camera.resolution(1920, 1080)
+							print(' Capturing video: ' + filepath + '\n')
+							statusDictionary.update({'message': ' Recording: Started '})
+							camera.start_recording(filepath, quality=20)
+						else:
+							camera.stop_recording()
+							camera.resolution = camera.MAX_RESOLUTION
+							print(' Capture complete \n')
+							statusDictionary.update({'message': ' Recording: Stopped '})
+							isRecording == False
+
+					elif mode == 'persistent':
 						# Normal photo
 						filepath = getFilePath(True)
 						print(' Capturing image: ' + filepath + '\n')
