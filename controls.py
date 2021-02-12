@@ -61,7 +61,7 @@ class OnScreenControls():
 		# --- On-Screen Control Button Styles -----------------------------------
 
 		buttonStyle = ttk.Style()
-		buttonStyle.configure('default.TButton', background = '#222222', bordercolor = '#222222', borderwidth=0)
+		buttonStyle.configure('default.TButton', background = '#222222', bordercolor = '#111111', borderwidth=0)
 		buttonStyle.configure('primary.TButton', background = '#00DDF1', bordercolor = '#00DDF1', borderwidth=0)
 		buttonWidth = 80
 		buttonHeight = 80
@@ -108,12 +108,12 @@ class OnScreenControls():
 		captureVideoImage = ImageTk.PhotoImage(image)
 		captureVideoButton = ttk.Button(root, compound=tk.CENTER, image=captureVideoImage, command=lambda: Buttons.handler(buttonDictionary, 'captureVideo'))
 		captureVideoButton['style'] = 'primary.TButton'
-		captureVideoButton.place(x=borderLeft+(buttonWidth*9),y=0,width=buttonWidth,height=buttonHeight)
+		captureVideoButton.place(x=borderLeft,y=0,width=buttonWidth,height=buttonHeight))
 
 		captureVideoLabel = ttk.Label(root, compound=tk.CENTER, text='Record')
 		captureVideoLabel['style'] = 'primary.TLabel'
 		captureVideoLabel.configure(anchor='center')
-		captureVideoLabel.place(x=borderLeft+(buttonWidth*9),y=buttonHeight,width=buttonWidth,height=labelHeight)
+		captureVideoLabel.place(x=borderLeft,y=buttonHeight,width=buttonWidth,height=labelHeight)
 
 		# Shutter Speed 
 		image = Image.open(os.path.join(currentDirectory, 'images/shutter-speed-up.png'))
