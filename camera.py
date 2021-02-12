@@ -400,6 +400,7 @@ try:
 		global timer
 		global raw
 		global imageCount
+		global isRecording
 		global statusDictionary
 		global buttonDictionary
 
