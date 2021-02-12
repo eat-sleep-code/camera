@@ -206,9 +206,9 @@ class OnScreenControls():
 
 		def updateStatus():
 			statusVariable.set(statusDictionary['message'])
-			if statusDictionary['action'] == 'recording':
+			if statusDictionary['action'] == 'recording' and captureVideoLabel['style'] == 'primary.TLabel':
 				captureVideoLabel['style'] = 'warning.TLabel'
-				time.sleep(500)
+			elif statusDictionary['action'] == 'recording' and captureVideoLabel['style'] == 'warning.TLabel':
 				captureVideoLabel['style'] = 'primary.TLabel'
 			else:
 				captureVideoLabel['style'] = 'primary.TLabel'
