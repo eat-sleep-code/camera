@@ -489,9 +489,7 @@ try:
 					buttonDictionary.update({'capture': False})
 
 				elif buttonDictionary['captureVideo'] == True:
-					print('buttonDictionary: ' + str(buttonDictionary))
-					print('isRecording: ' + str(isRecording))
-
+					
 					# Video
 					if isRecording == False:
 						isRecording = True
@@ -500,6 +498,7 @@ try:
 					#	camera.resolution(1920, 1080)
 					#	print(' Capturing video: ' + filepath + '\n')
 						statusDictionary.update({'message': ' Recording: Started '})
+						buttonDictionary.update({'captureVideo': False})
 					#	camera.start_recording(filepath, quality=20)
 					else:
 						isRecording = False
@@ -510,7 +509,6 @@ try:
 						statusDictionary.update({'message': ' Recording: Stopped '})
 						buttonDictionary.update({'captureVideo': False})
 					
-					print('sleeping...')
 					time.sleep(1)
 
 				# Preview Toggle				
