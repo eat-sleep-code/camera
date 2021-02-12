@@ -488,7 +488,7 @@ try:
 
 					buttonDictionary.update({'capture': False})
 
-				elif buttonDictionary['captureVideo'] == True
+				elif buttonDictionary['captureVideo'] == True:
 					print('buttonDictionary: ' + str(buttonDictionary))
 					print('isRecording: ' + str(isRecording))
 
