@@ -1,3 +1,4 @@
+#/usr/bin/python3
 import tkinter as tk
 from tkinter import ttk
 
@@ -17,7 +18,7 @@ import threading
 import time
 
 
-version = '2021.02.13'
+version = '2021.02.11'
 
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
