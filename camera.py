@@ -27,7 +27,7 @@ running = False
 onScreen = OnScreenControls()
 onScreenButtons = Buttons()
 statusDictionary = {'message': ''}
-buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'capture': False}
+buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'capture': False, 'captureVideo': False}
 
 
 # === Argument Handling ========================================================
