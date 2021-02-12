@@ -302,15 +302,17 @@ def setAWB(input, wait = 0):
 def getFileName(timestamped = True, isVideo = False):
 	now = datetime.datetime.now()
 	datestamp = now.strftime('%Y%m%d')
+	timestamp = now.strftime('%H%M%S')		
+			
 	if isVideo==True:
 		extension = '.h264'
+		return datestamp + '-' + timestamp + extension
 	else:
 		extension = '.jpg'
-	if timestamped == True:
-		timestamp = now.strftime('%H%M%S')
-		return datestamp + '-' + timestamp + '-' + str(imageCount).zfill(2) + extension
-	else:
-		return datestamp + '-' + str(imageCount).zfill(8) + extension
+		if timestamped == True:
+			return datestamp + '-' + timestamp + '-' + str(imageCount).zfill(2) + extension
+		else:
+			return datestamp + '-' + str(imageCount).zfill(8) + extension
 
 # ------------------------------------------------------------------------------
 
