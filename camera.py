@@ -26,7 +26,7 @@ dng = RPICAM2DNG()
 running = False
 onScreen = OnScreenControls()
 onScreenButtons = Buttons()
-statusDictionary = {'message': ''}
+statusDictionary = {'message': '', 'action': ''}
 buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'capture': False, 'captureVideo': False}
 
 
@@ -493,6 +493,7 @@ try:
 					# Video
 					if isRecording == False:
 						isRecording = True
+						statusDictionary.update({'action': 'recording'})
 						filepath = getFilePath(True, True)
 						camera.resolution = (1920, 1080)
 						print(' Capturing video: ' + filepath + '\n')
@@ -501,6 +502,7 @@ try:
 						camera.start_recording(filepath, quality=20)
 					else:
 						isRecording = False
+						statusDictionary.update({'action': ''})
 						camera.stop_recording()
 						camera.resolution = camera.MAX_RESOLUTION
 						print(' Capture complete \n')

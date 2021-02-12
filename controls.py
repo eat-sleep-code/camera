@@ -206,6 +206,10 @@ class OnScreenControls():
 
 		def updateStatus():
 			statusVariable.set(statusDictionary['message'])
+			if buttonDictionary['action'] == 'recording':
+				captureVideoButton['style'] = 'warning.TButton'
+			else:
+				captureVideoButton['style'] = 'primary.TButton'
 			if running == False:
 				root.destroy()
 				sys.exit(0)
