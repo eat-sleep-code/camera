@@ -108,7 +108,7 @@ class OnScreenControls():
 		captureVideoImage = ImageTk.PhotoImage(image)
 		captureVideoButton = ttk.Button(root, compound=tk.CENTER, image=captureVideoImage, command=lambda: Buttons.handler(buttonDictionary, 'captureVideo'))
 		captureVideoButton['style'] = 'primary.TButton'
-		captureVideoButton.place(x=borderLeft,y=0,width=buttonWidth,height=buttonHeight))
+		captureVideoButton.place(x=borderLeft,y=0,width=buttonWidth,height=buttonHeight)
 
 		captureVideoLabel = ttk.Label(root, compound=tk.CENTER, text='Record')
 		captureVideoLabel['style'] = 'primary.TLabel'
