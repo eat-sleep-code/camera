@@ -98,8 +98,11 @@ if outputFolder.endswith('/') == False:
 timer = args.timer or 0
 timer = int(timer)
 
+
 raw = args.raw or True
-isRecording == False
+
+
+isRecording = False
 
 # === Echo Control =============================================================
 
@@ -437,10 +440,10 @@ try:
 				# Capture
 				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True or buttonDictionary['captureVideo'] == True:
 					
-					if mode = 'video' or buttonDictionary['captureVideo'] == True:
+					if mode == 'video' or buttonDictionary['captureVideo'] == True:
 						# Video
 						if isRecording == False:
-							isRecording == True
+							isRecording = True
 							filepath = getFilePath(True, True)
 							camera.resolution(1920, 1080)
 							print(' Capturing video: ' + filepath + '\n')
@@ -451,7 +454,7 @@ try:
 							camera.resolution = camera.MAX_RESOLUTION
 							print(' Capture complete \n')
 							statusDictionary.update({'message': ' Recording: Stopped '})
-							isRecording == False
+							isRecording = False
 
 					elif mode == 'persistent':
 						# Normal photo

@@ -61,7 +61,8 @@ class OnScreenControls():
 		# --- On-Screen Control Button Styles -----------------------------------
 
 		buttonStyle = ttk.Style()
-		buttonStyle.configure('default.TButton', background = '#111111', bordercolor = '#111111', borderwidth=0)
+		buttonStyle.configure('default.TButton', background = '#222222', bordercolor = '#222222', borderwidth=0)
+		buttonStyle.configure('primary.TButton', background = '#00DDF1', bordercolor = '#00DDF1', borderwidth=0)
 		buttonWidth = 80
 		buttonHeight = 80
 
@@ -106,7 +107,7 @@ class OnScreenControls():
 		image = Image.open(os.path.join(currentDirectory, 'images/capture-video.png'))
 		captureVideoImage = ImageTk.PhotoImage(image)
 		captureVideoButton = ttk.Button(root, compound=tk.CENTER, image=captureVideoImage, command=lambda: Buttons.handler(buttonDictionary, 'captureVideo'))
-		captureVideoButton['style'] = 'default.TButton'
+		captureVideoButton['style'] = 'primary.TButton'
 		captureVideoButton.place(x=borderLeft+(buttonWidth*9),y=0,width=buttonWidth,height=buttonHeight)
 
 		captureVideoLabel = ttk.Label(root, compound=tk.CENTER, text='Record')
@@ -194,7 +195,7 @@ class OnScreenControls():
 		image = Image.open(os.path.join(currentDirectory, 'images/capture-photo.png'))
 		captureImage = ImageTk.PhotoImage(image)
 		captureButton = ttk.Button(root, compound=tk.CENTER, image=captureImage, command=lambda: Buttons.handler(buttonDictionary, 'capture'))
-		captureButton['style'] = 'default.TButton'
+		captureButton['style'] = 'primary.TButton'
 		captureButton.place(x=borderLeft+(buttonWidth*9),y=0,width=buttonWidth,height=buttonHeight)
 
 		captureLabel = ttk.Label(root, compound=tk.CENTER, text='Capture')
