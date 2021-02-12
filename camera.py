@@ -102,7 +102,7 @@ timer = int(timer)
 raw = args.raw or True
 
 
-isRecording = False
+
 
 # === Echo Control =============================================================
 
@@ -400,10 +400,9 @@ try:
 		global timer
 		global raw
 		global imageCount
-		global isRecording
 		global statusDictionary
 		global buttonDictionary
-		global isRecording
+
 		
 
 		# print(str(camera.resolution))
@@ -493,25 +492,6 @@ try:
 							captureImage(filepath, raw)
 							imageCount += 1
 							time.sleep(timer) 	
-
-					elif mode == 'video':
-						camera.sensor_mode = 0
-						if isRecording == True:
-							camera.stop_recording()			
-							camera.video_stabilization = False							
-							camera.resolution = camera.MAX_RESOLUTION
-							isRecording = False
-							time.sleep(1)
-						else:
-							filepath = getFilePath(True, True)
-							print(' Capturing video: ' + filepath + '\n')
-							isRecording = True							
-							camera.resolution = (1920, 1080)
-							camera.video_stabilization = True
-							camera.start_recording(filepath)
-							if timer > 0:
-								sleep(timer)
-								camera.stop_recording()
 							
 					else:
 						# Single photo and then exit
