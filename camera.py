@@ -489,23 +489,21 @@ try:
 					buttonDictionary.update({'capture': False})
 
 				elif buttonDictionary['captureVideo'] == True:
-					
+
 					# Video
 					if isRecording == False:
 						isRecording = True
-						print('clicked record')
-					#	filepath = getFilePath(True, True)
-					#	camera.resolution(1920, 1080)
-					#	print(' Capturing video: ' + filepath + '\n')
+						filepath = getFilePath(True, True)
+						camera.resolution(1920, 1080)
+						print(' Capturing video: ' + filepath + '\n')
 						statusDictionary.update({'message': ' Recording: Started '})
 						buttonDictionary.update({'captureVideo': False})
-					#	camera.start_recording(filepath, quality=20)
+						camera.start_recording(filepath, quality=20)
 					else:
 						isRecording = False
-						print('clicked stop')
-					#	camera.stop_recording()
-					#	camera.resolution = camera.MAX_RESOLUTION
-					#	print(' Capture complete \n')
+						camera.stop_recording()
+						camera.resolution = camera.MAX_RESOLUTION
+						print(' Capture complete \n')
 						statusDictionary.update({'message': ' Recording: Stopped '})
 						buttonDictionary.update({'captureVideo': False})
 					
