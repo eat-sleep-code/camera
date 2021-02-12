@@ -438,31 +438,9 @@ try:
 					showInstructions(True, 0.5)	
 
 				# Capture
-				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True or buttonDictionary['captureVideo'] == True:
+				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True:
 					
-					if mode == 'video' or buttonDictionary['captureVideo'] == True:
-						print('mode: ' + mode)
-						print('buttonDictionary: ' + str(buttonDictionary))
-						print('isRecording: ' + str(isRecording))
-						# Video
-						if isRecording == False:
-							isRecording = True
-							print('clicked record')
-						#	filepath = getFilePath(True, True)
-						#	camera.resolution(1920, 1080)
-						#	print(' Capturing video: ' + filepath + '\n')
-						#	statusDictionary.update({'message': ' Recording: Started '})
-						#	camera.start_recording(filepath, quality=20)
-						else:
-							isRecording = False
-							print('clicked stop')
-						#	camera.stop_recording()
-						#	camera.resolution = camera.MAX_RESOLUTION
-						#	print(' Capture complete \n')
-						#	statusDictionary.update({'message': ' Recording: Stopped '})
-						time.sleep(1)
-
-					elif mode == 'persistent':
+					if mode == 'persistent':
 						# Normal photo
 						filepath = getFilePath(True)
 						print(' Capturing image: ' + filepath + '\n')
@@ -509,6 +487,31 @@ try:
 						break
 
 					buttonDictionary.update({'capture': False})
+
+				elif buttonDictionary['captureVideo'] == True
+					print('buttonDictionary: ' + str(buttonDictionary))
+					print('isRecording: ' + str(isRecording))
+
+					# Video
+					if isRecording == False:
+						isRecording = True
+						print('clicked record')
+					#	filepath = getFilePath(True, True)
+					#	camera.resolution(1920, 1080)
+					#	print(' Capturing video: ' + filepath + '\n')
+						statusDictionary.update({'message': ' Recording: Started '})
+					#	camera.start_recording(filepath, quality=20)
+					else:
+						isRecording = False
+						print('clicked stop')
+					#	camera.stop_recording()
+					#	camera.resolution = camera.MAX_RESOLUTION
+					#	print(' Capture complete \n')
+						statusDictionary.update({'message': ' Recording: Stopped '})
+						buttonDictionary.update({'captureVideo': False})
+					
+					print('sleeping...')
+					time.sleep(1)
 
 				# Preview Toggle				
 				elif keyboard.is_pressed('p'):
