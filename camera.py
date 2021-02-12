@@ -441,20 +441,26 @@ try:
 				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True or buttonDictionary['captureVideo'] == True:
 					
 					if mode == 'video' or buttonDictionary['captureVideo'] == True:
+						print('mode: ' + mode)
+						print('buttonDictionary: ' + str(buttonDictionary))
+						print('isRecording: ' + str(isRecording))
 						# Video
 						if isRecording == False:
 							isRecording = True
-							filepath = getFilePath(True, True)
-							camera.resolution(1920, 1080)
-							print(' Capturing video: ' + filepath + '\n')
-							statusDictionary.update({'message': ' Recording: Started '})
-							camera.start_recording(filepath, quality=20)
+							print('clicked record')
+						#	filepath = getFilePath(True, True)
+						#	camera.resolution(1920, 1080)
+						#	print(' Capturing video: ' + filepath + '\n')
+						#	statusDictionary.update({'message': ' Recording: Started '})
+						#	camera.start_recording(filepath, quality=20)
 						else:
-							camera.stop_recording()
-							camera.resolution = camera.MAX_RESOLUTION
-							print(' Capture complete \n')
-							statusDictionary.update({'message': ' Recording: Stopped '})
 							isRecording = False
+							print('clicked stop')
+						#	camera.stop_recording()
+						#	camera.resolution = camera.MAX_RESOLUTION
+						#	print(' Capture complete \n')
+						#	statusDictionary.update({'message': ' Recording: Stopped '})
+						time.sleep(1)
 
 					elif mode == 'persistent':
 						# Normal photo
