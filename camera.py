@@ -494,7 +494,7 @@ try:
 					if isRecording == False:
 						isRecording = True
 						filepath = getFilePath(True, True)
-						camera.resolution(1920, 1080)
+						camera.resolution = (1920, 1080)
 						print(' Capturing video: ' + filepath + '\n')
 						statusDictionary.update({'message': ' Recording: Started '})
 						buttonDictionary.update({'captureVideo': False})
