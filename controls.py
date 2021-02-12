@@ -206,7 +206,7 @@ class OnScreenControls():
 
 		def updateStatus():
 			statusVariable.set(statusDictionary['message'])
-			if buttonDictionary['action'] == 'recording':
+			if statusDictionary['action'] == 'recording':
 				captureVideoButton['style'] = 'warning.TButton'
 			else:
 				captureVideoButton['style'] = 'primary.TButton'
