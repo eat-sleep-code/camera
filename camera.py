@@ -52,11 +52,11 @@ previewVisible = False
 try:
 	previewWidth = args.previewWidth or 800
 	previewWidth = int(previewWidth)
-	previewHeight = args.previewHeight or 406
+	previewHeight = args.previewHeight or 356
 	previewHeight = int(previewHeight)
 except Exception as ex: 
 	previewWidth = 800
-	previewHeight = 406
+	previewHeight = 356
 	
 
 action = args.action or 'capture'
@@ -312,6 +312,8 @@ def setVideoMode(input = 0, wait = 0):
 	# 0 = 1920 x 1080 (30fps) - H264
 	# 1 = 
 
+	global videoWidth
+	global videoHeight
 	global videoFramerate
 	global videoMode
 	global defaultFramerate
@@ -441,6 +443,10 @@ try:
 		global awb
 		global timer
 		global raw
+		global videoWidth
+		global videoHeight
+		global videoFramerate
+		global VideoFormat
 		global imageCount
 		global isRecording
 		global statusDictionary

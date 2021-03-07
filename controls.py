@@ -56,7 +56,7 @@ class OnScreenControls():
 		root = tk.Tk()
 		root.title('Camera Controls')
 		root.wm_attributes('-type', 'splash')
-		root.geometry(str(root.winfo_screenwidth()) + 'x94+0+' + str(root.winfo_screenheight() - 94))
+		root.geometry(str(root.winfo_screenwidth()) + 'x124+0+' + str(root.winfo_screenheight() - 124))
 		root['background'] = '#111111'
 		
 		
@@ -119,12 +119,12 @@ class OnScreenControls():
 		videoModeImage = ImageTk.PhotoImage(image)
 		videoModeButton = ttk.Button(root, compound=tk.CENTER, image=videoModeImage, command=lambda: Buttons.handler(buttonDictionary, 'videoMode'))
 		videoModeButton['style'] = 'default.TButton'
-		videoModeButton.place(x=borderLeft+(buttonWidth),y=0,width=buttonWidth,height=buttonHeight)
+		videoModeButton.place(x=borderLeft+buttonWidth,y=0,width=buttonWidth,height=buttonHeight)
 
 		videoModeLabel = ttk.Label(root, compound=tk.CENTER, text='Mode')
 		videoModeLabel['style'] = 'default.TLabel'
 		videoModeLabel.configure(anchor='center')
-		videoModeLabel.place(x=borderLeft+(buttonWidth),y=buttonHeight,width=buttonWidth,height=labelHeight)
+		videoModeLabel.place(x=borderLeft+buttonWidth,y=buttonHeight,width=buttonWidth,height=labelHeight)
 
 
 		# Shutter Speed 
