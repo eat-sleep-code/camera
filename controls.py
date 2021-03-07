@@ -30,6 +30,8 @@ class Buttons():
 		    buttonDictionary.update({'bracketUp': True})
 		elif e == 'bracketDown':
 		    buttonDictionary.update({'bracketDown': True})
+		elif e == 'videoMode':
+		   	buttonDictionary.update({'videoMode': True})
 		elif e == 'capture':
 		   	buttonDictionary.update({'capture': True})
 		elif e == 'captureVideo':
@@ -54,7 +56,7 @@ class OnScreenControls():
 		root = tk.Tk()
 		root.title('Camera Controls')
 		root.wm_attributes('-type', 'splash')
-		root.geometry(str(root.winfo_screenwidth()) + 'x140+0+' + str(root.winfo_screenheight() - 140))
+		root.geometry(str(root.winfo_screenwidth()) + 'x94+0+' + str(root.winfo_screenheight() - 94))
 		root['background'] = '#111111'
 		
 		
@@ -63,8 +65,8 @@ class OnScreenControls():
 		buttonStyle = ttk.Style()
 		buttonStyle.configure('default.TButton', background = '#222222', bordercolor = '#111111', borderwidth=0)
 		buttonStyle.configure('primary.TButton', background = '#00DDF1', bordercolor = '#00DDF1', borderwidth=0)
-		buttonWidth = 80
-		buttonHeight = 80
+		buttonWidth = 72.72
+		buttonHeight = 64
 
 
 		# --- On-Screen Control Label Styles ------------------------------------
@@ -76,9 +78,6 @@ class OnScreenControls():
 		labelHeight = 30
 
 		borderLeft = 0
-		if (root.winfo_screenwidth() > 800): # Keep capture button to the far right
-				borderLeft = root.winfo_screenwidth() - 800
-
 		
 		# --- Control Rendering -------------------------------------------------
 		# Status
@@ -115,23 +114,36 @@ class OnScreenControls():
 		captureVideoLabel.configure(anchor='center')
 		captureVideoLabel.place(x=borderLeft,y=buttonHeight,width=buttonWidth,height=labelHeight)
 
+		# Video Mode
+		image = Image.open(os.path.join(currentDirectory, 'images/video-mode.png'))
+		videoModeImage = ImageTk.PhotoImage(image)
+		videoModeButton = ttk.Button(root, compound=tk.CENTER, image=videoModeImage, command=lambda: Buttons.handler(buttonDictionary, 'videoMode'))
+		videoModeButton['style'] = 'primary.TButton'
+		videoModeButton.place(x=borderLeft+(buttonWidth),y=0,width=buttonWidth,height=buttonHeight)
+
+		videoModeLabel = ttk.Label(root, compound=tk.CENTER, text='Mode')
+		videoModeLabel['style'] = 'primary.TLabel'
+		videoModeLabel.configure(anchor='center')
+		videoModeLabel.place(x=borderLeft+(buttonWidth),y=buttonHeight,width=buttonWidth,height=labelHeight)
+
+
 		# Shutter Speed 
 		image = Image.open(os.path.join(currentDirectory, 'images/shutter-speed-up.png'))
 		shutterUpImage = ImageTk.PhotoImage(image)
 		shutterUpButton = ttk.Button(root, compound=tk.CENTER, image=shutterUpImage, command=lambda: Buttons.handler(buttonDictionary, 'shutterUp'))
 		shutterUpButton['style'] = 'default.TButton'
-		shutterUpButton.place(x=borderLeft+(buttonWidth),y=0,width=buttonWidth,height=buttonHeight)
+		shutterUpButton.place(x=borderLeft+(buttonWidth*2),y=0,width=buttonWidth,height=buttonHeight)
 
 		image = Image.open(os.path.join(currentDirectory, 'images/shutter-speed-down.png'))
 		shutterDownImage = ImageTk.PhotoImage(image)
 		shutterDownButton = ttk.Button(root, compound=tk.CENTER, image=shutterDownImage, command=lambda: Buttons.handler(buttonDictionary, 'shutterDown'))
 		shutterDownButton['style'] = 'default.TButton'
-		shutterDownButton.place(x=borderLeft+(buttonWidth*2),y=0,width=buttonWidth,height=buttonHeight)
+		shutterDownButton.place(x=borderLeft+(buttonWidth*3),y=0,width=buttonWidth,height=buttonHeight)
 
 		shutterLabel = ttk.Label(root, compound=tk.CENTER, text='Shutter Speed')
 		shutterLabel['style'] = 'default.TLabel'
 		shutterLabel.configure(anchor='center')
-		shutterLabel.place(x=borderLeft+(buttonWidth),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
+		shutterLabel.place(x=borderLeft+(buttonWidth*2),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
 
 
 		#ISO
@@ -139,18 +151,18 @@ class OnScreenControls():
 		isoUpImage = ImageTk.PhotoImage(image)
 		isoUpButton = ttk.Button(root, compound=tk.CENTER, image=isoUpImage, command=lambda: Buttons.handler(buttonDictionary, 'isoUp'))
 		isoUpButton['style'] = 'default.TButton'
-		isoUpButton.place(x=borderLeft+(buttonWidth*3),y=0,width=buttonWidth,height=buttonHeight)
+		isoUpButton.place(x=borderLeft+(buttonWidth*4),y=0,width=buttonWidth,height=buttonHeight)
 
 		image = Image.open(os.path.join(currentDirectory, 'images/iso-down.png'))
 		isoDownImage = ImageTk.PhotoImage(image)
 		isoDownButton = ttk.Button(root, compound=tk.CENTER, image=isoDownImage, command=lambda: Buttons.handler(buttonDictionary, 'isoDown'))
 		isoDownButton['style'] = 'default.TButton'
-		isoDownButton.place(x=borderLeft+(buttonWidth*4),y=0,width=buttonWidth,height=buttonHeight)
+		isoDownButton.place(x=borderLeft+(buttonWidth*5),y=0,width=buttonWidth,height=buttonHeight)
 
 		isoLabel = ttk.Label(root, compound=tk.CENTER, text='ISO')
 		isoLabel['style'] = 'default.TLabel'
 		isoLabel.configure(anchor='center')
-		isoLabel.place(x=borderLeft+(buttonWidth*3),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
+		isoLabel.place(x=borderLeft+(buttonWidth*4),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
 
 
 		# Exposure Compensation
@@ -158,18 +170,18 @@ class OnScreenControls():
 		evUpImage = ImageTk.PhotoImage(image)
 		evUpButton = ttk.Button(root, compound=tk.CENTER, image=evUpImage, command=lambda: Buttons.handler(buttonDictionary, 'evUp'))
 		evUpButton['style'] = 'default.TButton'
-		evUpButton.place(x=borderLeft+(buttonWidth*5),y=0,width=buttonWidth,height=buttonHeight)
+		evUpButton.place(x=borderLeft+(buttonWidth*6),y=0,width=buttonWidth,height=buttonHeight)
 
 		image = Image.open(os.path.join(currentDirectory, 'images/exposure-compensation-down.png'))
 		evDownImage = ImageTk.PhotoImage(image)
 		evDownButton = ttk.Button(root, compound=tk.CENTER, image=evDownImage, command=lambda: Buttons.handler(buttonDictionary, 'evDown'))
 		evDownButton['style'] = 'default.TButton'
-		evDownButton.place(x=borderLeft+(buttonWidth*6),y=0,width=buttonWidth,height=buttonHeight)
+		evDownButton.place(x=borderLeft+(buttonWidth*7),y=0,width=buttonWidth,height=buttonHeight)
 
 		evLabel = ttk.Label(root, compound=tk.CENTER, text='Compensation')
 		evLabel['style'] = 'default.TLabel'
 		evLabel.configure(anchor='center')
-		evLabel.place(x=borderLeft+(buttonWidth*5),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
+		evLabel.place(x=borderLeft+(buttonWidth*6),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
 
 
 		# Exposure Bracketing
@@ -177,18 +189,18 @@ class OnScreenControls():
 		bracketUpImage = ImageTk.PhotoImage(image)
 		bracketUpButton = ttk.Button(root, compound=tk.CENTER, image=bracketUpImage, command=lambda: Buttons.handler(buttonDictionary, 'bracketUp'))
 		bracketUpButton['style'] = 'default.TButton'
-		bracketUpButton.place(x=borderLeft+(buttonWidth*7),y=0,width=buttonWidth,height=buttonHeight)
+		bracketUpButton.place(x=borderLeft+(buttonWidth*8),y=0,width=buttonWidth,height=buttonHeight)
 
 		image = Image.open(os.path.join(currentDirectory, 'images/exposure-bracketing-down.png'))
 		bracketDownImage = ImageTk.PhotoImage(image)
 		bracketDownButton = ttk.Button(root, compound=tk.CENTER, image=bracketDownImage, command=lambda: Buttons.handler(buttonDictionary, 'bracketDown'))
 		bracketDownButton['style'] = 'default.TButton'
-		bracketDownButton.place(x=borderLeft+(buttonWidth*8),y=0,width=buttonWidth,height=buttonHeight)
+		bracketDownButton.place(x=borderLeft+(buttonWidth*9),y=0,width=buttonWidth,height=buttonHeight)
 
 		bracketLabel = ttk.Label(root, compound=tk.CENTER, text='Bracketing')
 		bracketLabel['style'] = 'default.TLabel'
 		bracketLabel.configure(anchor='center')
-		bracketLabel.place(x=borderLeft+(buttonWidth*7),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
+		bracketLabel.place(x=borderLeft+(buttonWidth*8),y=buttonHeight,width=buttonWidth*2,height=labelHeight)
 
 
 		# Capture
@@ -196,12 +208,12 @@ class OnScreenControls():
 		captureImage = ImageTk.PhotoImage(image)
 		captureButton = ttk.Button(root, compound=tk.CENTER, image=captureImage, command=lambda: Buttons.handler(buttonDictionary, 'capture'))
 		captureButton['style'] = 'primary.TButton'
-		captureButton.place(x=borderLeft+(buttonWidth*9),y=0,width=buttonWidth,height=buttonHeight)
+		captureButton.place(x=borderLeft+(buttonWidth*10),y=0,width=buttonWidth,height=buttonHeight)
 
 		captureLabel = ttk.Label(root, compound=tk.CENTER, text='Capture')
 		captureLabel['style'] = 'primary.TLabel'
 		captureLabel.configure(anchor='center')
-		captureLabel.place(x=borderLeft+(buttonWidth*9),y=buttonHeight,width=buttonWidth,height=labelHeight)
+		captureLabel.place(x=borderLeft+(buttonWidth*10),y=buttonHeight,width=buttonWidth,height=labelHeight)
 
 
 		def updateStatus():

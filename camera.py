@@ -18,7 +18,7 @@ import threading
 import time
 
 
-version = '2021.02.11'
+version = '2021.03.07'
 
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
@@ -28,7 +28,7 @@ running = False
 onScreen = OnScreenControls()
 onScreenButtons = Buttons()
 statusDictionary = {'message': '', 'action': ''}
-buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'capture': False, 'captureVideo': False}
+buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'videoMode': False, 'capture': False, 'captureVideo': False}
 
 
 # === Argument Handling ========================================================
@@ -52,11 +52,11 @@ previewVisible = False
 try:
 	previewWidth = args.previewWidth or 800
 	previewWidth = int(previewWidth)
-	previewHeight = args.previewHeight or 460
+	previewHeight = args.previewHeight or 406
 	previewHeight = int(previewHeight)
 except Exception as ex: 
 	previewWidth = 800
-	previewHeight = 460
+	previewHeight = 406
 	
 
 action = args.action or 'capture'
@@ -103,6 +103,12 @@ timer = int(timer)
 raw = args.raw or True
 
 
+videoWidth = 1920
+videoHeight = 1080
+videoFormat = 'h264'
+videoFramerate = defaultFramerate
+videoModeMax = 1
+videoMode = 0
 
 
 # === Echo Control =============================================================
@@ -139,6 +145,7 @@ def showInstructions(clearFirst = False, wait = 0):
 	print('\n Press \u241B to exit ')
 	time.sleep(wait)
 	return
+
 
 # ------------------------------------------------------------------------------
 
@@ -297,6 +304,38 @@ def setAWB(input, wait = 0):
 		return
 	except Exception as ex:
 		print(' WARNING: Invalid Auto White Balance Mode! ')
+
+# ------------------------------------------------------------------------------
+
+def setVideoMode(input = 0, wait = 0):
+	# --- Video Modes --------------
+	# 0 = 1920 x 1080 (30fps) - H264
+	# 1 = 
+
+	global videoFramerate
+	global videoMode
+	global defaultFramerate
+	
+	try:
+		if input == 1:
+			videoWidth = 1920
+			videoHeight = 1080
+			videoFramerate = 24
+			videoFormat = 'h264'
+			print(' Video Mode: 1920x1080 24fps (H264)')
+			statusDictionary.update({'message': 'Video Mode: 1920x1080 24fps (H264)'})
+		else:
+			videoWidth = 1920
+			videoHeight = 1080
+			videoFramerate = 30
+			videoFormat = 'h264'
+			print(' Video Mode: 1920x1080 24fps (H264)')
+			statusDictionary.update({'message': 'Video Mode: 1920x1080 24fps (H264)'})
+		time.sleep(wait)
+		return
+	except Exception as ex:
+		print(' WARNING: Invalid Video Mode! ')
+
 
 # ------------------------------------------------------------------------------
 
@@ -498,7 +537,8 @@ try:
 						isRecording = True
 						statusDictionary.update({'action': 'recording'})
 						filepath = getFilePath(True, True)
-						camera.resolution = (1920, 1080)
+						camera.framerate = videoFramerate
+						camera.resolution = (videoWidth, videoHeight)
 						print(' Capturing video: ' + filepath + '\n')
 						statusDictionary.update({'message': ' Recording: Started '})
 						buttonDictionary.update({'captureVideo': False})
@@ -568,6 +608,7 @@ try:
 						ev = int(ev - 1)
 						setEV(ev, 0.25)
 						buttonDictionary.update({'evDown': False})
+
 				# Exposure Bracketing
 				elif keyboard.is_pressed('b+up') or buttonDictionary['bracketUp'] == True:
 					if bracket < evMax:
@@ -579,6 +620,16 @@ try:
 						bracket = int(bracket - 1)
 						setBracket(bracket, 0.25)
 						buttonDictionary.update({'bracketDown': False})
+
+				# Video Mode
+				elif buttonDictionary['videoMode'] == True:
+					if videoMode < videoModeMax:
+						videoMode = int(videoMode + 1)
+					else: 
+						videoMode = 0
+					setVideoMode(videoMode, 0.25)
+					buttonDictionary.update({'videoMode': False})
+			
 			except SystemExit:
 				running = False
 				hidePreview()
