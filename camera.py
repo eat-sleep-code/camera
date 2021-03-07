@@ -315,8 +315,7 @@ def setVideoMode(input = 0, wait = 0):
 	global videoWidth
 	global videoHeight
 	global videoFramerate
-	global videoMode
-	global defaultFramerate
+	global videoFormat
 	
 	try:
 		if input == 1:
@@ -447,6 +446,8 @@ try:
 		global videoHeight
 		global videoFramerate
 		global VideoFormat
+		global videoMode
+		global videoModeMax
 		global imageCount
 		global isRecording
 		global statusDictionary
