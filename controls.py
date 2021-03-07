@@ -118,11 +118,11 @@ class OnScreenControls():
 		image = Image.open(os.path.join(currentDirectory, 'images/video-mode.png'))
 		videoModeImage = ImageTk.PhotoImage(image)
 		videoModeButton = ttk.Button(root, compound=tk.CENTER, image=videoModeImage, command=lambda: Buttons.handler(buttonDictionary, 'videoMode'))
-		videoModeButton['style'] = 'primary.TButton'
+		videoModeButton['style'] = 'default.TButton'
 		videoModeButton.place(x=borderLeft+(buttonWidth),y=0,width=buttonWidth,height=buttonHeight)
 
 		videoModeLabel = ttk.Label(root, compound=tk.CENTER, text='Mode')
-		videoModeLabel['style'] = 'primary.TLabel'
+		videoModeLabel['style'] = 'default.TLabel'
 		videoModeLabel.configure(anchor='center')
 		videoModeLabel.place(x=borderLeft+(buttonWidth),y=buttonHeight,width=buttonWidth,height=labelHeight)
 
