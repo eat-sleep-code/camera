@@ -64,7 +64,7 @@ class OnScreenControls():
 
 		buttonStyle = ttk.Style()
 		buttonStyle.configure('default.TButton', background = '#222222', bordercolor = '#111111', borderwidth=0)
-		buttonStyle.configure('primary.TButton', background = '#3CC6ED', bordercolor = '#3CC6ED', borderwidth=0)
+		buttonStyle.configure('primary.TButton', background = '#00DDF1', bordercolor = '#00DDF1', borderwidth=0)
 		buttonWidth = 72.72
 		buttonHeight = 64
 
@@ -73,8 +73,8 @@ class OnScreenControls():
 
 		labelStyle = ttk.Style()
 		labelStyle.configure('default.TLabel', background='#000000', foreground='#EEEEEE')
-		labelStyle.configure('warning.TLabel', background='#FF7D5E', foreground='#EEEEEE')
-		labelStyle.configure('primary.TLabel', background='#3CC6ED', foreground='#111111')
+		labelStyle.configure('warning.TLabel', background='#880000', foreground='#EEEEEE')
+		labelStyle.configure('primary.TLabel', background='#00DDF1', foreground='#111111')
 		labelHeight = 30
 
 		borderLeft = 0
