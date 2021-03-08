@@ -67,7 +67,7 @@ class OnScreenControls():
 		buttonStyle.configure('default.TButton', background = '#222222', bordercolor = '#111111', borderwidth=0)
 		buttonStyle.configure('primary.TButton', background = '#00DDF1', bordercolor = '#00DDF1', borderwidth=0)
 		buttonWidth = 72.72
-		buttonHeight = 64
+		buttonHeight = 60
 
 
 		# --- On-Screen Control Label Styles ------------------------------------
