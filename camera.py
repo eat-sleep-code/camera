@@ -18,7 +18,7 @@ import threading
 import time
 
 
-version = '2021.03.07'
+version = '2021.03.12'
 
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
@@ -310,7 +310,7 @@ def setAWB(input, wait = 0):
 def setVideoMode(input = 0, wait = 0):
 	# --- Video Modes --------------
 	# 0 = 1920 x 1080 (30fps) - H264
-	# 1 = 
+	# 1 = 1920 x 1080 (24fps) - H264
 
 	global videoWidth
 	global videoHeight
@@ -330,8 +330,8 @@ def setVideoMode(input = 0, wait = 0):
 			videoHeight = 1080
 			videoFramerate = 30
 			videoFormat = 'h264'
-			print(' Video Mode: 1920x1080 24fps (H264)')
-			statusDictionary.update({'message': 'Video Mode: 1920x1080 24fps (H264)'})
+			print(' Video Mode: 1920x1080 30fps (H264)')
+			statusDictionary.update({'message': 'Video Mode: 1920x1080 30fps (H264)'})
 		time.sleep(wait)
 		return
 	except Exception as ex:
