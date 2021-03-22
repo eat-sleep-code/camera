@@ -637,12 +637,12 @@ try:
 					setVideoMode(videoMode, 0.25)
 					buttonDictionary.update({'videoMode': False})
 			
-			#except SystemExit:
-			#	running = False
-			#	hidePreview()
-			#	time.sleep(5)				
-			#	os.kill(os.getpid(), signal.SIGSTOP)
-			#	sys.exit(0)
+			except SystemExit:
+				running = False
+				hidePreview()
+				time.sleep(5)				
+				os.kill(os.getpid(), signal.SIGSTOP)
+				sys.exit(0)
 			except Exception as ex:
 				print(str(ex))
 				pass
