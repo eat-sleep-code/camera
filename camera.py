@@ -637,12 +637,12 @@ try:
 					setVideoMode(videoMode, 0.25)
 					buttonDictionary.update({'videoMode': False})
 			
-			except SystemExit:
-				running = False
-				hidePreview()
-				time.sleep(5)				
-				os.kill(os.getpid(), signal.SIGSTOP)
-				sys.exit(0)
+			#except SystemExit:
+			#	running = False
+			#	hidePreview()
+			#	time.sleep(5)				
+			#	os.kill(os.getpid(), signal.SIGSTOP)
+			#	sys.exit(0)
 			except Exception as ex:
 				print(str(ex))
 				pass
@@ -653,17 +653,14 @@ try:
 		# Not yet implemented
 
 	# print(' Action: ' + action)
-	if action == 'capture' or action == 'image' or action == 'photo':
-		Capture()
-	elif action == 'capturesingle' or action == 'single':
+	if action == 'capturesingle' or action == 'single':
 		Capture('single')
 	elif action == 'timelapse':
 		Capture('timelapse')
 	elif action == 'video':
 		Capture('video')
 	else:
-		echoOn()
-		sys.exit(0)
+		Capture()
 
 except KeyboardInterrupt:
 	echoOn()
