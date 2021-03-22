@@ -445,7 +445,7 @@ try:
 		global videoWidth
 		global videoHeight
 		global videoFramerate
-		global VideoFormat
+		global videoFormat
 		global videoMode
 		global videoModeMax
 		global imageCount
