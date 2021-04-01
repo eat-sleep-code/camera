@@ -20,6 +20,13 @@ import time
 
 version = '2021.04.01'
 
+# Kill other camera script(s)
+try:
+	cameraRemoteScript = "/home/pi/camera.remote/camera.py"
+	subprocess.check_call(['pkill', '-9', '-f', cameraRemoteScript])
+except Exception as ex:
+	pass
+
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
 camera.resolution = camera.MAX_RESOLUTION
