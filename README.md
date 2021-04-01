@@ -52,6 +52,9 @@ camera <options>
 + Press the [space] bar to take photos or begin a timelapse
 + Press &#x241B; to exit
 
+### Web Controls
+If you need to control your camera via a web-based interface, please see [camera.remote](https://github.com/eat-sleep-code/camera.remote).
+
 ---
 
 ## Autostart at Desktop Login
