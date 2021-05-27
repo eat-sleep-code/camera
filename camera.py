@@ -17,8 +17,7 @@ import sys
 import threading
 import time
 
-
-version = '2021.03.12'
+version = '2021.04.01'
 
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
@@ -165,20 +164,25 @@ def setShutter(input, wait = 0):
 			shutter = shutterShort
 		elif shutter > shutterLong:
 			shutter = shutterLong 
+			
 	try:
 		if camera.framerate == defaultFramerate and shutter > shutterLongThreshold:
 			camera.framerate=fractions.Fraction(5, 1000)
 		elif camera.framerate != defaultFramerate and shutter <= shutterLongThreshold:
 			camera.framerate = defaultFramerate
+	except Exception as ex:
+		# print( ' WARNING: Could not set framerate! ')
+		pass
 	
+	try:
 		if shutter == 0:
 			camera.shutter_speed = 0
-			#print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))	
+			# print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))	
 			print(' Shutter Speed: auto')
 			statusDictionary.update({'message': 'Shutter Speed: auto'})
 		else:
 			camera.shutter_speed = shutter * 1000
-			#print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))		
+			# print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))		
 			floatingShutter = float(shutter/1000)
 			roundedShutter = '{:.3f}'.format(floatingShutter)
 			if shutter > shutterLongThreshold:
@@ -210,7 +214,7 @@ def setISO(input, wait = 0):
 			iso = isoMax	
 	try:	
 		camera.iso = iso
-		#print(str(camera.iso) + '|' + str(iso))
+		# print(str(camera.iso) + '|' + str(iso))
 		if iso == 0:
 			print(' ISO: auto')
 			statusDictionary.update({'message': ' ISO: auto'})
@@ -445,7 +449,7 @@ try:
 		global videoWidth
 		global videoHeight
 		global videoFramerate
-		global VideoFormat
+		global videoFormat
 		global videoMode
 		global videoModeMax
 		global imageCount
@@ -572,7 +576,7 @@ try:
 				elif keyboard.is_pressed('s+up') or buttonDictionary['shutterUp'] == True:
 					if shutter == 0:
 						shutter = shutterShort
-					if shutter > shutterShort and shutter <= shutterLong:					
+					elif shutter > shutterShort and shutter <= shutterLong:					
 						shutter = int(shutter / 1.5)
 					setShutter(shutter, 0.25)
 					buttonDictionary.update({'shutterUp': False})
@@ -590,7 +594,7 @@ try:
 				elif keyboard.is_pressed('i+up') or buttonDictionary['isoUp'] == True:
 					if iso == 0:
 						iso = isoMin
-					if iso >= isoMin and iso < isoMax:					
+					elif iso >= isoMin and iso < isoMax:					
 						iso = int(iso * 2)
 					setISO(iso, 0.25)
 					buttonDictionary.update({'isoUp': False})
@@ -653,17 +657,14 @@ try:
 		# Not yet implemented
 
 	# print(' Action: ' + action)
-	if action == 'capture' or action == 'image' or action == 'photo':
-		Capture()
-	elif action == 'capturesingle' or action == 'single':
+	if action == 'capturesingle' or action == 'single':
 		Capture('single')
 	elif action == 'timelapse':
 		Capture('timelapse')
 	elif action == 'video':
 		Capture('video')
 	else:
-		echoOn()
-		sys.exit(0)
+		Capture()
 
 except KeyboardInterrupt:
 	echoOn()

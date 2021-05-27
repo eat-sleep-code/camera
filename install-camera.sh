@@ -52,4 +52,5 @@ echo ''
 echo -e '\033[32m-------------------------------------------------------------------------- \033[0m'
 echo -e '\033[32mInstallation completed. \033[0m'
 echo ''
+sudo rm ~/install-camera.sh
 bash
