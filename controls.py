@@ -52,7 +52,7 @@ class OnScreenControls():
 
 	def create(self, running, statusDictionary, buttonDictionary):
 		
-		currentDirectory = os.getcwd() + '/camera/'
+		currentDirectory = '/home/pi/camera/'
 
 		root = tk.Tk()
 		root.title('Camera Controls')
