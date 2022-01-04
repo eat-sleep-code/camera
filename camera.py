@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import ttk
 from picamera import PiCamera
-from pydng.core import RPICAM2DNG
+from pidng.core import RPICAM2DNG
 from controls import OnScreenControls, Buttons
 import argparse
 import datetime
@@ -15,7 +15,7 @@ import sys
 import threading
 import time
 
-version = '2021.11.22'
+version = '2022.01.03'
 
 camera = PiCamera()
 PiCamera.CAPTURE_TIMEOUT = 1500
