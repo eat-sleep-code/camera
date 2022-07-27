@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import os
+import sys
 import time
 
 
@@ -16,27 +17,27 @@ class Buttons():
 		# print(' DEBUG: ' + e + ' was clicked ')
 
 		if e == 'shutterUp':
-		    buttonDictionary.update({'shutterUp': True})
+			buttonDictionary.update({'shutterUp': True})
 		elif e == 'shutterDown':
-		    buttonDictionary.update({'shutterDown': True})
+			buttonDictionary.update({'shutterDown': True})
 		elif e == 'isoUp':
-		    buttonDictionary.update({'isoUp': True})
+			buttonDictionary.update({'isoUp': True})
 		elif e == 'isoDown':
-		    buttonDictionary.update({'isoDown': True})
+			buttonDictionary.update({'isoDown': True})
 		elif e == 'evUp':
-		    buttonDictionary.update({'evUp': True})
+			buttonDictionary.update({'evUp': True})
 		elif e == 'evDown':
-		   buttonDictionary.update({'evDown': True})
+			buttonDictionary.update({'evDown': True})
 		elif e == 'bracketUp':
-		    buttonDictionary.update({'bracketUp': True})
+			buttonDictionary.update({'bracketUp': True})
 		elif e == 'bracketDown':
-		    buttonDictionary.update({'bracketDown': True})
+			buttonDictionary.update({'bracketDown': True})
 		elif e == 'videoMode':
-		   	buttonDictionary.update({'videoMode': True})
+			buttonDictionary.update({'videoMode': True})
 		elif e == 'capture':
-		   	buttonDictionary.update({'capture': True})
+			buttonDictionary.update({'capture': True})
 		elif e == 'captureVideo':
-		   	buttonDictionary.update({'captureVideo': True})
+			buttonDictionary.update({'captureVideo': True})
 		elif e == 'exit':
 			buttonDictionary.update({'exit': True})			
 		
