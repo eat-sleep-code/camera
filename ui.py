@@ -46,9 +46,9 @@ class Buttons():
 
 
 
-class OnScreenControls():
+class OnScreenUI():
 
-	# === Create Controls =======================================================
+	# === Create UI =======================================================
 
 	def create(self, running, statusDictionary, buttonDictionary):
 		
@@ -233,6 +233,5 @@ class OnScreenControls():
 
 		root.after(500, updateStatus)
 
-		# --- Create Controls ---------------------------------------------------
-
+	
 		root.mainloop()
