@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import tkinter as tk
 from tkinter import ttk
-from picamera2 import PiCamera2, Preview, MappedArray
+from picamera2 import Picamera2, Preview, MappedArray
 from picamera2.controls import Controls
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
@@ -23,7 +23,7 @@ import time
 
 version = '2022.07.27'
 
-camera = PiCamera2()
+camera = Picamera2()
 controls = Controls(camera)
 camera.CAPTURE_TIMEOUT = 1500
 camera.resolution = camera.MAX_RESOLUTION
