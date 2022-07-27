@@ -1,8 +1,10 @@
-# Compatibility Notice
+# Known Issues
 
-Due to breaking changes in the Raspberry Pi OS camera stack, this software will **not** work with the recent *Bullseye* version of Raspberry Pi OS.   A new integration library is currently under development by the Raspberry Pi Foundation with a planned release in early 2022.   Our camera software will be updated to take advantage of this integration library when it becomes publicly available.
+This branch contains a work-in-progress migration to utilize the PiCamera 2 library.
 
-In the meantime, if you wish to use this software you will need to install the *Buster* version of Raspberry Pi OS.
+- This software is in the early stages of development and may include syntax or runtime issues
+- The ISO value cannot be currently set
+- The UI changes have not been started
 
 ---
 
@@ -81,7 +83,7 @@ Add the following line to the end of the file and then save the file:
 ---
 
 ## Infrared Cameras
-If you are using an infrared (IR) camera, you will need to modify the Auto White Balance (AWB) mode at boot time.
+If you are using an infrared (IR) camera, you may need to modify the Auto White Balance (AWB) mode at boot time.
 
 This can be achieved by executing `sudo nano /boot/config.txt` and adding the following lines.
 
