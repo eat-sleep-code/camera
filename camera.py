@@ -1,10 +1,16 @@
 #!/usr/bin/python3
 import tkinter as tk
 from tkinter import ttk
-from picamera import PiCamera
+from picamera2 import PiCamera2, Preview, MappedArray
+from picamera2.controls import Controls
+from picamera2.encoders import H264Encoder
+from picamera2.outputs import FileOutput
+from picamera2.previews.qt import QGlPicamera2
+from libcamera import ColorSpace
 from pidng.core import RPICAM2DNG
-from controls import OnScreenControls, Buttons
+from ui import OnScreenUI, Buttons
 import argparse
+import cv2
 import datetime
 import fractions
 import keyboard
@@ -15,18 +21,18 @@ import sys
 import threading
 import time
 
-version = '2022.01.03'
+version = '2022.07.27'
 
-camera = PiCamera()
-PiCamera.CAPTURE_TIMEOUT = 1500
+camera = PiCamera2()
+controls = Controls(camera)
+camera.CAPTURE_TIMEOUT = 1500
 camera.resolution = camera.MAX_RESOLUTION
 dng = RPICAM2DNG()
 running = False
-onScreen = OnScreenControls()
+onScreen = OnScreenUI()
 onScreenButtons = Buttons()
 statusDictionary = {'message': '', 'action': ''}
 buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'videoMode': False, 'capture': False, 'captureVideo': False}
-
 
 # === Argument Handling ========================================================
 
@@ -120,6 +126,31 @@ clear()
 
 
 
+# === Create Configurations ====================================================
+
+configPreview = camera.create_preview_configuration()
+configPreview.main.size = (previewWidth, previewHeight)
+configPreview.lores.size = (320, 240)
+configPreview.lores.format = "YUV420"
+configPreview.buffer_count = 4
+configPreview.colour_space = ColorSpace.Jpeg()
+
+# ------------------------------------------------------------------------------
+
+configStill = camera.create_still_configuration()
+configStill.enable_raw()
+configStill.main.size = (2048, 1536)
+configStill.buffer_count = 2
+configStill.colour_space = ColorSpace.Jpeg()
+
+# ------------------------------------------------------------------------------
+
+configVideo = camera.create_video_configuration()
+configVideo.main.size = (1929, 1080)
+configVideo.buffer_count = 8
+configVideo.colour_space = ColorSpace.Rec709()
+
+
 # === Functions ================================================================
 
 def showInstructions(clearFirst = False, wait = 0):
@@ -147,6 +178,7 @@ def showInstructions(clearFirst = False, wait = 0):
 # ------------------------------------------------------------------------------
 
 def setShutter(input, wait = 0):
+	global controls
 	global shutter
 	global shutterLong
 	global shutterLongThreshold
@@ -164,23 +196,23 @@ def setShutter(input, wait = 0):
 			shutter = shutterLong 
 			
 	try:
-		if camera.framerate == defaultFramerate and shutter > shutterLongThreshold:
-			camera.framerate=fractions.Fraction(5, 1000)
-		elif camera.framerate != defaultFramerate and shutter <= shutterLongThreshold:
-			camera.framerate = defaultFramerate
+		if controls.FrameRate == defaultFramerate and shutter > shutterLongThreshold:
+			controls.FrameRate =fractions.Fraction(5, 1000)
+		elif controls.FrameRate != defaultFramerate and shutter <= shutterLongThreshold:
+			controls.FrameRate = defaultFramerate
 	except Exception as ex:
 		# print( ' WARNING: Could not set framerate! ')
 		pass
 	
 	try:
 		if shutter == 0:
-			camera.shutter_speed = 0
-			# print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))	
+			controls.ExposureTime = 0
+			# print(str(controls.ExposureTime) + '|' + str(controls.FrameRate) + '|' + str(shutter))	
 			print(' Shutter Speed: auto')
 			statusDictionary.update({'message': 'Shutter Speed: auto'})
 		else:
-			camera.shutter_speed = shutter * 1000
-			# print(str(camera.shutter_speed) + '|' + str(camera.framerate) + '|' + str(shutter))		
+			controls.ExposureTime = shutter * 1000
+			# print(str(controls.ExposureTime) + '|' + str(controls.FrameRate) + '|' + str(shutter))		
 			floatingShutter = float(shutter/1000)
 			roundedShutter = '{:.3f}'.format(floatingShutter)
 			if shutter > shutterLongThreshold:
@@ -197,14 +229,17 @@ def setShutter(input, wait = 0):
 # ------------------------------------------------------------------------------				
 
 def setISO(input, wait = 0):
+	global controls
 	global iso
 	global isoMin
 	global isoMax
 	global statusDictionary
 
 	if str(input).lower() == 'auto' or str(input) == '0':
+		controls.AeEnable = 1
 		iso = 0
 	else: 
+		controls.AeEnable = 0
 		iso = int(input)
 		if iso < isoMin:	
 			iso = isoMin
@@ -232,7 +267,7 @@ def setExposure(input, wait = 0):
 
 	exposure = input
 	try:	
-		camera.exposure_mode = exposure
+		controls.AeExposureMode = exposure
 		print(' Exposure Mode: ' + exposure)
 		statusDictionary.update({'message': ' Exposure Mode: ' + exposure})
 		time.sleep(wait)
@@ -243,6 +278,7 @@ def setExposure(input, wait = 0):
 # ------------------------------------------------------------------------------
 
 def setEV(input, wait = 0, displayMessage = True):
+	global controls
 	global ev 
 	global bracket
 	global statusDictionary
@@ -255,7 +291,7 @@ def setEV(input, wait = 0, displayMessage = True):
 	elif ev < 0:
 		evPrefix = ''
 	try:
-		camera.exposure_compensation = ev
+		controls.ExposureValue = ev
 		# print(str(camera.exposure_compensation) + '|' + str(ev))
 		if displayMessage == True:
 			print(' Exposure Compensation: ' + evPrefix + str(ev))
@@ -268,6 +304,7 @@ def setEV(input, wait = 0, displayMessage = True):
 # ------------------------------------------------------------------------------				
 
 def setBracket(input, wait = 0, displayMessage = True):
+	global controls
 	global bracket
 	global bracketLow
 	global bracketHigh
@@ -277,10 +314,10 @@ def setBracket(input, wait = 0, displayMessage = True):
 
 	bracket = int(input)
 	try:
-		bracketLow = camera.exposure_compensation - bracket
+		bracketLow = controls.ExposureValue - bracket
 		if bracketLow < evMin:
 			bracketLow = evMin
-		bracketHigh = camera.exposure_compensation + bracket
+		bracketHigh = controls.ExposureValue + bracket
 		if bracketHigh > evMax:
 			bracketHigh = evMax
 		if displayMessage == True:
@@ -294,12 +331,13 @@ def setBracket(input, wait = 0, displayMessage = True):
 # ------------------------------------------------------------------------------
 
 def setAWB(input, wait = 0):
+	global controls
 	global awb
 	global statusDictionary
 
 	awb = input
 	try:	
-		camera.awb_mode = awb
+		controls.AwbMode = awb
 		print(' White Balance Mode: ' + awb)
 		statusDictionary.update({'message': ' White Balance Mode: ' + awb})
 		time.sleep(wait)
@@ -314,6 +352,7 @@ def setVideoMode(input = 0, wait = 0):
 	# 0 = 1920 x 1080 (30fps) - H264
 	# 1 = 1920 x 1080 (24fps) - H264
 
+	global controls
 	global videoWidth
 	global videoHeight
 	global videoFramerate
@@ -347,7 +386,7 @@ def getFileName(timestamped = True, isVideo = False):
 	datestamp = now.strftime('%Y%m%d')
 	timestamp = now.strftime('%H%M%S')		
 			
-	if isVideo==True:
+	if isVideo == True:
 		extension = '.h264'
 		return datestamp + '-' + timestamp + extension
 	else:
@@ -373,7 +412,9 @@ def getFilePath(timestamped = True, isVideo = False):
 
 def showPreview(x = 0, y = 0, w = 800, h = 600):
 	global previewVisible
-	camera.start_preview(fullscreen=False, resolution=(w, h), window=(x, y, w, h))	
+	camera.configure(configPreview)
+	camera.start(show_preview=True)
+	# camera.post_callback = drawDetectedAreas
 	previewVisible = True
 	time.sleep(0.1)
 	return
@@ -390,7 +431,8 @@ def hidePreview():
 # ------------------------------------------------------------------------------
 
 def captureImage(filepath, raw = True):
-	camera.capture(filepath, quality=100, bayer=raw)
+	camera.configure(configStill)
+	metadata = camera.capture_file(filepath)
 	if raw == True:
 		conversionThread = threading.Thread(target=convertBayerDataToDNG, args=(filepath,))
 		conversionThread.start()
@@ -400,9 +442,32 @@ def captureImage(filepath, raw = True):
 def convertBayerDataToDNG(filepath):
 	dng.convert(filepath)
 
+# ------------------------------------------------------------------------------
+
+def detectAreas(detectionType = "face"):
+	global previewVisible
+
+	try:
+		faceDetector = cv2.CascadeClassifier("/cv/" + detectionType + ".xml")
+		array = camera.capture_array("lores")
+		gray = array[h1,:]
+		detections = faceDetector.detectMultiScale(gray, 1.1, 3)
+		return detections
+	except Exception as ex:
+		print( ' WARNING: Could not perform detection! ' + str(ex))
+		pass
 
 # ------------------------------------------------------------------------------
-def createControls():
+
+def drawDetectedAreas(request):
+	with MappedArray(request, "main") as m:
+		for detectedArea in detections:
+			(x, y, w, h) = [c * n // d for c, n, d in zip(detectedArea, (w0, h0) * 2, (w1, h1) * 2)] 
+			cv2.rectangle(m.array, (x, y), (x + w, y + h), (0, 255, 0, 0))
+
+# ------------------------------------------------------------------------------
+
+def createUI():
 	global running
 	global statusDictionary	
 	global buttonDictionary
@@ -412,8 +477,8 @@ def createControls():
 	
 # === Image Capture ============================================================
 
-controlsThread = threading.Thread(target=createControls)
-controlsThread.start()
+uiThread = threading.Thread(target=createUI)
+uiThread.start()
 
 
 try:
@@ -427,6 +492,7 @@ try:
 		pass
 	
 	def Capture(mode = 'persistent'):
+		global controls
 		global previewVisible
 		global previewWidth
 		global previewHeight
@@ -458,7 +524,7 @@ try:
 		
 
 		# print(str(camera.resolution))
-		camera.sensor_mode = 3
+		#camera.sensor_mode = 3
 
 		print('\n Camera ' + version )
 		print('\n ----------------------------------------------------------------------')
@@ -546,17 +612,18 @@ try:
 						isRecording = True
 						statusDictionary.update({'action': 'recording'})
 						filepath = getFilePath(True, True)
-						camera.framerate = videoFramerate
-						camera.resolution = (videoWidth, videoHeight)
 						print(' Capturing video: ' + filepath + '\n')
 						statusDictionary.update({'message': ' Recording: Started '})
 						buttonDictionary.update({'captureVideo': False})
-						camera.start_recording(filepath, quality=20)
+						encoder = H264Encoder(10000000)
+						encoder.output = FileOutput(filepath)
+						controls.FrameRate = videoFramerate
+						camera.configure(configVideo)
+						camera.start_encoder(encoder)
 					else:
 						isRecording = False
 						statusDictionary.update({'action': ''})
-						camera.stop_recording()
-						camera.resolution = camera.MAX_RESOLUTION
+						camera.stop_encoder()
 						print(' Capture complete \n')
 						statusDictionary.update({'message': ' Recording: Stopped '})
 						buttonDictionary.update({'captureVideo': False})
