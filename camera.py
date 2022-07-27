@@ -33,6 +33,7 @@ onScreen = OnScreenUI()
 onScreenButtons = Buttons()
 statusDictionary = {'message': '', 'action': ''}
 buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'videoMode': False, 'capture': False, 'captureVideo': False}
+detections = []
 
 # === Argument Handling ========================================================
 
@@ -448,10 +449,10 @@ def detectAreas(detectionType = "face"):
 	global previewVisible
 
 	try:
-		faceDetector = cv2.CascadeClassifier("/cv/" + detectionType + ".xml")
-		array = camera.capture_array("lores")
-		gray = array[h1,:]
-		detections = faceDetector.detectMultiScale(gray, 1.1, 3)
+		itemDetector = cv2.CascadeClassifier("/cv/" + detectionType + ".xml")
+		captured = camera.capture_array("lores")
+		gray = cv2.cvtColor(captured, cv2.COLOR_BGR2GRAY)
+		detections = itemDetector.detectMultiScale(gray, 1.1, 3)
 		return detections
 	except Exception as ex:
 		print( ' WARNING: Could not perform detection! ' + str(ex))
@@ -460,6 +461,9 @@ def detectAreas(detectionType = "face"):
 # ------------------------------------------------------------------------------
 
 def drawDetectedAreas(request):
+	(w0, h0) = camera.stream_configuration("main")["size"]
+	(w1, h1) = camera.stream_configuration("lores")["size"]
+
 	with MappedArray(request, "main") as m:
 		for detectedArea in detections:
 			(x, y, w, h) = [c * n // d for c, n, d in zip(detectedArea, (w0, h0) * 2, (w1, h1) * 2)] 
