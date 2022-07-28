@@ -128,6 +128,7 @@ clear()
 
 configPreview = camera.create_preview_configuration()
 camera.preview_configuration.main.size = (previewWidth, previewHeight)
+camera.preview_configuration.enable_lores()
 camera.preview_configuration.lores.size = (800, 480)
 camera.preview_configuration.lores.format = "YUV420"
 configPreview.buffer_count = 4
