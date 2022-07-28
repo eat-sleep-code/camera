@@ -7,7 +7,6 @@ from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
 from picamera2.previews.qt import QGlPicamera2
 from libcamera import ColorSpace
-from pidng.core import RPICAM2DNG
 from ui import OnScreenUI, Buttons
 import argparse
 import cv2
@@ -26,8 +25,6 @@ version = '2022.07.27'
 camera = Picamera2()
 controls = Controls(camera)
 camera.CAPTURE_TIMEOUT = 1500
-camera.resolution = camera.MAX_RESOLUTION
-dng = RPICAM2DNG()
 running = False
 onScreen = OnScreenUI()
 onScreenButtons = Buttons()
@@ -131,7 +128,7 @@ clear()
 
 configPreview = camera.create_preview_configuration()
 configPreview.main.size = (previewWidth, previewHeight)
-configPreview.lores.size = (320, 240)
+configPreview.lores.size = (800, 480)
 configPreview.lores.format = "YUV420"
 configPreview.buffer_count = 4
 configPreview.colour_space = ColorSpace.Jpeg()
@@ -140,14 +137,14 @@ configPreview.colour_space = ColorSpace.Jpeg()
 
 configStill = camera.create_still_configuration()
 configStill.enable_raw()
-configStill.main.size = (2048, 1536)
+configStill.main.size = (4056, 3040)
 configStill.buffer_count = 2
 configStill.colour_space = ColorSpace.Jpeg()
 
 # ------------------------------------------------------------------------------
 
 configVideo = camera.create_video_configuration()
-configVideo.main.size = (1929, 1080)
+configVideo.main.size = (videoWidth, videoHeight)
 configVideo.buffer_count = 8
 configVideo.colour_space = ColorSpace.Rec709()
 
@@ -247,7 +244,7 @@ def setISO(input, wait = 0):
 		elif iso > isoMax:
 			iso = isoMax	
 	try:	
-		camera.iso = iso
+		#TODO: camera.iso = iso
 		# print(str(camera.iso) + '|' + str(iso))
 		if iso == 0:
 			print(' ISO: auto')
@@ -433,15 +430,11 @@ def hidePreview():
 
 def captureImage(filepath, raw = True):
 	camera.configure(configStill)
-	metadata = camera.capture_file(filepath)
+	captured = camera.switch_mode_capture_request_and_stop(configStill)
+	captured.save('main', filepath)
 	if raw == True:
-		conversionThread = threading.Thread(target=convertBayerDataToDNG, args=(filepath,))
-		conversionThread.start()
-
-# ------------------------------------------------------------------------------		
-
-def convertBayerDataToDNG(filepath):
-	dng.convert(filepath)
+		filepathDNG = filepath.replace('.jpg', '.dng')
+		captured.save_dng(filepathDNG)
 
 # ------------------------------------------------------------------------------
 
