@@ -127,24 +127,24 @@ clear()
 # === Create Configurations ====================================================
 
 configPreview = camera.create_preview_configuration()
-configPreview.main.size = (previewWidth, previewHeight)
-configPreview.lores.size = (800, 480)
-configPreview.lores.format = "YUV420"
+camera.preview_configuration.main.size = (previewWidth, previewHeight)
+camera.preview_configuration.lores.size = (800, 480)
+camera.preview_configuration.lores.format = "YUV420"
 configPreview.buffer_count = 4
 configPreview.colour_space = ColorSpace.Jpeg()
 
 # ------------------------------------------------------------------------------
 
 configStill = camera.create_still_configuration()
-configStill.enable_raw()
-configStill.main.size = (4056, 3040)
+camera.still_configuration.enable_raw()
+camera.still_configuration.main.size = (4056, 3040)
 configStill.buffer_count = 2
 configStill.colour_space = ColorSpace.Jpeg()
 
 # ------------------------------------------------------------------------------
 
 configVideo = camera.create_video_configuration()
-configVideo.main.size = (videoWidth, videoHeight)
+camera.video_configuration.size = (videoWidth, videoHeight)
 configVideo.buffer_count = 8
 configVideo.colour_space = ColorSpace.Rec709()
 
