@@ -132,7 +132,7 @@ camera.preview_configuration.enable_lores()
 camera.preview_configuration.lores.size = (800, 480)
 camera.preview_configuration.lores.format = "YUV420"
 camera.preview_configuration.buffer_count = 4
-camera.preview_configuration.colour_space = ColorSpace.Jpeg()
+camera.preview_configuration.colour_space = ColorSpace.Sycc()
 
 # ------------------------------------------------------------------------------
 
@@ -140,7 +140,7 @@ configStill = camera.create_still_configuration()
 camera.still_configuration.enable_raw()
 camera.still_configuration.main.size = camera.sensor_resolution
 camera.still_configuration.buffer_count = 2
-camera.still_configuration.colour_space = ColorSpace.Jpeg()
+camera.still_configuration.colour_space = ColorSpace.Sycc()
 
 # ------------------------------------------------------------------------------
 
