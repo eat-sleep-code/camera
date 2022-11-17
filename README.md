@@ -1,8 +1,6 @@
 # Compatibility Notice
 
-Due to breaking changes in the Raspberry Pi OS camera stack, this software will **not** work with the recent *Bullseye* version of Raspberry Pi OS.   A new integration library is currently under development by the Raspberry Pi Foundation with a planned release in early 2022.   Our camera software will be updated to take advantage of this integration library when it becomes publicly available.
-
-In the meantime, if you wish to use this software you will need to install the *Buster* version of Raspberry Pi OS.
+Due to breaking changes in the Raspberry Pi OS camera stack, if you wish to use this software on a Raspberry Pi running "Bullseye" (or newer) version of Raspberry Pi OS, you must enable Legacy Camera Support via `sudo raspi-config` > *Interface Options* > *Legacy Camera*.
 
 ---
 
@@ -16,6 +14,7 @@ This program makes the use of a Raspberry Pi HQ camera a little more powerful an
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
   - Set the Memory Split value to a value of at least 256MB
   - Enable the CSI camera interface
+  - Enable Legacy Camera Support (if applicable)
   - Set up your WiFi connection
 - Connect the Raspberry Pi HQ Camera to your Raspberry Pi
 
