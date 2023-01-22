@@ -410,6 +410,7 @@ def getFilePath(timestamped = True, isVideo = False):
 """
 def showPreview(x = 0, y = 0, w = 800, h = 600):
 	global previewVisible
+	camera.stop()
 	camera.configure(configPreview)
 	camera.start(show_preview=True)
 	# camera.post_callback = drawDetectedAreas
@@ -439,9 +440,10 @@ def captureImage(filepath, raw = True):
 	if raw == True:
 		filepathDNG = filepath.replace('.jpg', '.dng')
 		captured.save_dng(filepathDNG)
+	return
 
 # ------------------------------------------------------------------------------
-
+"""
 def detectAreas(detectionType = "face"):
 	global previewVisible
 
@@ -465,7 +467,7 @@ def drawDetectedAreas(request):
 		for detectedArea in detections:
 			(x, y, w, h) = [c * n // d for c, n, d in zip(detectedArea, (w0, h0) * 2, (w1, h1) * 2)] 
 			cv2.rectangle(m.array, (x, y), (x + w, y + h), (0, 255, 0, 0))
-
+"""
 # ------------------------------------------------------------------------------
 
 def createUI():
@@ -568,9 +570,11 @@ try:
 					if mode == 'persistent':
 						# Normal photo
 						filepath = getFilePath(True)
+						print(' Starting capture...', buttonDictionary['capture'])
+	
 						print(' Capturing image: ' + filepath + '\n')
 						captureImage(filepath, raw)
-						
+						print('did I come back here?')
 						imageCount += 1
 				
 						if (bracket != 0):
@@ -611,8 +615,9 @@ try:
 						echoOn()
 						break
 
+					print('Updating button')
 					buttonDictionary.update({'capture': False})
-
+					print('Button is now ', buttonDictionary['capture'])
 				elif buttonDictionary['captureVideo'] == True:
 
 					# Video
@@ -743,5 +748,6 @@ try:
 		Capture()
 
 except KeyboardInterrupt:
+	camera.stop()
 	echoOn()
 	sys.exit(1)
