@@ -1,13 +1,11 @@
 #!/usr/bin/python3
-import tkinter as tk
-from tkinter import ttk
-from picamera2 import Picamera2, Preview, MappedArray
+import pygame
+from picamera2 import Picamera2, MappedArray
 from picamera2.controls import Controls
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
-from picamera2.previews.qt import QGlPicamera2
 from libcamera import ColorSpace
-from ui import OnScreenUI, Buttons
+#from ui import OnScreenUI, Buttons
 import argparse
 import cv2
 import datetime
@@ -20,14 +18,14 @@ import sys
 import threading
 import time
 
-version = '2022.07.27'
+version = '2023.01.20'
 
 camera = Picamera2()
 controls = Controls(camera)
 camera.CAPTURE_TIMEOUT = 1500
 running = False
-onScreen = OnScreenUI()
-onScreenButtons = Buttons()
+#onScreen = OnScreenUI()
+#onScreenButtons = Buttons()
 statusDictionary = {'message': '', 'action': ''}
 buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'videoMode': False, 'capture': False, 'captureVideo': False}
 detections = []
@@ -127,9 +125,9 @@ clear()
 # === Create Configurations ====================================================
 
 configPreview = camera.create_preview_configuration()
-camera.preview_configuration.main.size = (previewWidth, previewHeight)
+camera.preview_configuration.main.size = camera.sensor_resolution
 camera.preview_configuration.enable_lores()
-camera.preview_configuration.lores.size = (800, 480)
+camera.preview_configuration.lores.size = (previewWidth, previewHeight)
 camera.preview_configuration.lores.format = "YUV420"
 camera.preview_configuration.buffer_count = 4
 camera.preview_configuration.colour_space = ColorSpace.Sycc()
@@ -409,6 +407,7 @@ def getFilePath(timestamped = True, isVideo = False):
 
 # ------------------------------------------------------------------------------
 
+"""
 def showPreview(x = 0, y = 0, w = 800, h = 600):
 	global previewVisible
 	camera.configure(configPreview)
@@ -417,22 +416,26 @@ def showPreview(x = 0, y = 0, w = 800, h = 600):
 	previewVisible = True
 	time.sleep(0.1)
 	return
-	
+"""
+
 # ------------------------------------------------------------------------------
 
+"""
 def hidePreview():
 	global previewVisible
 	camera.stop_preview()
 	previewVisible = False
 	time.sleep(0.1)
 	return
+"""
 
 # ------------------------------------------------------------------------------
 
 def captureImage(filepath, raw = True):
 	camera.configure(configStill)
 	captured = camera.switch_mode_capture_request_and_stop(configStill)
-	captured.save('main', filepath)
+	camera.capture_file(filepath)
+	#captured.save('main', filepath)
 	if raw == True:
 		filepathDNG = filepath.replace('.jpg', '.dng')
 		captured.save_dng(filepathDNG)
@@ -471,7 +474,7 @@ def createUI():
 	global buttonDictionary
 	
 	running = True
-	onScreen.create(running, statusDictionary, buttonDictionary)
+	#onScreen.create(running, statusDictionary, buttonDictionary)
 	
 # === Image Capture ============================================================
 
@@ -481,6 +484,7 @@ uiThread.start()
 
 try:
 	echoOff()
+
 	imageCount = 1
 	isRecording = False
 
@@ -519,7 +523,8 @@ try:
 		global statusDictionary
 		global buttonDictionary
 
-		
+		pygame.init()
+		screen = pygame.display.set_mode(previewWidth, previewHeight)
 
 		# print(str(camera.resolution))
 		#camera.sensor_mode = 3
@@ -537,11 +542,16 @@ try:
 		setAWB(awb, 0)
 		
 		showInstructions(False, 0)
-		showPreview(0, 0, previewWidth, previewHeight)
+		#showPreview(0, 0, previewWidth, previewHeight)
 		
 		# print('Key Pressed: ' + keyboard.read_hotkey())
 		while True:
 			try:
+				array = camera.capture_array()
+				img = pygame.image.frombuffer(array.data, res, 'RGB')
+				screen.blit(img, (0, 0))
+				pygame.display.update()
+				
 				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc') or buttonDictionary['exit'] == True:
 					# clear()
 					echoOn()
@@ -628,13 +638,16 @@ try:
 					
 					time.sleep(1)
 
+
 				# Preview Toggle				
 				elif keyboard.is_pressed('p'):
 					if previewVisible == True:
-						hidePreview()
+						print('hiding...')
+						#hidePreview()
 					else:
-						showPreview(0, 0, previewWidth, previewHeight)
-
+						print('showing...')
+						#showPreview(0, 0, previewWidth, previewHeight)
+				
 				# Shutter Speed	
 				elif keyboard.is_pressed('s+up') or buttonDictionary['shutterUp'] == True:
 					if shutter == 0:
@@ -706,7 +719,7 @@ try:
 			
 			except SystemExit:
 				running = False
-				hidePreview()
+				#hidePreview()
 				time.sleep(5)				
 				os.kill(os.getpid(), signal.SIGSTOP)
 				sys.exit(0)
