@@ -10,7 +10,6 @@ import argparse
 import cv2
 import datetime
 import fractions
-import keyboard
 import os
 import signal
 import subprocess
@@ -24,6 +23,14 @@ camera = Picamera2()
 controls = Controls(camera)
 camera.CAPTURE_TIMEOUT = 1500
 running = False
+
+# === UI Setup ================================================================
+pygame.init()
+displayInfo = pygame.display.Info()
+appWidth = displayInfo.current_w
+appHeight = displayInfo.current_h
+screen = pygame.display.set_mode(appWidth, appHeight)
+
 #onScreen = OnScreenUI()
 #onScreenButtons = Buttons()
 statusDictionary = {'message': '', 'action': ''}
@@ -43,20 +50,8 @@ parser.add_argument('--awb', dest='awb', help='Set the Auto White Balance (AWB) 
 parser.add_argument('--outputFolder', dest='outputFolder', help='Set the folder where images will be saved')
 parser.add_argument('--raw', dest='raw', help='Set whether DNG files are created in addition to JPEG files')
 parser.add_argument('--timer', dest='timer', help='Set self-timer or interval (seconds)')
-parser.add_argument('--previewWidth', dest='previewWidth', help='Set the preview window width')
-parser.add_argument('--previewHeight', dest='previewHeight', help='Set the preview window height')
 args = parser.parse_args()
-	
-previewVisible = False
-try:
-	previewWidth = args.previewWidth or 800
-	previewWidth = int(previewWidth)
-	previewHeight = args.previewHeight or 356
-	previewHeight = int(previewHeight)
-except Exception as ex: 
-	previewWidth = 800
-	previewHeight = 356
-	
+		
 
 action = args.action or 'capture'
 action = action.lower()
@@ -125,12 +120,9 @@ clear()
 # === Create Configurations ====================================================
 
 configPreview = camera.create_preview_configuration()
-camera.preview_configuration.main.size = camera.sensor_resolution
-camera.preview_configuration.enable_lores()
-camera.preview_configuration.lores.size = (previewWidth, previewHeight)
-camera.preview_configuration.lores.format = "YUV420"
-camera.preview_configuration.buffer_count = 4
-camera.preview_configuration.colour_space = ColorSpace.Sycc()
+camera.preview_configuration.main.size = (appWidth, appHeight)
+camera.preview_configuration.main.format = 'BGR888'
+camera.configure('preview')
 
 # ------------------------------------------------------------------------------
 
@@ -407,39 +399,18 @@ def getFilePath(timestamped = True, isVideo = False):
 
 # ------------------------------------------------------------------------------
 
-"""
-def showPreview(x = 0, y = 0, w = 800, h = 600):
-	global previewVisible
-	camera.stop()
-	camera.configure(configPreview)
-	camera.start(show_preview=True)
-	# camera.post_callback = drawDetectedAreas
-	previewVisible = True
-	time.sleep(0.1)
-	return
-"""
-
-# ------------------------------------------------------------------------------
-
-"""
-def hidePreview():
-	global previewVisible
-	camera.stop_preview()
-	previewVisible = False
-	time.sleep(0.1)
-	return
-"""
-
-# ------------------------------------------------------------------------------
-
 def captureImage(filepath, raw = True):
-	camera.configure(configStill)
-	captured = camera.switch_mode_capture_request_and_stop(configStill)
+	global screen
+	camera.switch_mode_and_capture_file(configStill, filepath)
 	camera.capture_file(filepath)
-	#captured.save('main', filepath)
+	capturedFrame = pygame.image.load(filepath).convert()
+	capturedFrameRectangle = capturedFrame.get_rect()
+	screen.blit(capturedFrame, capturedFrameRectangle)
+	pygame.display.update()
 	if raw == True:
 		filepathDNG = filepath.replace('.jpg', '.dng')
-		captured.save_dng(filepathDNG)
+		capturedFrame.save_dng(filepathDNG)
+	time.sleep(5)
 	return
 
 # ------------------------------------------------------------------------------
@@ -496,10 +467,10 @@ try:
 		pass
 	
 	def Capture(mode = 'persistent'):
+		global screen
 		global controls
-		global previewVisible
-		global previewWidth
-		global previewHeight
+		global appWidth
+		global appHeight
 		global shutter
 		global shutterLong
 		global shutterShort
@@ -525,9 +496,8 @@ try:
 		global statusDictionary
 		global buttonDictionary
 
-		pygame.init()
-		screen = pygame.display.set_mode(previewWidth, previewHeight)
-
+		
+		
 		# print(str(camera.resolution))
 		#camera.sensor_mode = 3
 
@@ -544,183 +514,169 @@ try:
 		setAWB(awb, 0)
 		
 		showInstructions(False, 0)
-		#showPreview(0, 0, previewWidth, previewHeight)
+		#showPreview(0, 0, appWidth, appHeight)
 		
-		# print('Key Pressed: ' + keyboard.read_hotkey())
 		while True:
 			try:
-				array = camera.capture_array()
-				img = pygame.image.frombuffer(array.data, res, 'RGB')
-				screen.blit(img, (0, 0))
-				pygame.display.update()
-				
-				if keyboard.is_pressed('ctrl+c') or keyboard.is_pressed('esc') or buttonDictionary['exit'] == True:
-					# clear()
-					echoOn()
-					sys.exit(1)
-					break
-					
-				# Help
-				elif keyboard.is_pressed('/') or keyboard.is_pressed('shift+/'):
-					showInstructions(True, 0.5)	
-
-				# Capture
-				elif keyboard.is_pressed('space') or buttonDictionary['capture'] == True:
-					
-					if mode == 'persistent':
-						# Normal photo
-						filepath = getFilePath(True)
-						print(' Starting capture...', buttonDictionary['capture'])
-	
-						print(' Capturing image: ' + filepath + '\n')
-						captureImage(filepath, raw)
-						print('did I come back here?')
-						imageCount += 1
-				
-						if (bracket != 0):
-							baseEV = ev
-							# Take underexposed photo
-							setEV(baseEV + bracketLow, 0, False)
-							filepath = getFilePath(True)
-							print(' Capturing image: ' + filepath + '  [' + str(bracketLow) + ']\n')
-							captureImage(filepath, raw)
-							imageCount += 1
-
-							# Take overexposed photo
-							setEV(baseEV + bracketHigh, 0, False)
-							filepath = getFilePath(True)
-							print(' Capturing image: ' + filepath + '  [' + str(bracketHigh) + ']\n')
-							captureImage(filepath, raw)
-							imageCount += 1						
-							
-							# Reset EV to base photo's value
-							setEV(baseEV, 0, False)
-							
-					elif mode == 'timelapse':
-						# Timelapse photo series
-						if timer < 0:
-							timer = 1
-						while True:
-							filepath = getFilePath(False)
-							print(' Capturing timelapse image: ' + filepath + '\n')
-							captureImage(filepath, raw)
-							imageCount += 1
-							time.sleep(timer) 	
-							
-					else:
-						# Single photo and then exit
-						filepath = getFilePath(True)
-						print(' Capturing single image: ' + filepath + '\n')
-						captureImage(filepath, raw)
+				events=pygame.event.get()
+				for e in events:
+					if (pygame.KEYDOWN and (e.key == pygame.K_q or e.key == pygame.K_ESCAPE)) or buttonDictionary['exit'] == True:
+						# clear()
 						echoOn()
+						sys.exit(1)
 						break
+						
+					# Help
+					elif (pygame.KEYDOWN and e.key == pygame.K_QUESTION):
+						showInstructions(True, 0.5)	
 
-					print('Updating button')
-					buttonDictionary.update({'capture': False})
-					print('Button is now ', buttonDictionary['capture'])
-				elif buttonDictionary['captureVideo'] == True:
-
-					# Video
-					if isRecording == False:
-						isRecording = True
-						statusDictionary.update({'action': 'recording'})
-						filepath = getFilePath(True, True)
-						print(' Capturing video: ' + filepath + '\n')
-						statusDictionary.update({'message': ' Recording: Started '})
-						buttonDictionary.update({'captureVideo': False})
-						encoder = H264Encoder(10000000)
-						encoder.output = FileOutput(filepath)
-						controls.FrameRate = videoFramerate
-						camera.configure(configVideo)
-						camera.start_encoder(encoder)
-					else:
-						isRecording = False
-						statusDictionary.update({'action': ''})
-						camera.stop_encoder()
-						print(' Capture complete \n')
-						statusDictionary.update({'message': ' Recording: Stopped '})
-						buttonDictionary.update({'captureVideo': False})
+					# Capture
+					elif (pygame.KEYDOWN and (e.key == pygame.K_SPACE)) or buttonDictionary['capture'] == True:
+						
+						if mode == 'persistent':
+							# Normal photo
+							filepath = getFilePath(True)
+							print(' Starting capture...', buttonDictionary['capture'])
+		
+							print(' Capturing image: ' + filepath + '\n')
+							captureImage(filepath, raw)
+							print('did I come back here?')
+							imageCount += 1
 					
-					time.sleep(1)
+							if (bracket != 0):
+								baseEV = ev
+								# Take underexposed photo
+								setEV(baseEV + bracketLow, 0, False)
+								filepath = getFilePath(True)
+								print(' Capturing image: ' + filepath + '  [' + str(bracketLow) + ']\n')
+								captureImage(filepath, raw)
+								imageCount += 1
 
+								# Take overexposed photo
+								setEV(baseEV + bracketHigh, 0, False)
+								filepath = getFilePath(True)
+								print(' Capturing image: ' + filepath + '  [' + str(bracketHigh) + ']\n')
+								captureImage(filepath, raw)
+								imageCount += 1						
+								
+								# Reset EV to base photo's value
+								setEV(baseEV, 0, False)
+								
+						elif mode == 'timelapse':
+							# Timelapse photo series
+							if timer < 0:
+								timer = 1
+							while True:
+								filepath = getFilePath(False)
+								print(' Capturing timelapse image: ' + filepath + '\n')
+								captureImage(filepath, raw)
+								imageCount += 1
+								time.sleep(timer) 	
+								
+						else:
+							# Single photo and then exit
+							filepath = getFilePath(True)
+							print(' Capturing single image: ' + filepath + '\n')
+							captureImage(filepath, raw)
+							echoOn()
+							break
 
-				# Preview Toggle				
-				elif keyboard.is_pressed('p'):
-					if previewVisible == True:
-						print('hiding...')
-						#hidePreview()
-					else:
-						print('showing...')
-						#showPreview(0, 0, previewWidth, previewHeight)
-				
-				# Shutter Speed	
-				elif keyboard.is_pressed('s+up') or buttonDictionary['shutterUp'] == True:
-					if shutter == 0:
-						shutter = shutterShort
-					elif shutter > shutterShort and shutter <= shutterLong:					
-						shutter = int(shutter / 1.5)
-					setShutter(shutter, 0.25)
-					buttonDictionary.update({'shutterUp': False})
-				elif keyboard.is_pressed('s+down') or buttonDictionary['shutterDown'] == True:
-					if shutter == 0:						
-						shutter = shutterLong
-					elif shutter < shutterLong and shutter >= shutterShort:					
-						shutter = int(shutter * 1.5)
-					elif shutter == shutterShort:
-						shutter = 0
-					setShutter(shutter, 0.25)
-					buttonDictionary.update({'shutterDown': False})
+						print('Updating button')
+						buttonDictionary.update({'capture': False})
+						print('Button is now ', buttonDictionary['capture'])
+					elif buttonDictionary['captureVideo'] == True:
 
-				# ISO
-				elif keyboard.is_pressed('i+up') or buttonDictionary['isoUp'] == True:
-					if iso == 0:
-						iso = isoMin
-					elif iso >= isoMin and iso < isoMax:					
-						iso = int(iso * 2)
-					setISO(iso, 0.25)
-					buttonDictionary.update({'isoUp': False})
-				elif keyboard.is_pressed('i+down') or buttonDictionary['isoDown'] == True:
-					if iso == 0:
-						iso = isoMax
-					elif iso <= isoMax and iso > isoMin:					
-						iso = int(iso / 2)
-					elif iso == isoMin:
-						iso = 0
-					setISO(iso, 0.25)
-					buttonDictionary.update({'isoDown': False})
+						# Video
+						if isRecording == False:
+							isRecording = True
+							statusDictionary.update({'action': 'recording'})
+							filepath = getFilePath(True, True)
+							print(' Capturing video: ' + filepath + '\n')
+							statusDictionary.update({'message': ' Recording: Started '})
+							buttonDictionary.update({'captureVideo': False})
+							encoder = H264Encoder(10000000)
+							encoder.output = FileOutput(filepath)
+							controls.FrameRate = videoFramerate
+							camera.configure(configVideo)
+							camera.start_encoder(encoder)
+						else:
+							isRecording = False
+							statusDictionary.update({'action': ''})
+							camera.stop_encoder()
+							print(' Capture complete \n')
+							statusDictionary.update({'message': ' Recording: Stopped '})
+							buttonDictionary.update({'captureVideo': False})
+						
+						time.sleep(1)
 
-				# Exposure Compensation
-				elif keyboard.is_pressed('c+up') or buttonDictionary['evUp'] == True:
-					if ev >= evMin and ev < evMax:					
-						ev = int(ev + 1)
-						setEV(ev, 0.25)
-						buttonDictionary.update({'evUp': False})
-				elif keyboard.is_pressed('c+down') or buttonDictionary['evDown'] == True:
-					if ev <= evMax and ev > evMin:					
-						ev = int(ev - 1)
-						setEV(ev, 0.25)
-						buttonDictionary.update({'evDown': False})
+					# Shutter Speed	
+					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or buttonDictionary['shutterUp'] == True:
+						if shutter == 0:
+							shutter = shutterShort
+						elif shutter > shutterShort and shutter <= shutterLong:					
+							shutter = int(shutter / 1.5)
+						setShutter(shutter, 0.25)
+						buttonDictionary.update({'shutterUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_CTRL) or buttonDictionary['shutterDown'] == True:
+						if shutter == 0:						
+							shutter = shutterLong
+						elif shutter < shutterLong and shutter >= shutterShort:					
+							shutter = int(shutter * 1.5)
+						elif shutter == shutterShort:
+							shutter = 0
+						setShutter(shutter, 0.25)
+						buttonDictionary.update({'shutterDown': False})
 
-				# Exposure Bracketing
-				elif keyboard.is_pressed('b+up') or buttonDictionary['bracketUp'] == True:
-					if bracket < evMax:
-						bracket = int(bracket + 1)
-						setBracket(bracket, 0.25)
-						buttonDictionary.update({'bracketUp': False})
-				elif keyboard.is_pressed('b+down') or buttonDictionary['bracketDown'] == True:
-					if bracket > 0:					
-						bracket = int(bracket - 1)
-						setBracket(bracket, 0.25)
-						buttonDictionary.update({'bracketDown': False})
+					# ISO
+					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or buttonDictionary['isoUp'] == True:
+						if iso == 0:
+							iso = isoMin
+						elif iso >= isoMin and iso < isoMax:					
+							iso = int(iso * 2)
+						setISO(iso, 0.25)
+						buttonDictionary.update({'isoUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_CTRL)  or buttonDictionary['isoDown'] == True:
+						if iso == 0:
+							iso = isoMax
+						elif iso <= isoMax and iso > isoMin:					
+							iso = int(iso / 2)
+						elif iso == isoMin:
+							iso = 0
+						setISO(iso, 0.25)
+						buttonDictionary.update({'isoDown': False})
 
-				# Video Mode
-				elif buttonDictionary['videoMode'] == True:
-					if videoMode < videoModeMax:
-						videoMode = int(videoMode + 1)
-					else: 
-						videoMode = 0
-					setVideoMode(videoMode, 0.25)
-					buttonDictionary.update({'videoMode': False})
+					# Exposure Compensation
+					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or buttonDictionary['evUp'] == True:
+						if ev >= evMin and ev < evMax:					
+							ev = int(ev + 1)
+							setEV(ev, 0.25)
+							buttonDictionary.update({'evUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_CTRL) or buttonDictionary['evDown'] == True:
+						if ev <= evMax and ev > evMin:					
+							ev = int(ev - 1)
+							setEV(ev, 0.25)
+							buttonDictionary.update({'evDown': False})
+
+					# Exposure Bracketing
+					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or buttonDictionary['bracketUp'] == True:
+						if bracket < evMax:
+							bracket = int(bracket + 1)
+							setBracket(bracket, 0.25)
+							buttonDictionary.update({'bracketUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_CTRL) or buttonDictionary['bracketDown'] == True:
+						if bracket > 0:					
+							bracket = int(bracket - 1)
+							setBracket(bracket, 0.25)
+							buttonDictionary.update({'bracketDown': False})
+
+					# Video Mode
+					elif buttonDictionary['videoMode'] == True:
+						if videoMode < videoModeMax:
+							videoMode = int(videoMode + 1)
+						else: 
+							videoMode = 0
+						setVideoMode(videoMode, 0.25)
+						buttonDictionary.update({'videoMode': False})
 			
 			except SystemExit:
 				running = False

@@ -1,7 +1,4 @@
 #!/usr/bin/python3
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
 import os
 import sys
 import time
@@ -54,7 +51,7 @@ class OnScreenUI():
 	def create(self, running, statusDictionary, buttonDictionary):
 		
 		currentDirectory = '/home/pi/camera/'
-
+		"""
 		root = tk.Tk()
 		root.title('Camera Controls')
 		root.wm_attributes('-type', 'splash')
@@ -217,7 +214,7 @@ class OnScreenUI():
 		captureLabel['style'] = 'primary.TLabel'
 		captureLabel.configure(anchor='center')
 		captureLabel.place(x=borderLeft+(buttonWidth*10),y=buttonHeight,width=buttonWidth,height=labelHeight)
-
+		
 
 		def updateStatus():
 			statusVariable.set(statusDictionary['message'])
@@ -232,7 +229,10 @@ class OnScreenUI():
 				sys.exit(0)
 			root.after(500, updateStatus)
 
+		
+
 		root.after(500, updateStatus)
 
 	
 		root.mainloop()
+		"""

@@ -10,7 +10,7 @@ sudo apt update
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
 sudo apt install -y git python3 python3-pip python3-libcamera python3-picamera2 python3-kms++ python3-pyqt5 python3-prctl ffmpeg libatlas-base-dev 
-sudo pip3 install numpy pygame piCamera2 keyboard opencv-python opencv-python-headless
+sudo pip3 install numpy pygame piCamera2 opencv-python opencv-python-headless
 
 echo ''
 echo -e '\033[93mInstalling Camera... \033[0m'
