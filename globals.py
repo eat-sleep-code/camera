@@ -13,7 +13,8 @@ def initialize():
 	clock = pygame.time.Clock()
 
 	global appRoot
-	appRoot = os.getcwd() + '/'
+	#appRoot = os.getcwd() + '/'
+	appRoot = '/home/pi/camera/'
 	os.chdir(appRoot)
 
 	global displayInfo
@@ -36,7 +37,7 @@ def initialize():
 	pygame.display.set_caption(title)
 
 	global iconDefault 
-	iconDefault = os.path.join(appRoot, 'images/capture-photo.png')
+	iconDefault = pygame.image.load(os.path.join(appRoot, 'images/capture-photo.png')).convert_alpha()
 	pygame.display.set_icon(iconDefault)
 
 	global buttonCollection

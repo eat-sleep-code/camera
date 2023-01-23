@@ -502,167 +502,167 @@ try:
 		
 		while True:
 			try:
-				events=pygame.event.get()
-				for e in events:
-					if (pygame.KEYDOWN and (e.key == pygame.K_q or e.key == pygame.K_ESCAPE)) or globals.buttonStateDictionary['exit'] == True:
-						# clear()
-						echoOn()
-						sys.exit(1)
-						break
-						
-					# Help
-					elif (pygame.KEYDOWN and e.key == pygame.K_QUESTION):
-						showInstructions(True, 0.5)	
-
-					# Capture
-					elif (pygame.KEYDOWN and (e.key == pygame.K_SPACE)) or globals.buttonStateDictionary['capture'] == True:
-						
-						if mode == 'persistent':
-							# Normal photo
-							filepath = getFilePath(True)
-							print(' Starting capture...', globals.buttonStateDictionary['capture'])
-		
-							print(' Capturing image: ' + filepath + '\n')
-							captureImage(filepath, raw)
-							print('did I come back here?')
-							imageCount += 1
+				key = pygame.key.get_pressed()
 					
-							if (bracket != 0):
-								baseEV = ev
-								# Take underexposed photo
-								setEV(baseEV + bracketLow, 0, False)
-								filepath = getFilePath(True)
-								print(' Capturing image: ' + filepath + '  [' + str(bracketLow) + ']\n')
-								captureImage(filepath, raw)
-								imageCount += 1
+				if (key[pygame.K_q] or key[pygame.K_ESCAPE]) or (globals.buttonStateDictionary['exit'] == True):
+					# clear()
+					echoOn()
+					sys.exit(1)
+					break
+					
+				# Help
+				elif (key[pygame.K_QUESTION]):
+					showInstructions(True, 0.5)	
 
-								# Take overexposed photo
-								setEV(baseEV + bracketHigh, 0, False)
-								filepath = getFilePath(True)
-								print(' Capturing image: ' + filepath + '  [' + str(bracketHigh) + ']\n')
-								captureImage(filepath, raw)
-								imageCount += 1						
-								
-								# Reset EV to base photo's value
-								setEV(baseEV, 0, False)
-								
-						elif mode == 'timelapse':
-							# Timelapse photo series
-							if timer < 0:
-								timer = 1
-							while True:
-								filepath = getFilePath(False)
-								print(' Capturing timelapse image: ' + filepath + '\n')
-								captureImage(filepath, raw)
-								imageCount += 1
-								time.sleep(timer) 	
-								
-						else:
-							# Single photo and then exit
-							filepath = getFilePath(True)
-							print(' Capturing single image: ' + filepath + '\n')
-							captureImage(filepath, raw)
-							echoOn()
-							break
-
-						print('Updating button')
-						globals.buttonStateDictionary.update({'capture': False})
-						print('Button is now ', globals.buttonStateDictionary['capture'])
-					elif globals.buttonStateDictionary['captureVideo'] == True:
-
-						# Video
-						if isRecording == False:
-							isRecording = True
-							globals.statusDictionary.update({'action': 'recording'})
-							filepath = getFilePath(True, True)
-							print(' Capturing video: ' + filepath + '\n')
-							globals.statusDictionary.update({'message': ' Recording: Started '})
-							globals.buttonStateDictionary.update({'captureVideo': False})
-							encoder = H264Encoder(10000000)
-							encoder.output = FileOutput(filepath)
-							controls.FrameRate = videoFramerate
-							camera.configure('video')
-							camera.start_encoder(encoder)
-						else:
-							isRecording = False
-							globals.statusDictionary.update({'action': ''})
-							camera.stop_encoder()
-							camera.configure('preview')
-							print(' Capture complete \n')
-							globals.statusDictionary.update({'message': ' Recording: Stopped '})
-							globals.buttonStateDictionary.update({'captureVideo': False})
-						
-						time.sleep(1)
-
-					# Shutter Speed	
-					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or globals.buttonStateDictionary['shutterUp'] == True:
-						if shutter == 0:
-							shutter = shutterShort
-						elif shutter > shutterShort and shutter <= shutterLong:					
-							shutter = int(shutter / 1.5)
-						setShutter(shutter, 0.25)
-						globals.buttonStateDictionary.update({'shutterUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_CTRL) or globals.buttonStateDictionary['shutterDown'] == True:
-						if shutter == 0:						
-							shutter = shutterLong
-						elif shutter < shutterLong and shutter >= shutterShort:					
-							shutter = int(shutter * 1.5)
-						elif shutter == shutterShort:
-							shutter = 0
-						setShutter(shutter, 0.25)
-						globals.buttonStateDictionary.update({'shutterDown': False})
-
-					# ISO
-					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or globals.buttonStateDictionary['isoUp'] == True:
-						if iso == 0:
-							iso = isoMin
-						elif iso >= isoMin and iso < isoMax:					
-							iso = int(iso * 2)
-						setISO(iso, 0.25)
-						globals.buttonStateDictionary.update({'isoUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_CTRL)  or globals.buttonStateDictionary['isoDown'] == True:
-						if iso == 0:
-							iso = isoMax
-						elif iso <= isoMax and iso > isoMin:					
-							iso = int(iso / 2)
-						elif iso == isoMin:
-							iso = 0
-						setISO(iso, 0.25)
-						globals.buttonStateDictionary.update({'isoDown': False})
-
-					# Exposure Compensation
-					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or globals.buttonStateDictionary['evUp'] == True:
-						if ev >= evMin and ev < evMax:					
-							ev = int(ev + 1)
-							setEV(ev, 0.25)
-							globals.buttonStateDictionary.update({'evUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_CTRL) or globals.buttonStateDictionary['evDown'] == True:
-						if ev <= evMax and ev > evMin:					
-							ev = int(ev - 1)
-							setEV(ev, 0.25)
-							globals.buttonStateDictionary.update({'evDown': False})
-
-					# Exposure Bracketing
-					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or globals.buttonStateDictionary['bracketUp'] == True:
-						if bracket < evMax:
-							bracket = int(bracket + 1)
-							setBracket(bracket, 0.25)
-							globals.buttonStateDictionary.update({'bracketUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_CTRL) or globals.buttonStateDictionary['bracketDown'] == True:
-						if bracket > 0:					
-							bracket = int(bracket - 1)
-							setBracket(bracket, 0.25)
-							globals.buttonStateDictionary.update({'bracketDown': False})
-
-					# Video Mode
-					elif globals.buttonStateDictionary['videoMode'] == True:
-						if videoMode < videoModeMax:
-							videoMode = int(videoMode + 1)
-						else: 
-							videoMode = 0
-						setVideoMode(videoMode, 0.25)
-						globals.buttonStateDictionary.update({'videoMode': False})
+				# Capture
+				elif (key[pygame.K_SPACE]) or (globals.buttonStateDictionary['capture'] == True):
+					
+					if mode == 'persistent':
+						# Normal photo
+						filepath = getFilePath(True)
+						print(' Starting capture...', globals.buttonStateDictionary['capture'])
+	
+						print(' Capturing image: ' + filepath + '\n')
+						captureImage(filepath, raw)
+						print('did I come back here?')
+						imageCount += 1
 				
+						if (bracket != 0):
+							baseEV = ev
+							# Take underexposed photo
+							setEV(baseEV + bracketLow, 0, False)
+							filepath = getFilePath(True)
+							print(' Capturing image: ' + filepath + '  [' + str(bracketLow) + ']\n')
+							captureImage(filepath, raw)
+							imageCount += 1
+
+							# Take overexposed photo
+							setEV(baseEV + bracketHigh, 0, False)
+							filepath = getFilePath(True)
+							print(' Capturing image: ' + filepath + '  [' + str(bracketHigh) + ']\n')
+							captureImage(filepath, raw)
+							imageCount += 1						
+							
+							# Reset EV to base photo's value
+							setEV(baseEV, 0, False)
+							
+					elif mode == 'timelapse':
+						# Timelapse photo series
+						if timer < 0:
+							timer = 1
+						while True:
+							filepath = getFilePath(False)
+							print(' Capturing timelapse image: ' + filepath + '\n')
+							captureImage(filepath, raw)
+							imageCount += 1
+							time.sleep(timer) 	
+							
+					else:
+						# Single photo and then exit
+						filepath = getFilePath(True)
+						print(' Capturing single image: ' + filepath + '\n')
+						captureImage(filepath, raw)
+						echoOn()
+						break
+
+					print('Updating button')
+					globals.buttonStateDictionary.update({'capture': False})
+					print('Button is now ', globals.buttonStateDictionary['capture'])
+				elif (globals.buttonStateDictionary['captureVideo'] == True):
+
+					# Video
+					if isRecording == False:
+						isRecording = True
+						globals.statusDictionary.update({'action': 'recording'})
+						filepath = getFilePath(True, True)
+						print(' Capturing video: ' + filepath + '\n')
+						globals.statusDictionary.update({'message': ' Recording: Started '})
+						globals.buttonStateDictionary.update({'captureVideo': False})
+						encoder = H264Encoder(10000000)
+						encoder.output = FileOutput(filepath)
+						controls.FrameRate = videoFramerate
+						camera.configure('video')
+						camera.start_encoder(encoder)
+					else:
+						isRecording = False
+						globals.statusDictionary.update({'action': ''})
+						camera.stop_encoder()
+						camera.configure('preview')
+						print(' Capture complete \n')
+						globals.statusDictionary.update({'message': ' Recording: Stopped '})
+						globals.buttonStateDictionary.update({'captureVideo': False})
+					
+					time.sleep(1)
+
+				# Shutter Speed	
+				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['shutterUp'] == True):
+					if shutter == 0:
+						shutter = shutterShort
+					elif shutter > shutterShort and shutter <= shutterLong:					
+						shutter = int(shutter / 1.5)
+					setShutter(shutter, 0.25)
+					globals.buttonStateDictionary.update({'shutterUp': False})
+				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['shutterDown'] == True):
+					if shutter == 0:						
+						shutter = shutterLong
+					elif shutter < shutterLong and shutter >= shutterShort:					
+						shutter = int(shutter * 1.5)
+					elif shutter == shutterShort:
+						shutter = 0
+					setShutter(shutter, 0.25)
+					globals.buttonStateDictionary.update({'shutterDown': False})
+
+				# ISO
+				elif (key[pygame.K_i] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['isoUp'] == True):
+					if iso == 0:
+						iso = isoMin
+					elif iso >= isoMin and iso < isoMax:					
+						iso = int(iso * 2)
+					setISO(iso, 0.25)
+					globals.buttonStateDictionary.update({'isoUp': False})
+				elif (key[pygame.K_i] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['isoDown'] == True):
+					if iso == 0:
+						iso = isoMax
+					elif iso <= isoMax and iso > isoMin:					
+						iso = int(iso / 2)
+					elif iso == isoMin:
+						iso = 0
+					setISO(iso, 0.25)
+					globals.buttonStateDictionary.update({'isoDown': False})
+
+				# Exposure Compensation
+				elif (key[pygame.K_c] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['evUp'] == True):
+					if ev >= evMin and ev < evMax:					
+						ev = int(ev + 1)
+						setEV(ev, 0.25)
+						globals.buttonStateDictionary.update({'evUp': False})
+				elif (key[pygame.K_c] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['evDown'] == True):
+					if ev <= evMax and ev > evMin:					
+						ev = int(ev - 1)
+						setEV(ev, 0.25)
+						globals.buttonStateDictionary.update({'evDown': False})
+
+				# Exposure Bracketing
+				elif (key[pygame.K_b] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['bracketUp'] == True):
+					if bracket < evMax:
+						bracket = int(bracket + 1)
+						setBracket(bracket, 0.25)
+						globals.buttonStateDictionary.update({'bracketUp': False})
+				elif (key[pygame.K_b] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['bracketDown'] == True):
+					if bracket > 0:					
+						bracket = int(bracket - 1)
+						setBracket(bracket, 0.25)
+						globals.buttonStateDictionary.update({'bracketDown': False})
+
+				# Video Mode
+				elif (globals.buttonStateDictionary['videoMode'] == True):
+					if videoMode < videoModeMax:
+						videoMode = int(videoMode + 1)
+					else: 
+						videoMode = 0
+					setVideoMode(videoMode, 0.25)
+					globals.buttonStateDictionary.update({'videoMode': False})
+			
 				# Show Preview Frame
 				array = camera.capture_array()
 				previewFrame = pygame.image.frombuffer(array.data, (globals.appWidth, globals.appHeight), 'RGB')
