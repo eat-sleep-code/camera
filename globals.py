@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import os
 import sys
 
@@ -37,6 +38,14 @@ def initialize():
 	global iconDefault 
 	iconDefault = os.path.join(appRoot, 'images/capture-photo.png')
 	pygame.display.set_icon(iconDefault)
+
+	global status
+	status = ''
+
+	global buttonCollection
+	buttonCollection = []
+
+	
 
 def restart():
 	os.execv(sys.executable, ['python'] + sys.argv)

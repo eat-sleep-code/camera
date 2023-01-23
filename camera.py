@@ -1,14 +1,5 @@
 #!/usr/bin/python3
-import pygame
-from picamera2 import Picamera2, MappedArray
-from picamera2.controls import Controls
-from picamera2.encoders import H264Encoder
-from picamera2.outputs import FileOutput
-from libcamera import ColorSpace
-from ui import OnScreenUI, Buttons
-import globals
 import argparse
-import cv2
 import datetime
 import fractions
 import os
@@ -18,6 +9,17 @@ import sys
 import threading
 import time
 
+import cv2
+import pygame
+from libcamera import ColorSpace
+from picamera2 import MappedArray, Picamera2
+from picamera2.controls import Controls
+from picamera2.encoders import H264Encoder
+from picamera2.outputs import FileOutput
+
+import globals
+from ui import Buttons, OnScreenUI
+
 version = '2023.01.20'
 
 camera = Picamera2()
@@ -26,6 +28,12 @@ camera.CAPTURE_TIMEOUT = 1500
 running = False
 
 # === UI Setup ================================================================
+
+# Run without Desktop
+# os.putenv('SDL_VIDEODRIVER', 'fbcon')
+# os.putenv('SDL_FBDEV', '/dev/fb1')
+# os.putenv('SDL_MOUSEDRV', 'TSLIB')
+# os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
 
 globals.initialize()
 onScreen = OnScreenUI()

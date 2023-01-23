@@ -1,0 +1,59 @@
+{
+	"controls": [
+		{
+			"id": "captureVideo", 
+			"title": "Record",
+			"icon": "images/capture-video.png"
+		},
+		{
+			"id": "videoMode", 
+			"title": "Mode",
+			"icon": "images/video-mode.png"
+		},
+		{
+			"id": "shutterSpeedUp", 
+			"title": "Increase Shutter Speed",
+			"icon": "images/shutter-speed-up.png"
+		},
+		{
+			"id": "shutterSpeedDown", 
+			"title": "Decrease Shutter Speed",
+			"icon": "images/shutter-speed-down.png"
+		},
+		{
+			"id": "isoUp", 
+			"title": "Increase ISO",
+			"icon": "images/iso-up.png"
+		},
+		{
+			"id": "isoDown", 
+			"title": "Decrease ISO",
+			"icon": "images/iso-down.png"
+		},
+		{
+			"id": "evUp", 
+			"title": "Increase Exposure Compensation",
+			"icon": "images/exposure-compensation-up.png"
+		},
+		{
+			"id": "evDown", 
+			"title": "Decrease Exposure Compensation",
+			"icon": "images/exposure-compensation-up.png"
+		},
+		{
+			"id": "bracketUp", 
+			"title": "Increase Exposure Bracketing",
+			"icon": "images/exposure-bracketing-up.png"
+		},
+		{
+			"id": "bracketDown", 
+			"title": "Decrease Exposure Bracketing",
+			"icon": "images/exposure-bracketing-down.png"
+		},
+		{
+			"id": "capturePhoto", 
+			"title": "Capture",
+			"icon": "images/capture-photo.png"
+		}
+	]
+}
