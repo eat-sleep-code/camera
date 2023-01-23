@@ -39,13 +39,19 @@ def initialize():
 	iconDefault = os.path.join(appRoot, 'images/capture-photo.png')
 	pygame.display.set_icon(iconDefault)
 
-	global status
-	status = ''
-
 	global buttonCollection
 	buttonCollection = []
-
 	
+	global buttonStateDictionary
+	buttonStateDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'videoMode': False, 'capture': False, 'captureVideo': False}
+
+	global statusDictionary
+	statusDictionary = {'message': '', 'action': ''}
+
+	global detections
+	detections = []
+
+
 
 def restart():
 	os.execv(sys.executable, ['python'] + sys.argv)

@@ -20,6 +20,9 @@ This program makes the use of a Raspberry Pi HQ camera a little more powerful an
   - Set the Memory Split value to a value of at least 256MB
   - Disable Legacy Camera Supports
   - Set up your WiFi connection
+- From a terminal/shell prompt type: `sudo nano /boot/config.txt`
+  - Find the line that says `dtoverlay=vc4-kmsv3d` and replace it with: `dtoverlay=vc4-kms-v3d,cma-512`
+  - Save the file changes.  This file change alllocate more system memory to the camera hardware. 
 - Connect the Raspberry Pi HQ Camera to your Raspberry Pi
 
 

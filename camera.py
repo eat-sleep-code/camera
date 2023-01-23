@@ -18,7 +18,7 @@ from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
 
 import globals
-from ui import Buttons, OnScreenUI
+from ui import UI
 
 version = '2023.01.20'
 
@@ -36,11 +36,9 @@ running = False
 # os.putenv('SDL_MOUSEDEV', '/dev/input/touchscreen')
 
 globals.initialize()
-onScreen = OnScreenUI()
-onScreenButtons = Buttons()
-statusDictionary = {'message': '', 'action': ''}
-buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'videoMode': False, 'capture': False, 'captureVideo': False}
-detections = []
+ui = UI()
+
+
 
 # === Argument Handling ========================================================
 
@@ -175,7 +173,6 @@ def setShutter(input, wait = 0):
 	global shutterLongThreshold
 	global shutterShort
 	global defaultFramerate
-	global statusDictionary
 	
 	if str(input).lower() == 'auto' or str(input) == '0':
 		shutter = 0
@@ -200,7 +197,7 @@ def setShutter(input, wait = 0):
 			controls.ExposureTime = 0
 			# print(str(controls.ExposureTime) + '|' + str(controls.FrameRate) + '|' + str(shutter))	
 			print(' Shutter Speed: auto')
-			statusDictionary.update({'message': 'Shutter Speed: auto'})
+			globals.statusDictionary.update({'message': 'Shutter Speed: auto'})
 		else:
 			controls.ExposureTime = shutter * 1000
 			# print(str(controls.ExposureTime) + '|' + str(controls.FrameRate) + '|' + str(shutter))		
@@ -208,10 +205,10 @@ def setShutter(input, wait = 0):
 			roundedShutter = '{:.3f}'.format(floatingShutter)
 			if shutter > shutterLongThreshold:
 				print(' Shutter Speed: ' + str(roundedShutter)  + 's [Long Exposure Mode]')
-				statusDictionary.update({'message': ' Shutter Speed: ' + str(roundedShutter)  + 's [Long Exposure Mode]'})
+				globals.statusDictionary.update({'message': ' Shutter Speed: ' + str(roundedShutter)  + 's [Long Exposure Mode]'})
 			else:
 				print(' Shutter Speed: ' + str(roundedShutter) + 's')
-				statusDictionary.update({'message': ' Shutter Speed: ' + str(roundedShutter) + 's'})
+				globals.statusDictionary.update({'message': ' Shutter Speed: ' + str(roundedShutter) + 's'})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -224,7 +221,6 @@ def setISO(input, wait = 0):
 	global iso
 	global isoMin
 	global isoMax
-	global statusDictionary
 
 	if str(input).lower() == 'auto' or str(input) == '0':
 		controls.AeEnable = 1
@@ -241,10 +237,10 @@ def setISO(input, wait = 0):
 		# print(str(camera.iso) + '|' + str(iso))
 		if iso == 0:
 			print(' ISO: auto')
-			statusDictionary.update({'message': ' ISO: auto'})
+			globals.statusDictionary.update({'message': ' ISO: auto'})
 		else:	
 			print(' ISO: ' + str(iso))
-			statusDictionary.update({'message': ' ISO: ' + str(iso)})
+			globals.statusDictionary.update({'message': ' ISO: ' + str(iso)})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -254,13 +250,12 @@ def setISO(input, wait = 0):
 
 def setExposure(input, wait = 0):
 	global exposure
-	global statusDictionary
 
 	exposure = input
 	try:	
 		controls.AeExposureMode = exposure
 		print(' Exposure Mode: ' + exposure)
-		statusDictionary.update({'message': ' Exposure Mode: ' + exposure})
+		globals.statusDictionary.update({'message': ' Exposure Mode: ' + exposure})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -272,7 +267,6 @@ def setEV(input, wait = 0, displayMessage = True):
 	global controls
 	global ev 
 	global bracket
-	global statusDictionary
 
 	ev = input
 	ev = int(ev)
@@ -286,7 +280,7 @@ def setEV(input, wait = 0, displayMessage = True):
 		# print(str(camera.exposure_compensation) + '|' + str(ev))
 		if displayMessage == True:
 			print(' Exposure Compensation: ' + evPrefix + str(ev))
-			statusDictionary.update({'message': ' Exposure Compensation: ' + evPrefix + str(ev)})
+			globals.statusDictionary.update({'message': ' Exposure Compensation: ' + evPrefix + str(ev)})
 		time.sleep(wait)
 		return
 	except Exception as ex: 
@@ -301,7 +295,6 @@ def setBracket(input, wait = 0, displayMessage = True):
 	global bracketHigh
 	global evMax
 	global evMin
-	global statusDictionary
 
 	bracket = int(input)
 	try:
@@ -313,7 +306,7 @@ def setBracket(input, wait = 0, displayMessage = True):
 			bracketHigh = evMax
 		if displayMessage == True:
 			print(' Exposure Bracketing: ' + str(bracket))
-			statusDictionary.update({'message': ' Exposure Bracketing: ' + str(bracket)})
+			globals.statusDictionary.update({'message': ' Exposure Bracketing: ' + str(bracket)})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -324,13 +317,12 @@ def setBracket(input, wait = 0, displayMessage = True):
 def setAWB(input, wait = 0):
 	global controls
 	global awb
-	global statusDictionary
 
 	awb = input
 	try:	
 		controls.AwbMode = awb
 		print(' White Balance Mode: ' + awb)
-		statusDictionary.update({'message': ' White Balance Mode: ' + awb})
+		globals.statusDictionary.update({'message': ' White Balance Mode: ' + awb})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -356,14 +348,14 @@ def setVideoMode(input = 0, wait = 0):
 			videoFramerate = 24
 			videoFormat = 'h264'
 			print(' Video Mode: 1920x1080 24fps (H264)')
-			statusDictionary.update({'message': 'Video Mode: 1920x1080 24fps (H264)'})
+			globals.statusDictionary.update({'message': 'Video Mode: 1920x1080 24fps (H264)'})
 		else:
 			videoWidth = 1920
 			videoHeight = 1080
 			videoFramerate = 30
 			videoFormat = 'h264'
 			print(' Video Mode: 1920x1080 30fps (H264)')
-			statusDictionary.update({'message': 'Video Mode: 1920x1080 30fps (H264)'})
+			globals.statusDictionary.update({'message': 'Video Mode: 1920x1080 30fps (H264)'})
 		time.sleep(wait)
 		return
 	except Exception as ex:
@@ -417,12 +409,12 @@ def captureImage(filepath, raw = True):
 
 # ------------------------------------------------------------------------------
 """
-def detectAreas(detectionType = "face"):
+def detectAreas(detectionType = 'face'):
 	global previewVisible
 
 	try:
-		itemDetector = cv2.CascadeClassifier("/cv/" + detectionType + ".xml")
-		captured = camera.capture_array("lores")
+		itemDetector = cv2.CascadeClassifier('/cv/' + detectionType + '.xml')
+		captured = camera.capture_array('lores')
 		gray = cv2.cvtColor(captured, cv2.COLOR_BGR2GRAY)
 		detections = itemDetector.detectMultiScale(gray, 1.1, 3)
 		return detections
@@ -433,10 +425,10 @@ def detectAreas(detectionType = "face"):
 # ------------------------------------------------------------------------------
 
 def drawDetectedAreas(request):
-	(w0, h0) = camera.stream_configuration("main")["size"]
-	(w1, h1) = camera.stream_configuration("lores")["size"]
+	(w0, h0) = camera.stream_configuration('main')['size']
+	(w1, h1) = camera.stream_configuration('lores')['size']
 
-	with MappedArray(request, "main") as m:
+	with MappedArray(request, 'main') as m:
 		for detectedArea in detections:
 			(x, y, w, h) = [c * n // d for c, n, d in zip(detectedArea, (w0, h0) * 2, (w1, h1) * 2)] 
 			cv2.rectangle(m.array, (x, y), (x + w, y + h), (0, 255, 0, 0))
@@ -445,11 +437,8 @@ def drawDetectedAreas(request):
 
 def createUI():
 	global running
-	global statusDictionary	
-	global buttonDictionary
-	
 	running = True
-	onScreen.create(running, statusDictionary, buttonDictionary)
+	ui.render(running)
 	
 # === Image Capture ============================================================
 
@@ -492,10 +481,7 @@ try:
 		global videoModeMax
 		global imageCount
 		global isRecording
-		global statusDictionary
-		global buttonDictionary
 
-		
 		
 		# print(str(camera.resolution))
 		#camera.sensor_mode = 3
@@ -518,7 +504,7 @@ try:
 			try:
 				events=pygame.event.get()
 				for e in events:
-					if (pygame.KEYDOWN and (e.key == pygame.K_q or e.key == pygame.K_ESCAPE)) or buttonDictionary['exit'] == True:
+					if (pygame.KEYDOWN and (e.key == pygame.K_q or e.key == pygame.K_ESCAPE)) or globals.buttonStateDictionary['exit'] == True:
 						# clear()
 						echoOn()
 						sys.exit(1)
@@ -529,12 +515,12 @@ try:
 						showInstructions(True, 0.5)	
 
 					# Capture
-					elif (pygame.KEYDOWN and (e.key == pygame.K_SPACE)) or buttonDictionary['capture'] == True:
+					elif (pygame.KEYDOWN and (e.key == pygame.K_SPACE)) or globals.buttonStateDictionary['capture'] == True:
 						
 						if mode == 'persistent':
 							# Normal photo
 							filepath = getFilePath(True)
-							print(' Starting capture...', buttonDictionary['capture'])
+							print(' Starting capture...', globals.buttonStateDictionary['capture'])
 		
 							print(' Capturing image: ' + filepath + '\n')
 							captureImage(filepath, raw)
@@ -580,18 +566,18 @@ try:
 							break
 
 						print('Updating button')
-						buttonDictionary.update({'capture': False})
-						print('Button is now ', buttonDictionary['capture'])
-					elif buttonDictionary['captureVideo'] == True:
+						globals.buttonStateDictionary.update({'capture': False})
+						print('Button is now ', globals.buttonStateDictionary['capture'])
+					elif globals.buttonStateDictionary['captureVideo'] == True:
 
 						# Video
 						if isRecording == False:
 							isRecording = True
-							statusDictionary.update({'action': 'recording'})
+							globals.statusDictionary.update({'action': 'recording'})
 							filepath = getFilePath(True, True)
 							print(' Capturing video: ' + filepath + '\n')
-							statusDictionary.update({'message': ' Recording: Started '})
-							buttonDictionary.update({'captureVideo': False})
+							globals.statusDictionary.update({'message': ' Recording: Started '})
+							globals.buttonStateDictionary.update({'captureVideo': False})
 							encoder = H264Encoder(10000000)
 							encoder.output = FileOutput(filepath)
 							controls.FrameRate = videoFramerate
@@ -599,24 +585,24 @@ try:
 							camera.start_encoder(encoder)
 						else:
 							isRecording = False
-							statusDictionary.update({'action': ''})
+							globals.statusDictionary.update({'action': ''})
 							camera.stop_encoder()
 							camera.configure('preview')
 							print(' Capture complete \n')
-							statusDictionary.update({'message': ' Recording: Stopped '})
-							buttonDictionary.update({'captureVideo': False})
+							globals.statusDictionary.update({'message': ' Recording: Stopped '})
+							globals.buttonStateDictionary.update({'captureVideo': False})
 						
 						time.sleep(1)
 
 					# Shutter Speed	
-					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or buttonDictionary['shutterUp'] == True:
+					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or globals.buttonStateDictionary['shutterUp'] == True:
 						if shutter == 0:
 							shutter = shutterShort
 						elif shutter > shutterShort and shutter <= shutterLong:					
 							shutter = int(shutter / 1.5)
 						setShutter(shutter, 0.25)
-						buttonDictionary.update({'shutterUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_CTRL) or buttonDictionary['shutterDown'] == True:
+						globals.buttonStateDictionary.update({'shutterUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_s) and pygame.key.get_mods() & pygame.KMOD_CTRL) or globals.buttonStateDictionary['shutterDown'] == True:
 						if shutter == 0:						
 							shutter = shutterLong
 						elif shutter < shutterLong and shutter >= shutterShort:					
@@ -624,17 +610,17 @@ try:
 						elif shutter == shutterShort:
 							shutter = 0
 						setShutter(shutter, 0.25)
-						buttonDictionary.update({'shutterDown': False})
+						globals.buttonStateDictionary.update({'shutterDown': False})
 
 					# ISO
-					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or buttonDictionary['isoUp'] == True:
+					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or globals.buttonStateDictionary['isoUp'] == True:
 						if iso == 0:
 							iso = isoMin
 						elif iso >= isoMin and iso < isoMax:					
 							iso = int(iso * 2)
 						setISO(iso, 0.25)
-						buttonDictionary.update({'isoUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_CTRL)  or buttonDictionary['isoDown'] == True:
+						globals.buttonStateDictionary.update({'isoUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_i) and pygame.key.get_mods() & pygame.KMOD_CTRL)  or globals.buttonStateDictionary['isoDown'] == True:
 						if iso == 0:
 							iso = isoMax
 						elif iso <= isoMax and iso > isoMin:					
@@ -642,47 +628,47 @@ try:
 						elif iso == isoMin:
 							iso = 0
 						setISO(iso, 0.25)
-						buttonDictionary.update({'isoDown': False})
+						globals.buttonStateDictionary.update({'isoDown': False})
 
 					# Exposure Compensation
-					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or buttonDictionary['evUp'] == True:
+					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_SHIFT)  or globals.buttonStateDictionary['evUp'] == True:
 						if ev >= evMin and ev < evMax:					
 							ev = int(ev + 1)
 							setEV(ev, 0.25)
-							buttonDictionary.update({'evUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_CTRL) or buttonDictionary['evDown'] == True:
+							globals.buttonStateDictionary.update({'evUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_c) and pygame.key.get_mods() & pygame.KMOD_CTRL) or globals.buttonStateDictionary['evDown'] == True:
 						if ev <= evMax and ev > evMin:					
 							ev = int(ev - 1)
 							setEV(ev, 0.25)
-							buttonDictionary.update({'evDown': False})
+							globals.buttonStateDictionary.update({'evDown': False})
 
 					# Exposure Bracketing
-					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or buttonDictionary['bracketUp'] == True:
+					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_SHIFT) or globals.buttonStateDictionary['bracketUp'] == True:
 						if bracket < evMax:
 							bracket = int(bracket + 1)
 							setBracket(bracket, 0.25)
-							buttonDictionary.update({'bracketUp': False})
-					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_CTRL) or buttonDictionary['bracketDown'] == True:
+							globals.buttonStateDictionary.update({'bracketUp': False})
+					elif (pygame.KEYDOWN and (e.key == pygame.K_b) and pygame.key.get_mods() & pygame.KMOD_CTRL) or globals.buttonStateDictionary['bracketDown'] == True:
 						if bracket > 0:					
 							bracket = int(bracket - 1)
 							setBracket(bracket, 0.25)
-							buttonDictionary.update({'bracketDown': False})
+							globals.buttonStateDictionary.update({'bracketDown': False})
 
 					# Video Mode
-					elif buttonDictionary['videoMode'] == True:
+					elif globals.buttonStateDictionary['videoMode'] == True:
 						if videoMode < videoModeMax:
 							videoMode = int(videoMode + 1)
 						else: 
 							videoMode = 0
 						setVideoMode(videoMode, 0.25)
-						buttonDictionary.update({'videoMode': False})
+						globals.buttonStateDictionary.update({'videoMode': False})
 				
 				# Show Preview Frame
 				array = camera.capture_array()
 				previewFrame = pygame.image.frombuffer(array.data, (globals.appWidth, globals.appHeight), 'RGB')
 				globals.displaySurface.blit(previewFrame, (0, 0))
 				pygame.display.update()
-			
+
 			except SystemExit:
 				running = False
 				time.sleep(5)				
@@ -692,10 +678,7 @@ try:
 				print(str(ex))
 				pass
 
-	def CaptureAndUploadImage():
-		Capture()
-		time.sleep(1000)
-		# Not yet implemented
+
 
 	# print(' Action: ' + action)
 	if action == 'capturesingle' or action == 'single':

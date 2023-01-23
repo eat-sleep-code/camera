@@ -10,50 +10,12 @@ from data import Data
 from models import Button
 
 
-class Buttons():
-	
-	# === Button Click Event Handler ============================================
 
-	def handler(buttonDictionary, e):
-		
-		# print(' DEBUG: ' + e + ' was clicked ')
-
-		if e == 'shutterUp':
-			buttonDictionary.update({'shutterUp': True})
-		elif e == 'shutterDown':
-			buttonDictionary.update({'shutterDown': True})
-		elif e == 'isoUp':
-			buttonDictionary.update({'isoUp': True})
-		elif e == 'isoDown':
-			buttonDictionary.update({'isoDown': True})
-		elif e == 'evUp':
-			buttonDictionary.update({'evUp': True})
-		elif e == 'evDown':
-			buttonDictionary.update({'evDown': True})
-		elif e == 'bracketUp':
-			buttonDictionary.update({'bracketUp': True})
-		elif e == 'bracketDown':
-			buttonDictionary.update({'bracketDown': True})
-		elif e == 'videoMode':
-			buttonDictionary.update({'videoMode': True})
-		elif e == 'capture':
-			buttonDictionary.update({'capture': True})
-		elif e == 'captureVideo':
-			buttonDictionary.update({'captureVideo': True})
-		elif e == 'exit':
-			buttonDictionary.update({'exit': True})			
-		
-		time.sleep(0.2)
-
-		return buttonDictionary
-
-
-
-class OnScreenUI():
+class UI():
 
 	# === Create UI =======================================================
 
-	def create(self, running, statusDictionary, buttonDictionary):
+	def render(self, running):
 		
 		currentDirectory = os.getcwd() + '/'
 		
@@ -99,9 +61,9 @@ class OnScreenUI():
 				globals.displaySurface.blit(controlIcon, (itemX, itemY))
 
 				# Button Text
-				textStart = itemX + buttonWidth + cellPadding + gutter
-				gameTitleText = globals.fontDefault.render(button.text, True, (255, 255, 255))
-				globals.displaySurface.blit(gameTitleText, (textStart, itemX, itemY))
+				buttonTextStart = itemX + buttonWidth + cellPadding + gutter
+				buttonText = globals.fontDefault.render(button.text, True, (255, 255, 255))
+				globals.displaySurface.blit(buttonText, (buttonTextStart, itemX, itemY))
 
 				tempButtonCollection.append(button)
 				
@@ -115,8 +77,8 @@ class OnScreenUI():
 
 		
 		def updateStatus():
-			statusText.set(statusDictionary['message'])
-			if statusDictionary['action'] == 'recording':
+			statusText.set(globals.statusDictionary['message'])
+			if globals.statusDictionary['action'] == 'recording':
 				print('recording')
 			else:
 				...
@@ -124,12 +86,16 @@ class OnScreenUI():
 				sys.exit(0)
 
 
-	def buttonHandler():
+# === Button Click Event Handler ============================================
+
+	def handle():
 		while True:
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					for button in globals.buttonCollection:
 						rect = button.rect
 						if rect.collidepoint(event.pos):
-							globals.buttonDictionary[button.value] == True
-								
+							globals.buttonStateDictionary.update({button.value: True})
+							time.sleep(0.2)
+
+			return globals.buttonStateDictionary

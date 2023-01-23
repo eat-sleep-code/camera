@@ -19,4 +19,4 @@ class CameraControl(object):
 
 class CameraControlList(object):
 	def __init__(self):
-		self.controls = [Control()]
+		self.controls = [CameraControl()]

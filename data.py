@@ -1,7 +1,9 @@
-import globals
 import json
-from models import CameraControl, CameraControlList
 import os
+
+import globals
+from models import CameraControl, CameraControlList
+
 
 class Data:
     
