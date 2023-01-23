@@ -54,15 +54,12 @@ camera <options>
 + _--outputFolder_ : Set the folder where images will be saved     *(default: dcim/)* 
 + _--raw_ : Set whether DNG files are created in addition to JPEG files	    *(default: True)*
 + _--timer_ : Set the interval for timelapse mode in seconds     *(default: 0)* 
-+ _--previewWidth_ : Set the preview window width     *(default: 800)*
-+ _--previewHeight_ : Set the preview window height    *(default: 460)*
 
 ### Keyboard Controls
-+ Press s+&#x25B2; or s+&#x25BC; to change shutter speed
-+ Press i+&#x25B2; or i+&#x25B2; to change ISO
-+ Press c+&#x25B2; or c+&#x25B2; to change exposure compensation
-+ Press b+&#x25B2; or b+&#x25B2; to change exposure bracketing
-+ Press [p] to toggle the preview window
++ Press s+&#x21E7; or s+&#x2303; to change shutter speed
++ Press i+&#x21E7; or i+&#x2303; to change ISO
++ Press c+&#x21E7; or c+&#x2303; to change exposure compensation
++ Press b+&#x21E7; or b+&#x2303; to change exposure bracketing
 + Press the [space] bar to take photos or begin a timelapse
 + Press &#x241B; to exit
 
