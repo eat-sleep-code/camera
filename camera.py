@@ -5,7 +5,8 @@ from picamera2.controls import Controls
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
 from libcamera import ColorSpace
-#from ui import OnScreenUI, Buttons
+from ui import OnScreenUI, Buttons
+import globals
 import argparse
 import cv2
 import datetime
@@ -25,14 +26,10 @@ camera.CAPTURE_TIMEOUT = 1500
 running = False
 
 # === UI Setup ================================================================
-pygame.init()
-displayInfo = pygame.display.Info()
-appWidth = displayInfo.current_w
-appHeight = displayInfo.current_h
-screen = pygame.display.set_mode(appWidth, appHeight)
 
-#onScreen = OnScreenUI()
-#onScreenButtons = Buttons()
+globals.initialize()
+onScreen = OnScreenUI()
+onScreenButtons = Buttons()
 statusDictionary = {'message': '', 'action': ''}
 buttonDictionary = {'exit': False, 'shutterUp': False, 'shutterDown': False, 'isoUp': False, 'isoDown': False, 'evUp': False, 'evDown': False, 'bracketUp': False, 'bracketDown': False, 'videoMode': False, 'capture': False, 'captureVideo': False}
 detections = []
@@ -119,7 +116,7 @@ clear()
 
 # === Create Configurations ====================================================
 
-camera.preview_configuration.main.size = (appWidth, appHeight)
+camera.preview_configuration.main.size = (globals.appWidth, globals.appHeight)
 camera.preview_configuration.main.format = 'BGR888'
 camera.configure('preview')
 
@@ -397,13 +394,12 @@ def getFilePath(timestamped = True, isVideo = False):
 # ------------------------------------------------------------------------------
 
 def captureImage(filepath, raw = True):
-	global screen
 	request = camera.switch_mode_and_capture_request('still')
 	request.save('main', filepath)
 	array = request.make_array('main')
 	request.release()
 	capturedFrame = pygame.image.frombuffer(array.data, camera.sensor_resolution, 'RGB')
-	screen.blit(capturedFrame, (0, 0))
+	globals.displaySurface.blit(capturedFrame, (0, 0))
 	pygame.display.update()
 	if raw == True:
 		filepathDNG = filepath.replace('.jpg', '.dng')
@@ -445,7 +441,7 @@ def createUI():
 	global buttonDictionary
 	
 	running = True
-	#onScreen.create(running, statusDictionary, buttonDictionary)
+	onScreen.create(running, statusDictionary, buttonDictionary)
 	
 # === Image Capture ============================================================
 
@@ -465,10 +461,7 @@ try:
 		pass
 	
 	def Capture(mode = 'persistent'):
-		global screen
 		global controls
-		global appWidth
-		global appHeight
 		global shutter
 		global shutterLong
 		global shutterShort
@@ -512,7 +505,6 @@ try:
 		setAWB(awb, 0)
 		
 		showInstructions(False, 0)
-		#showPreview(0, 0, appWidth, appHeight)
 		
 		while True:
 			try:
@@ -676,10 +668,15 @@ try:
 							videoMode = 0
 						setVideoMode(videoMode, 0.25)
 						buttonDictionary.update({'videoMode': False})
+				
+				# Show Preview Frame
+				array = camera.capture_array()
+				previewFrame = pygame.image.frombuffer(array.data, (globals.appWidth, globals.appHeight), 'RGB')
+				globals.displaySurface.blit(previewFrame, (0, 0))
+				pygame.display.update()
 			
 			except SystemExit:
 				running = False
-				#hidePreview()
 				time.sleep(5)				
 				os.kill(os.getpid(), signal.SIGSTOP)
 				sys.exit(0)

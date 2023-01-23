@@ -2,6 +2,7 @@
 import os
 import sys
 import time
+import globals
 
 
 	
@@ -50,43 +51,25 @@ class OnScreenUI():
 
 	def create(self, running, statusDictionary, buttonDictionary):
 		
-		currentDirectory = '/home/pi/camera/'
-		"""
-		root = tk.Tk()
-		root.title('Camera Controls')
-		root.wm_attributes('-type', 'splash')
-		root.geometry(str(root.winfo_screenwidth()) + 'x124+0+' + str(root.winfo_screenheight() - 124))
-		root['background'] = '#111111'
+		currentDirectory = os.getcwd() + '/'
 		
 		
-		# --- On-Screen Control Button Styles -----------------------------------
+		collapseButtonWidth = 16
+		buttonCount = 8
+		buttonWidth = (globals.appWidth - collapseButtonWidth) / buttonCount
+		buttonHeight = buttonWidth
+		labelHeight = 32
 
-		buttonStyle = ttk.Style()
-		buttonStyle.configure('default.TButton', background = '#222222', bordercolor = '#111111', borderwidth=0)
-		buttonStyle.configure('primary.TButton', background = '#00DDF1', bordercolor = '#00DDF1', borderwidth=0)
-		buttonWidth = 72.72
-		buttonHeight = 60
-
-
-		# --- On-Screen Control Label Styles ------------------------------------
-
-		labelStyle = ttk.Style()
-		labelStyle.configure('default.TLabel', background='#000000', foreground='#EEEEEE')
-		labelStyle.configure('warning.TLabel', background='#880000', foreground='#EEEEEE')
-		labelStyle.configure('primary.TLabel', background='#00DDF1', foreground='#111111')
-		labelHeight = 30
-
-		borderLeft = 0
 		
+
 		# --- Control Rendering -------------------------------------------------
 		# Status
-		windowWidth = 800 # str(root.winfo_screenwidth())
 		statusVariable = tk.StringVar() 
 		statusLabel = ttk.Label(root, compound=tk.CENTER, textvariable=statusVariable)
 		statusLabel['style'] = 'default.TLabel'
 		statusLabel.configure(anchor='center')
 		statusVariable.set(statusDictionary['message'])		
-		statusLabel.place(x=0,y=buttonHeight+labelHeight,width=windowWidth,height=labelHeight)
+		statusLabel.place(x=0,y=buttonHeight+labelHeight,width=globals.appWidth,height=labelHeight)
 				
 				
 		# Exit
@@ -216,12 +199,7 @@ class OnScreenUI():
 			if running == False:
 				root.destroy()
 				sys.exit(0)
-			root.after(500, updateStatus)
+
 
 		
 
-		root.after(500, updateStatus)
-
-	
-		root.mainloop()
-		"""
