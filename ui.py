@@ -90,7 +90,7 @@ class OnScreenUI():
 				
 				
 		# Exit
-		# image = Image.open(os.path.join(currentDirectory, 'images/exit.png'))
+		# image = pygame.image.load(os.path.join(currentDirectory, 'images/exit.png'))
 		# exitImage = ImageTk.PhotoImage(image)
 		# exitButton = ttk.Button(root, compound=tk.CENTER, image=exitImage, command=lambda: Buttons.handler(buttonDictionary, 'exit'))
 		# exitButton['style'] = 'default.TButton'
@@ -103,8 +103,7 @@ class OnScreenUI():
 
 
 		# Capture Video
-		image = Image.open(os.path.join(currentDirectory, 'images/capture-video.png'))
-		captureVideoImage = ImageTk.PhotoImage(image)
+		captureVideoImage = pygame.image.load(os.path.join(currentDirectory, 'images/capture-video.png'))
 		captureVideoButton = ttk.Button(root, compound=tk.CENTER, image=captureVideoImage, command=lambda: Buttons.handler(buttonDictionary, 'captureVideo'))
 		captureVideoButton['style'] = 'primary.TButton'
 		captureVideoButton.place(x=borderLeft,y=0,width=buttonWidth,height=buttonHeight)
@@ -115,8 +114,7 @@ class OnScreenUI():
 		captureVideoLabel.place(x=borderLeft,y=buttonHeight,width=buttonWidth,height=labelHeight)
 
 		# Video Mode
-		image = Image.open(os.path.join(currentDirectory, 'images/video-mode.png'))
-		videoModeImage = ImageTk.PhotoImage(image)
+		videoModeImage = pygame.image.load(os.path.join(currentDirectory, 'images/video-mode.png'))
 		videoModeButton = ttk.Button(root, compound=tk.CENTER, image=videoModeImage, command=lambda: Buttons.handler(buttonDictionary, 'videoMode'))
 		videoModeButton['style'] = 'default.TButton'
 		videoModeButton.place(x=borderLeft+buttonWidth,y=0,width=buttonWidth,height=buttonHeight)
@@ -128,14 +126,12 @@ class OnScreenUI():
 
 
 		# Shutter Speed 
-		image = Image.open(os.path.join(currentDirectory, 'images/shutter-speed-up.png'))
-		shutterUpImage = ImageTk.PhotoImage(image)
+		shutterUpImage = pygame.image.load(os.path.join(currentDirectory, 'images/shutter-speed-up.png'))
 		shutterUpButton = ttk.Button(root, compound=tk.CENTER, image=shutterUpImage, command=lambda: Buttons.handler(buttonDictionary, 'shutterUp'))
 		shutterUpButton['style'] = 'default.TButton'
 		shutterUpButton.place(x=borderLeft+(buttonWidth*2),y=0,width=buttonWidth,height=buttonHeight)
 
-		image = Image.open(os.path.join(currentDirectory, 'images/shutter-speed-down.png'))
-		shutterDownImage = ImageTk.PhotoImage(image)
+		shutterDownImage = pygame.image.load(os.path.join(currentDirectory, 'images/shutter-speed-down.png'))
 		shutterDownButton = ttk.Button(root, compound=tk.CENTER, image=shutterDownImage, command=lambda: Buttons.handler(buttonDictionary, 'shutterDown'))
 		shutterDownButton['style'] = 'default.TButton'
 		shutterDownButton.place(x=borderLeft+(buttonWidth*3),y=0,width=buttonWidth,height=buttonHeight)
@@ -147,14 +143,12 @@ class OnScreenUI():
 
 
 		#ISO
-		image = Image.open(os.path.join(currentDirectory, 'images/iso-up.png'))
-		isoUpImage = ImageTk.PhotoImage(image)
+		isoUpImage = pygame.image.load(os.path.join(currentDirectory, 'images/iso-up.png'))
 		isoUpButton = ttk.Button(root, compound=tk.CENTER, image=isoUpImage, command=lambda: Buttons.handler(buttonDictionary, 'isoUp'))
 		isoUpButton['style'] = 'default.TButton'
 		isoUpButton.place(x=borderLeft+(buttonWidth*4),y=0,width=buttonWidth,height=buttonHeight)
 
-		image = Image.open(os.path.join(currentDirectory, 'images/iso-down.png'))
-		isoDownImage = ImageTk.PhotoImage(image)
+		isoDownImage = pygame.image.load(os.path.join(currentDirectory, 'images/iso-down.png'))
 		isoDownButton = ttk.Button(root, compound=tk.CENTER, image=isoDownImage, command=lambda: Buttons.handler(buttonDictionary, 'isoDown'))
 		isoDownButton['style'] = 'default.TButton'
 		isoDownButton.place(x=borderLeft+(buttonWidth*5),y=0,width=buttonWidth,height=buttonHeight)
@@ -166,14 +160,12 @@ class OnScreenUI():
 
 
 		# Exposure Compensation
-		image = Image.open(os.path.join(currentDirectory, 'images/exposure-compensation-up.png'))
-		evUpImage = ImageTk.PhotoImage(image)
+		evUpImage = pygame.image.load(os.path.join(currentDirectory, 'images/exposure-compensation-up.png'))
 		evUpButton = ttk.Button(root, compound=tk.CENTER, image=evUpImage, command=lambda: Buttons.handler(buttonDictionary, 'evUp'))
 		evUpButton['style'] = 'default.TButton'
 		evUpButton.place(x=borderLeft+(buttonWidth*6),y=0,width=buttonWidth,height=buttonHeight)
 
-		image = Image.open(os.path.join(currentDirectory, 'images/exposure-compensation-down.png'))
-		evDownImage = ImageTk.PhotoImage(image)
+		evDownImage = pygame.image.load(os.path.join(currentDirectory, 'images/exposure-compensation-down.png'))
 		evDownButton = ttk.Button(root, compound=tk.CENTER, image=evDownImage, command=lambda: Buttons.handler(buttonDictionary, 'evDown'))
 		evDownButton['style'] = 'default.TButton'
 		evDownButton.place(x=borderLeft+(buttonWidth*7),y=0,width=buttonWidth,height=buttonHeight)
@@ -185,14 +177,12 @@ class OnScreenUI():
 
 
 		# Exposure Bracketing
-		image = Image.open(os.path.join(currentDirectory, 'images/exposure-bracketing-up.png'))
-		bracketUpImage = ImageTk.PhotoImage(image)
+		bracketUpImage = pygame.image.load(os.path.join(currentDirectory, 'images/exposure-bracketing-up.png'))
 		bracketUpButton = ttk.Button(root, compound=tk.CENTER, image=bracketUpImage, command=lambda: Buttons.handler(buttonDictionary, 'bracketUp'))
 		bracketUpButton['style'] = 'default.TButton'
 		bracketUpButton.place(x=borderLeft+(buttonWidth*8),y=0,width=buttonWidth,height=buttonHeight)
 
-		image = Image.open(os.path.join(currentDirectory, 'images/exposure-bracketing-down.png'))
-		bracketDownImage = ImageTk.PhotoImage(image)
+		bracketDownImage = pygame.image.load(os.path.join(currentDirectory, 'images/exposure-bracketing-down.png'))
 		bracketDownButton = ttk.Button(root, compound=tk.CENTER, image=bracketDownImage, command=lambda: Buttons.handler(buttonDictionary, 'bracketDown'))
 		bracketDownButton['style'] = 'default.TButton'
 		bracketDownButton.place(x=borderLeft+(buttonWidth*9),y=0,width=buttonWidth,height=buttonHeight)
@@ -204,8 +194,7 @@ class OnScreenUI():
 
 
 		# Capture
-		image = Image.open(os.path.join(currentDirectory, 'images/capture-photo.png'))
-		captureImage = ImageTk.PhotoImage(image)
+		captureImage = pygame.image.load(os.path.join(currentDirectory, 'images/capture-photo.png'))
 		captureButton = ttk.Button(root, compound=tk.CENTER, image=captureImage, command=lambda: Buttons.handler(buttonDictionary, 'capture'))
 		captureButton['style'] = 'primary.TButton'
 		captureButton.place(x=borderLeft+(buttonWidth*10),y=0,width=buttonWidth,height=buttonHeight)
