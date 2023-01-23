@@ -19,7 +19,7 @@ sudo rm -Rf ~/camera
 sudo git clone -b picamera-2-migration --single-branch https://github.com/eat-sleep-code/camera
 sudo chown -R $USER:$USER camera
 cd camera
-sudo chmod +x camera.py
+sudo chmod +x *.py
 
 cd ~
 echo ''
