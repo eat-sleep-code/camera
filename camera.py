@@ -119,23 +119,21 @@ clear()
 
 # === Create Configurations ====================================================
 
-configPreview = camera.create_preview_configuration()
 camera.preview_configuration.main.size = (appWidth, appHeight)
 camera.preview_configuration.main.format = 'BGR888'
 camera.configure('preview')
 
 # ------------------------------------------------------------------------------
 
-configStill = camera.create_still_configuration()
+
 camera.still_configuration.enable_raw()
 camera.still_configuration.main.size = camera.sensor_resolution
-camera.still_configuration.buffer_count = 2
+#camera.still_configuration.buffer_count = 2
 camera.still_configuration.colour_space = ColorSpace.Sycc()
 
 # ------------------------------------------------------------------------------
 
-configVideo = camera.create_video_configuration()
-camera.video_configuration.size = (videoWidth, videoHeight)
+camera.video_configuration.main.size = (videoWidth, videoHeight)
 camera.video_configuration.buffer_count = 8
 camera.video_configuration.colour_space = ColorSpace.Rec709()
 
@@ -148,12 +146,11 @@ def showInstructions(clearFirst = False, wait = 0):
 	else:
 		print(' ----------------------------------------------------------------------')
 
-	print('\n Press s+\u25B2 or s+\u25BC to change shutter speed')
-	print('\n Press i+\u25B2 or i+\u25BC to change ISO')
-	print('\n Press c+\u25B2 or c+\u25BC to change exposure compensation')
-	print('\n Press b+\u25B2 or b+\u25BC to change exposure bracketing')
-	print('\n Press [p] to toggle the preview window')
-
+	print('\n Press s+\u21E7 or s+\u2303 to change shutter speed')
+	print('\n Press i+\u21E7 or i+\u2303 to change ISO')
+	print('\n Press c+\u21E7 or c+\u2303 to change exposure compensation')
+	print('\n Press b+\u21E7 or b+\u2303 to change exposure bracketing')
+	
 	if action == 'timelapse':			 		
 		print('\n Press the [space] bar to begin a timelapse ')
 	else:
@@ -401,11 +398,12 @@ def getFilePath(timestamped = True, isVideo = False):
 
 def captureImage(filepath, raw = True):
 	global screen
-	camera.switch_mode_and_capture_file(configStill, filepath)
-	camera.capture_file(filepath)
-	capturedFrame = pygame.image.load(filepath).convert()
-	capturedFrameRectangle = capturedFrame.get_rect()
-	screen.blit(capturedFrame, capturedFrameRectangle)
+	request = camera.switch_mode_and_capture_request('still')
+	request.save('main', filepath)
+	array = request.make_array('main')
+	request.release()
+	capturedFrame = pygame.image.frombuffer(array.data, camera.sensor_resolution, 'RGB')
+	screen.blit(capturedFrame, (0, 0))
 	pygame.display.update()
 	if raw == True:
 		filepathDNG = filepath.replace('.jpg', '.dng')
@@ -597,12 +595,13 @@ try:
 							encoder = H264Encoder(10000000)
 							encoder.output = FileOutput(filepath)
 							controls.FrameRate = videoFramerate
-							camera.configure(configVideo)
+							camera.configure('video')
 							camera.start_encoder(encoder)
 						else:
 							isRecording = False
 							statusDictionary.update({'action': ''})
 							camera.stop_encoder()
+							camera.configure('preview')
 							print(' Capture complete \n')
 							statusDictionary.update({'message': ' Recording: Stopped '})
 							buttonDictionary.update({'captureVideo': False})
