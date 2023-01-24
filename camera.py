@@ -442,9 +442,6 @@ def createUI():
 	
 # === Image Capture ============================================================
 
-uiThread = threading.Thread(target=createUI)
-uiThread.start()
-
 
 try:
 	echoOff()
@@ -664,10 +661,13 @@ try:
 					globals.buttonStateDictionary.update({'videoMode': False})
 			
 				# Show Preview Frame
+				print('create preview frame')
 				array = camera.capture_array()
 				previewFrame = pygame.image.frombuffer(array.data, (globals.appWidth, globals.appHeight), 'RGB')
 				globals.displaySurface.blit(previewFrame, (0, 0))
 				pygame.display.update()
+				uiThread = threading.Thread(target=createUI)
+				uiThread.start()
 
 			except SystemExit:
 				running = False
