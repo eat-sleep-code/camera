@@ -479,7 +479,7 @@ try:
 		global imageCount
 		global isRecording
 
-		
+		camera.start()
 		# print(str(camera.resolution))
 		#camera.sensor_mode = 3
 
@@ -660,7 +660,6 @@ try:
 					globals.buttonStateDictionary.update({'videoMode': False})
 			
 				# Show Preview Frame
-				print('create preview frame')
 				array = camera.capture_array()
 				previewFrame = pygame.image.frombuffer(array.data, (globals.appWidth, globals.appHeight), 'RGB')
 				globals.displaySurface.blit(previewFrame, (0, 0))
@@ -669,7 +668,6 @@ try:
 				uiThread.start()
 
 			except SystemExit:
-				running = False
 				time.sleep(5)				
 				os.kill(os.getpid(), signal.SIGSTOP)
 				sys.exit(0)
