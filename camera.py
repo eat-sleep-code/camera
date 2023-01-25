@@ -500,7 +500,6 @@ try:
 		while True:
 			try:
 				key = pygame.key.get_pressed()
-				print(key)	
 				if (key[pygame.K_q] or key[pygame.K_ESCAPE]) or (globals.buttonStateDictionary['exit'] == True):
 					# clear()
 					echoOn()
