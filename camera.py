@@ -20,7 +20,7 @@ from picamera2.outputs import FileOutput
 import globals
 from ui import UI
 
-version = '2023.01.20'
+version = '2023.01.24'
 
 camera = Picamera2()
 controls = Controls(camera)
@@ -455,7 +455,6 @@ try:
 		pass
 	
 	def Capture(mode = 'persistent'):
-		global controls
 		global shutter
 		global shutterLong
 		global shutterShort
@@ -575,7 +574,7 @@ try:
 						globals.buttonStateDictionary.update({'captureVideo': False})
 						encoder = H264Encoder(10000000)
 						encoder.output = FileOutput(filepath)
-						controls.FrameRate = videoFramerate
+						#controls.FrameRate = videoFramerate
 						camera.configure('video')
 						camera.start_encoder(encoder)
 					else:

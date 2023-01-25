@@ -7,12 +7,12 @@ from models import CameraControl, CameraControlList
 
 class Data:
     
-    def getControls(): 
+    def getCameraControls(): 
         
-        with open(os.path.join(globals.appRoot) + 'controls.json') as request:
+        with open(os.path.join(globals.appRoot) + 'camera-controls.json') as request:
             data = json.loads(request.read())
             cameraControlList = CameraControlList()
-            cameraControlList.controls.clear()
+            cameraControlList.cameraControls.clear()
             dataSource = data['controls']
 
             if len(dataSource) > 0:
@@ -24,6 +24,6 @@ class Data:
                     cameraControl.title = controlData['title']
                     cameraControl.icon = controlData['icon']
 
-                    cameraControlList.controls.append(cameraControl)
+                    cameraControlList.cameraControls.append(cameraControl)
 
             return cameraControlList

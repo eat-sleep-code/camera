@@ -17,9 +17,6 @@ class UI():
 
 	def render(self, running):
 		
-		currentDirectory = os.getcwd() + '/'
-		
-		
 		collapseButtonWidth = 16
 		buttonCount = 8
 		buttonWidth = (globals.appWidth - collapseButtonWidth) / buttonCount
@@ -37,7 +34,7 @@ class UI():
 		# Hide / Collapse Button
 		# TODO: Write logic to show/collapse controls
 
-		menuItems = Data.getControls.controls
+		menuItems = Data.getCameraControls().cameraControls
 		tempButtonCollection = []
 		if len(menuItems) > 0:
 			x = collapseButtonWidth,
