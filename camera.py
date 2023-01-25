@@ -586,14 +586,14 @@ try:
 					time.sleep(1)
 
 				# Shutter Speed	
-				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['shutterSpeedUp'] == True):
+				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['shutterUp'] == True):
 					if shutter == 0:
 						shutter = shutterShort
 					elif shutter > shutterShort and shutter <= shutterLong:					
 						shutter = int(shutter / 1.5)
 					setShutter(shutter, 0.25)
-					globals.buttonStateDictionary.update({'shutterSpeedUp': False})
-				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['shutterSpeedDown'] == True):
+					globals.buttonStateDictionary.update({'shutterUp': False})
+				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['shutterDown'] == True):
 					if shutter == 0:						
 						shutter = shutterLong
 					elif shutter < shutterLong and shutter >= shutterShort:					
@@ -601,7 +601,7 @@ try:
 					elif shutter == shutterShort:
 						shutter = 0
 					setShutter(shutter, 0.25)
-					globals.buttonStateDictionary.update({'shutterSpeedDown': False})
+					globals.buttonStateDictionary.update({'shutterDown': False})
 
 				# ISO
 				elif (key[pygame.K_i] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['isoUp'] == True):
