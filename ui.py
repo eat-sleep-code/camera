@@ -39,45 +39,53 @@ class UI():
 		# Hide / Collapse Button
 		# TODO: Write logic to show/collapse controls
 
-		groupList = Data.getCameraControls().cameraControls
+
+		#if (len(globals.buttonData) == 0):
+		parentList = Data.getControls().parents
+		#else:
+		#	parentList = globals.buttonData
+
 		tempButtonCollection = []
-		if len(groupList) > 0:
+		if len(parentList) > 0:
 			x = collapseButtonWidth
 			y = globals.appHeight - buttonHeight - 100
-			for group in groupList:
+			
+			for parent in parentList:
 				itemX = x
 				itemY = y
 				
-				for control in group:
-					# Button
-					controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
-					button = Button()
-					button.rect = controlRectangle
-					button.text = control.tooltip
-					button.type = 'launcher'
-					button.value = control.id
-					button.icon = control.icon
+				for itemList in parent.itemList:
+					for item in itemList.items:
+						# Button
+						controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
+						button = Button()
+						button.rect = controlRectangle
+						button.text = item.tooltip
+						button.type = 'launcher'
+						button.value = item.id
+						button.icon = item.icon
 
-					# Button Icon
 
-					if globals.statusDictionary['action'] == 'recording':
-						print('recording')
+						# Button Icon
+						if globals.statusDictionary['action'] == 'recording':
+							print('recording')
+						
+						controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
+						controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
+						globals.displaySurface.blit(controlIcon, (itemX, itemY))
+
+						
+						tempButtonCollection.append(button)
+						
+						x = itemX + buttonWidth + gutter
+						#print('X:', x, 'Y:', y)
+
+				# Button Group Text
+				groupTextStart = itemX + buttonWidth + cellPadding + gutter
+				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
+				globals.displaySurface.blit(groupText, (groupTextStart, itemY + buttonHeight))
 					
-					controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
-					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
-					globals.displaySurface.blit(controlIcon, (itemX, itemY))
-
-					# Button Text
-					buttonTextStart = itemX + buttonWidth + cellPadding + gutter
-					buttonText = globals.fontDefault.render(button.text, True, (255, 255, 255))
-					globals.displaySurface.blit(buttonText, (buttonTextStart, itemY))
-
-					tempButtonCollection.append(button)
-					
-					x = itemX + buttonWidth + gutter
-					#print('X:', x, 'Y:', y)
-				
-			globals.buttonCollection.clear()
+			
 			globals.buttonCollection = tempButtonCollection
 			return
 

@@ -2,33 +2,37 @@ import json
 import os
 
 import globals
-from models import CameraControl, CameraControlList, CameraControlGroup, CameraControlGroupList
+from models import UIItem, UIItemList, UIParent, UIParentList
 
 
 class Data:
     
-    def getCameraControls(): 
+    def getControls(): 
         
         with open(os.path.join(globals.appRoot) + 'camera-controls.json') as request:
             data = json.loads(request.read())
-            cameraControlGroupList = CameraControlGroupList()
-            cameraControlGroupList.cameraControlGroups.clear()
+            uiParentList = UIParentList()
+            uiParentList.parents.clear()
             dataSource = data['controlGroups']
 
             if len(dataSource) > 0:
-                for controlGroupData in dataSource:
-                    cameraControlGroup = CameraControlGroup()
-                    cameraControlGroup.title = controlGroupData['title']
-                    cameraControlList = CameraControlList()
-                    cameraControlList.cameraControls.clear()
-                    for controlData in controlGroupData['controls']:
-                        cameraControl = CameraControl()
-                        cameraControl.id = controlData['id']
-                        cameraControl.tooltip = controlData['tooltip']
-                        cameraControl.icon = controlData['icon']
-                        cameraControlList.cameraControls.append(cameraControl)
-                    cameraControlGroup.controls = cameraControlList
+                for parent in dataSource:
+                    uiParent = UIParent()
+                    uiParent.title = parent['title']
 
-                    cameraControlGroupList.cameraControlGroups.append(cameraControlGroup)
-
-            return cameraControlGroupList
+                    # Get child controls
+                    uiItemList = UIItemList()
+                    uiItemList.items.clear()
+                    for item in parent['controls']:
+                        uiItem = UIItem()
+                        uiItem.id = item['id']
+                        uiItem.tooltip = item['tooltip']
+                        uiItem.icon = item['icon']
+                        uiItemList.items.append(uiItem)
+                    
+                    # Append child controls to parent group
+                    uiParent.itemList = uiItemList
+                    uiParentList.parents.append(uiParent)
+                
+            
+            return 

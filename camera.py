@@ -668,7 +668,7 @@ try:
 				os.kill(os.getpid(), signal.SIGSTOP)
 				sys.exit(0)
 			except Exception as ex:
-				print(str(ex))
+				print('Error: ', str(ex))
 				pass
 
 
