@@ -24,13 +24,13 @@
 			"title": "Shutter Speed",
 			"controls": [
 				{
-					"id": "shutterSpeedUp", 
-					"icon": "images/shutter-speed-up.png",
+					"id": "shutterUp", 
+					"icon": "images/shutter-up.png",
 					"tooltip": "Increase Shutter Speed"
 				},
 				{
-					"id": "shutterSpeedDown", 
-					"icon": "images/shutter-speed-down.png",
+					"id": "shutterDown", 
+					"icon": "images/shutter-down.png",
 					"tooltip": "Decrease Shutter Speed"
 				}
 			]
