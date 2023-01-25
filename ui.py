@@ -43,7 +43,7 @@ class UI():
 		tempButtonCollection = []
 		if len(menuItems) > 0:
 			x = collapseButtonWidth
-			y = globals.appHeight - buttonHeight
+			y = globals.appHeight - buttonHeight - 100
 			for item in menuItems:
 				itemX = x
 				itemY = y
@@ -92,6 +92,7 @@ class UI():
 
 	def buttonHandler(self):
 		while True:
+			print('polling for event')
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.FINGERDOWN:
 					print('event occurred')

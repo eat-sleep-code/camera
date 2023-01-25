@@ -21,7 +21,7 @@ This program makes the use of a Raspberry Pi HQ camera a little more powerful an
   - Disable Legacy Camera Supports
   - Set up your WiFi connection
 - From a terminal/shell prompt type: `sudo nano /boot/config.txt`
-  - Find the line that says `dtoverlay=vc4-kmsv3d` and replace it with: `dtoverlay=vc4-kms-v3d,cma-512`
+  - Find the uncommented line that starts with `dtoverlay=` and append the following to the end of it: `,cma-512`
   - Save the file changes.  This file change alllocate more system memory to the camera hardware. 
 - Connect the Raspberry Pi HQ Camera to your Raspberry Pi
 
