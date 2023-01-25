@@ -33,6 +33,5 @@ class Data:
                     # Append child controls to parent group
                     uiParent.itemList = uiItemList
                     uiParentList.parents.append(uiParent)
-                
             
-            return 
+            return uiParentList

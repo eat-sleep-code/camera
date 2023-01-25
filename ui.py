@@ -55,12 +55,12 @@ class UI():
 				itemY = y
 				
 				for itemList in parent.itemList:
-					for item in itemList:
+					for item in itemList.items:
 						# Button
 						controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
 						button = Button()
 						button.rect = controlRectangle
-						button.text = item.tooltip
+						button.text = item
 						button.type = 'launcher'
 						button.value = item.id
 						button.icon = item.icon
@@ -76,10 +76,9 @@ class UI():
 
 						
 						tempButtonCollection.append(button)
-						
+					
 						x = itemX + buttonWidth + gutter
-						#print('X:', x, 'Y:', y)
-
+					
 				# Button Group Text
 				groupTextStart = itemX + buttonWidth + cellPadding + gutter
 				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
