@@ -31,7 +31,7 @@ class UI():
 		# Status
 		try:
 			statusText = globals.fontDefault.render(str(globals.statusDictionary['message']), True, (255, 255, 255))
-			globals.displaySurface.blit(statusText, (0, 0))
+			globals.displaySurface.blit(statusText, (collapseButtonWidth, globals.appHeight - 50))
 		except:
 			print('Warning: Could not update on-screen status')
 			pass
@@ -39,67 +39,58 @@ class UI():
 		# Hide / Collapse Button
 		# TODO: Write logic to show/collapse controls
 
-		menuItems = Data.getCameraControls().cameraControls
+		groupList = Data.getCameraControls().cameraControls
 		tempButtonCollection = []
-		if len(menuItems) > 0:
+		if len(groupList) > 0:
 			x = collapseButtonWidth
 			y = globals.appHeight - buttonHeight - 100
-			for item in menuItems:
+			for group in groupList:
 				itemX = x
 				itemY = y
 				
-				# Button
-				controlRectangle = pygame.draw.rect(globals.displaySurface, (1, 30, 64), [itemX, itemY, buttonWidth, buttonHeight])
-				button = Button()
-				button.rect = controlRectangle
-				button.text = item.title
-				button.type = 'launcher'
-				button.value = item.id
-				button.icon = item.icon
+				for control in group:
+					# Button
+					controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
+					button = Button()
+					button.rect = controlRectangle
+					button.text = control.tooltip
+					button.type = 'launcher'
+					button.value = control.id
+					button.icon = control.icon
 
-				# Button Icon
-				controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
-				controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
-				globals.displaySurface.blit(controlIcon, (itemX, itemY))
+					# Button Icon
 
-				# Button Text
-				buttonTextStart = itemX + buttonWidth + cellPadding + gutter
-				buttonText = globals.fontDefault.render(button.text, True, (255, 255, 255))
-				globals.displaySurface.blit(buttonText, (buttonTextStart, itemY))
+					if globals.statusDictionary['action'] == 'recording':
+						print('recording')
+					
+					controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
+					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
+					globals.displaySurface.blit(controlIcon, (itemX, itemY))
 
-				tempButtonCollection.append(button)
-				
-				x = itemX + buttonWidth + gutter
-				#print('X:', x, 'Y:', y)
+					# Button Text
+					buttonTextStart = itemX + buttonWidth + cellPadding + gutter
+					buttonText = globals.fontDefault.render(button.text, True, (255, 255, 255))
+					globals.displaySurface.blit(buttonText, (buttonTextStart, itemY))
+
+					tempButtonCollection.append(button)
+					
+					x = itemX + buttonWidth + gutter
+					#print('X:', x, 'Y:', y)
 				
 			globals.buttonCollection.clear()
 			globals.buttonCollection = tempButtonCollection
 			return
 
 
-		
-		def updateStatus():
-			statusText.set(globals.statusDictionary['message'])
-			if globals.statusDictionary['action'] == 'recording':
-				print('recording')
-			else:
-				...
-			if running == False:
-				sys.exit(0)
-
 
 # === Button Click Event Handler ============================================
 
 	def buttonHandler(self):
 		while True:
-			print('polling for event')
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.FINGERDOWN:
-					print('event occurred')
 					for button in globals.buttonCollection:
 						rect = button.rect
 						if rect.collidepoint(event.pos):
 							globals.buttonStateDictionary.update({button.value: True})
 							time.sleep(0.2)
-
-			return globals.buttonStateDictionary

@@ -12,7 +12,7 @@ class Button(object):
 class CameraControl(object):
 	def __init__(self):
 		self.id = ''
-		self.title = ''
+		self.tooltip = ''
 		self.icon = ''
 
 # ---------------------------------------------------------------------
@@ -20,3 +20,17 @@ class CameraControl(object):
 class CameraControlList(object):
 	def __init__(self):
 		self.cameraControls = [CameraControl()]
+
+
+# ---------------------------------------------------------------------
+
+class CameraControlGroup(object):
+	def __init__(self):
+		self.title = ''
+		self.controls = [CameraControlList()]
+
+# ---------------------------------------------------------------------
+
+class CameraControlGroupList(object):
+	def __init__(self):
+		self.controlGroups = [CameraControlGroup]

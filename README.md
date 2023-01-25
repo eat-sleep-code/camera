@@ -18,7 +18,7 @@ This program makes the use of a Raspberry Pi HQ camera a little more powerful an
 - Install the latest 64-bit version of Raspberry Pi OS
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
   - Set the Memory Split value to a value of at least 256MB
-  - Disable Legacy Camera Supports
+  - Disable "Legacy Camera Support"
   - Set up your WiFi connection
 - From a terminal/shell prompt type: `sudo nano /boot/config.txt`
   - Find the uncommented line that starts with `dtoverlay=` and append the following to the end of it: `,cma-512`
@@ -58,7 +58,7 @@ camera <options>
 ### Keyboard Controls
 + Press s+&#x21E7; or s+&#x2303; to change shutter speed
 + Press i+&#x21E7; or i+&#x2303; to change ISO
-+ Press c+&#x21E7; or c+&#x2303; to change exposure compensation
++ Press e+&#x21E7; or e+&#x2303; to change exposure compensation
 + Press b+&#x21E7; or b+&#x2303; to change exposure bracketing
 + Press the [space] bar to take photos or begin a timelapse
 + Press &#x241B; to exit

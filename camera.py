@@ -153,7 +153,7 @@ def showInstructions(clearFirst = False, wait = 0):
 
 	print('\n Press s+\u21E7 or s+\u2303 to change shutter speed')
 	print('\n Press i+\u21E7 or i+\u2303 to change ISO')
-	print('\n Press c+\u21E7 or c+\u2303 to change exposure compensation')
+	print('\n Press e+\u21E7 or e+\u2303 to change exposure compensation')
 	print('\n Press b+\u21E7 or b+\u2303 to change exposure bracketing')
 	
 	if action == 'timelapse':			 		
@@ -591,14 +591,14 @@ try:
 					time.sleep(1)
 
 				# Shutter Speed	
-				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['shutterUp'] == True):
+				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['shutterSpeedUp'] == True):
 					if shutter == 0:
 						shutter = shutterShort
 					elif shutter > shutterShort and shutter <= shutterLong:					
 						shutter = int(shutter / 1.5)
 					setShutter(shutter, 0.25)
-					globals.buttonStateDictionary.update({'shutterUp': False})
-				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['shutterDown'] == True):
+					globals.buttonStateDictionary.update({'shutterSpeedUp': False})
+				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['shutterSpeedDown'] == True):
 					if shutter == 0:						
 						shutter = shutterLong
 					elif shutter < shutterLong and shutter >= shutterShort:					
@@ -606,7 +606,7 @@ try:
 					elif shutter == shutterShort:
 						shutter = 0
 					setShutter(shutter, 0.25)
-					globals.buttonStateDictionary.update({'shutterDown': False})
+					globals.buttonStateDictionary.update({'shutterSpeedDown': False})
 
 				# ISO
 				elif (key[pygame.K_i] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['isoUp'] == True):
@@ -627,12 +627,12 @@ try:
 					globals.buttonStateDictionary.update({'isoDown': False})
 
 				# Exposure Compensation
-				elif (key[pygame.K_c] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['evUp'] == True):
+				elif (key[pygame.K_e] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['evUp'] == True):
 					if ev >= evMin and ev < evMax:					
 						ev = int(ev + 1)
 						setEV(ev, 0.25)
 						globals.buttonStateDictionary.update({'evUp': False})
-				elif (key[pygame.K_c] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['evDown'] == True):
+				elif (key[pygame.K_e] and (pygame.key.get_mods() & pygame.KMOD_CTRL)) or (globals.buttonStateDictionary['evDown'] == True):
 					if ev <= evMax and ev > evMin:					
 						ev = int(ev - 1)
 						setEV(ev, 0.25)

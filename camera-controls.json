@@ -1,59 +1,94 @@
 {
-	"controls": [
-		{
-			"id": "captureVideo", 
+	"controlGroups": [
+		{ 
 			"title": "Record",
-			"icon": "images/capture-video.png"
+			"controls": [
+				{
+					"id": "captureVideo", 
+					"icon": "images/capture-video.png",
+					"tooltip": "Toggle Video Recording"
+				}
+			]
 		},
 		{
-			"id": "videoMode", 
-			"title": "Mode",
-			"icon": "images/video-mode.png"
+			"title": "Video Mode",
+			"controls": [
+				{
+					"id": "videoMode", 
+					"icon": "images/video-mode.png",
+					"tooltip": "Set Video Mode"
+				}
+			]
 		},
-		{
-			"id": "shutterSpeedUp", 
-			"title": "Increase Shutter Speed",
-			"icon": "images/shutter-speed-up.png"
+		{	
+			"title": "Shutter Speed",
+			"controls": [
+				{
+					"id": "shutterSpeedUp", 
+					"icon": "images/shutter-speed-up.png",
+					"tooltip": "Increase Shutter Speed"
+				},
+				{
+					"id": "shutterSpeedDown", 
+					"icon": "images/shutter-speed-down.png",
+					"tooltip": "Decrease Shutter Speed"
+				}
+			]
 		},
-		{
-			"id": "shutterSpeedDown", 
-			"title": "Decrease Shutter Speed",
-			"icon": "images/shutter-speed-down.png"
+		{	
+			"title": "ISO",
+			"controls": [
+				{
+					"id": "isoUp", 
+					"icon": "images/iso-up.png",
+					"tooltip": "Increase ISO"
+				},
+				{
+					"id": "isoDown", 
+					"icon": "images/iso-down.png",
+					"tooltip": "Decrease ISO"
+				}
+			]
 		},
-		{
-			"id": "isoUp", 
-			"title": "Increase ISO",
-			"icon": "images/iso-up.png"
+		{	
+			"title": "Exposure Compensation",
+			"controls": [
+				{
+					"id": "evUp", 
+					"icon": "images/exposure-compensation-up.png",
+					"tooltip": "Increase Exposure Compensation"
+				},
+				{
+					"id": "evDown", 
+					"icon": "images/exposure-compensation-down.png",
+					"tooltip": "Decrease Exposure Compensation"
+				}
+			]
 		},
-		{
-			"id": "isoDown", 
-			"title": "Decrease ISO",
-			"icon": "images/iso-down.png"
+		{	
+			"title": "Exposure Bracketing",
+			"controls": [
+				{
+					"id": "bracketUp", 
+					"icon": "images/exposure-bracketing-up.png",
+					"tooltip": "Increase Exposure Bracketing"
+				},
+				{
+					"id": "bracketDown", 
+					"icon": "images/exposure-bracketing-down.png",
+					"tooltip": "Decrease Exposure Bracking"
+				}
+			]
 		},
-		{
-			"id": "evUp", 
-			"title": "Increase Exposure Compensation",
-			"icon": "images/exposure-compensation-up.png"
-		},
-		{
-			"id": "evDown", 
-			"title": "Decrease Exposure Compensation",
-			"icon": "images/exposure-compensation-up.png"
-		},
-		{
-			"id": "bracketUp", 
-			"title": "Increase Exposure Bracketing",
-			"icon": "images/exposure-bracketing-up.png"
-		},
-		{
-			"id": "bracketDown", 
-			"title": "Decrease Exposure Bracketing",
-			"icon": "images/exposure-bracketing-down.png"
-		},
-		{
-			"id": "capturePhoto", 
+		{ 
 			"title": "Capture",
-			"icon": "images/capture-photo.png"
+			"controls": [
+				{
+					"id": "capturePhoto", 
+					"icon": "images/capture-photo.png",
+					"tooltip": "Capture Photo"
+				}
+			]
 		}
 	]
 }

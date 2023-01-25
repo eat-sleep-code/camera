@@ -2,7 +2,7 @@ import json
 import os
 
 import globals
-from models import CameraControl, CameraControlList
+from models import CameraControl, CameraControlList, CameraControlGroup, CameraControlGroupList
 
 
 class Data:
@@ -11,19 +11,24 @@ class Data:
         
         with open(os.path.join(globals.appRoot) + 'camera-controls.json') as request:
             data = json.loads(request.read())
-            cameraControlList = CameraControlList()
-            cameraControlList.cameraControls.clear()
-            dataSource = data['controls']
+            cameraControlGroupList = CameraControlGroupList()
+            cameraControlGroupList.cameraControlGroups.clear()
+            dataSource = data['controlGroups']
 
             if len(dataSource) > 0:
-                i = 0
-                for controlData in dataSource:
-                    i = i + 1
-                    cameraControl = CameraControl()
-                    cameraControl.id = controlData['id']
-                    cameraControl.title = controlData['title']
-                    cameraControl.icon = controlData['icon']
+                for controlGroupData in dataSource:
+                    cameraControlGroup = CameraControlGroup()
+                    cameraControlGroup.title = controlGroupData['title']
+                    cameraControlList = CameraControlList()
+                    cameraControlList.cameraControls.clear()
+                    for controlData in controlGroupData['controls']:
+                        cameraControl = CameraControl()
+                        cameraControl.id = controlData['id']
+                        cameraControl.tooltip = controlData['tooltip']
+                        cameraControl.icon = controlData['icon']
+                        cameraControlList.cameraControls.append(cameraControl)
+                    cameraControlGroup.controls = cameraControlList
 
-                    cameraControlList.cameraControls.append(cameraControl)
+                    cameraControlGroupList.cameraControlGroups.append(cameraControlGroup)
 
-            return cameraControlList
+            return cameraControlGroupList
