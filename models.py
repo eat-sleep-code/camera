@@ -20,6 +20,8 @@ class UIItem(object):
 class UIItemList(object):
 	def __init__(self):
 		self.items = [UIItem()]
+	def __iter__(self):
+		return iter(self.items)
 
 
 # ---------------------------------------------------------------------

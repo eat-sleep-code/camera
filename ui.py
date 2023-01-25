@@ -55,7 +55,7 @@ class UI():
 				itemY = y
 				
 				for itemList in parent.itemList:
-					for item in itemList.items:
+					for item in itemList:
 						# Button
 						controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
 						button = Button()
