@@ -517,10 +517,7 @@ try:
 						# Normal photo
 						filepath = getFilePath(True)
 						print(' Starting capture...', globals.buttonStateDictionary['capture'])
-	
-						print(' Capturing image: ' + filepath + '\n')
 						captureImage(filepath, raw)
-						print('did I come back here?')
 						imageCount += 1
 				
 						if (bracket != 0):
@@ -561,9 +558,7 @@ try:
 						echoOn()
 						break
 
-					print('Updating button')
 					globals.buttonStateDictionary.update({'capture': False})
-					print('Button is now ', globals.buttonStateDictionary['capture'])
 				elif (globals.buttonStateDictionary['captureVideo'] == True):
 
 					# Video
