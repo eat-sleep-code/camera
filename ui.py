@@ -90,10 +90,11 @@ class UI():
 
 # === Button Click Event Handler ============================================
 
-	def handle():
+	def buttonHandler(self):
 		while True:
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.FINGERDOWN:
+					print('event occurred')
 					for button in globals.buttonCollection:
 						rect = button.rect
 						if rect.collidepoint(event.pos):

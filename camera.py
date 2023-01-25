@@ -37,7 +37,8 @@ running = False
 
 globals.initialize()
 ui = UI()
-ui.handle()
+buttonHandlerThread = threading.Thread(target=ui.buttonHandler)
+buttonHandlerThread.start()
 
 
 
