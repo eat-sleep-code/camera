@@ -663,8 +663,9 @@ try:
 				previewFrame = pygame.image.frombuffer(array.data, (globals.appWidth, globals.appHeight), 'RGB')
 				globals.displaySurface.blit(previewFrame, (0, 0))
 				pygame.display.update()
-				uiThread = threading.Thread(target=createUI)
-				uiThread.start()
+				createUI()
+				#uiThread = threading.Thread(target=createUI)
+				#uiThread.start()
 
 			except SystemExit:
 				time.sleep(5)				

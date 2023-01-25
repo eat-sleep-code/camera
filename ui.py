@@ -31,7 +31,7 @@ class UI():
 
 		# --- Control Rendering -------------------------------------------------
 		# Status
-		statusText = globals.fontDefault.render(str(globals.status), True, (255, 255, 255))
+		statusText = globals.fontDefault.render(str(globals.statusDictionary['message']), True, (255, 255, 255))
 		globals.displaySurface.blit(statusText, (0, 0))
 		
 		# Hide / Collapse Button
