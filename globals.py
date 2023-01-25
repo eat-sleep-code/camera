@@ -27,7 +27,7 @@ def initialize():
 	appHeight = displayInfo.current_h
 	
 	global displaySurface
-	displaySurface = pygame.display.set_mode((appWidth, appHeight), pygame.HWSURFACE | pygame.DOUBLEBUF)
+	displaySurface = pygame.display.set_mode((appWidth, appHeight), pygame.FULLSCREEN | pygame.HWSURFACE | pygame.DOUBLEBUF)
 
 	global fontDefault
 	fontDefault = pygame.font.SysFont('Helvetica', 20, bold=False)
