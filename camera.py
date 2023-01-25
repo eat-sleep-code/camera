@@ -37,6 +37,7 @@ running = False
 
 globals.initialize()
 ui = UI()
+ui.handle()
 
 
 

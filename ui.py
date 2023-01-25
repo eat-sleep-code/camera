@@ -41,7 +41,6 @@ class UI():
 
 		menuItems = Data.getCameraControls().cameraControls
 		tempButtonCollection = []
-		print(len(menuItems))
 		if len(menuItems) > 0:
 			x = collapseButtonWidth
 			y = globals.appHeight - buttonHeight
