@@ -40,10 +40,10 @@ class UI():
 		# TODO: Write logic to show/collapse controls
 
 
-		#if (len(globals.buttonData) == 0):
-		parentList = Data.getControls().parents
-		#else:
-		#	parentList = globals.buttonData
+		if (len(globals.buttonData) == 0):
+			parentList = Data.getControls().parents
+		else:
+			parentList = globals.buttonData
 
 		tempButtonCollection = []
 		if len(parentList) > 0:
@@ -54,30 +54,30 @@ class UI():
 				itemX = x
 				itemY = y
 				
-				for itemList in parent.itemList:
-					for item in itemList.items:
-						# Button
-						controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
-						button = Button()
-						button.rect = controlRectangle
-						button.text = item
-						button.type = 'launcher'
-						button.value = item.id
-						button.icon = item.icon
-
-
-						# Button Icon
-						if globals.statusDictionary['action'] == 'recording':
-							print('recording')
-						
-						controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
-						controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
-						globals.displaySurface.blit(controlIcon, (itemX, itemY))
-
-						
-						tempButtonCollection.append(button)
+				for item in parent.itemList:
 					
-						x = itemX + buttonWidth + gutter
+					# Button
+					controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
+					button = Button()
+					button.rect = controlRectangle
+					button.text = item.tooltip
+					button.type = 'launcher'
+					button.value = item.id
+					button.icon = item.icon
+
+
+					# Button Icon
+					if globals.statusDictionary['action'] == 'recording':
+						print('recording')
+					
+					controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
+					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
+					globals.displaySurface.blit(controlIcon, (itemX, itemY))
+
+					
+					tempButtonCollection.append(button)
+				
+					x = itemX + buttonWidth + gutter
 					
 				# Button Group Text
 				groupTextStart = itemX + buttonWidth + cellPadding + gutter
