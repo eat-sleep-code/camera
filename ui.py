@@ -16,10 +16,11 @@ class UI():
 	# === Create UI =======================================================
 
 	def render(self, running):
-		
+
 		collapseButtonWidth = 16
-		buttonCount = 8
+		buttonCount = 11
 		buttonWidth = (globals.appWidth - collapseButtonWidth) / buttonCount
+		buttonWidth = int(buttonWidth)
 		buttonHeight = buttonWidth
 		labelHeight = 32
 		cellPadding = 10
@@ -28,16 +29,21 @@ class UI():
 
 		# --- Control Rendering -------------------------------------------------
 		# Status
-		statusText = globals.fontDefault.render(str(globals.statusDictionary['message']), True, (255, 255, 255))
-		globals.displaySurface.blit(statusText, (0, 0))
-		
+		try:
+			statusText = globals.fontDefault.render(str(globals.statusDictionary['message']), True, (255, 255, 255))
+			globals.displaySurface.blit(statusText, (0, 0))
+		except:
+			print('Warning: Could not update on-screen status')
+			pass
+
 		# Hide / Collapse Button
 		# TODO: Write logic to show/collapse controls
 
 		menuItems = Data.getCameraControls().cameraControls
 		tempButtonCollection = []
+		print(len(menuItems))
 		if len(menuItems) > 0:
-			x = collapseButtonWidth,
+			x = collapseButtonWidth
 			y = globals.appHeight - buttonHeight
 			for item in menuItems:
 				itemX = x
@@ -60,7 +66,7 @@ class UI():
 				# Button Text
 				buttonTextStart = itemX + buttonWidth + cellPadding + gutter
 				buttonText = globals.fontDefault.render(button.text, True, (255, 255, 255))
-				globals.displaySurface.blit(buttonText, (buttonTextStart, itemX, itemY))
+				globals.displaySurface.blit(buttonText, (buttonTextStart, itemY))
 
 				tempButtonCollection.append(button)
 				
@@ -69,7 +75,7 @@ class UI():
 				
 			globals.buttonCollection.clear()
 			globals.buttonCollection = tempButtonCollection
-			pygame.display.flip()
+			pygame.display.update()
 
 
 		
