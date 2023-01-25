@@ -75,7 +75,7 @@ class UI():
 				
 			globals.buttonCollection.clear()
 			globals.buttonCollection = tempButtonCollection
-			pygame.display.update()
+			return
 
 
 		

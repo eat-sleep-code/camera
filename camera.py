@@ -661,8 +661,8 @@ try:
 				array = camera.capture_array()
 				previewFrame = pygame.image.frombuffer(array.data, (globals.appWidth, globals.appHeight), 'RGB')
 				globals.displaySurface.blit(previewFrame, (0, 0))
-				#pygame.display.update()
 				createUI()
+				pygame.display.update()
 				#uiThread = threading.Thread(target=createUI)
 				#uiThread.start()
 
