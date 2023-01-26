@@ -30,7 +30,7 @@ def initialize():
 	displaySurface = pygame.display.set_mode((appWidth, appHeight), pygame.HWSURFACE | pygame.DOUBLEBUF, 32)   # pygame.FULLSCREEN | 
 
 	global fontDefault
-	fontDefault = pygame.font.SysFont('Helvetica', 20, bold=False)
+	fontDefault = pygame.font.SysFont('Helvetica', 16, bold=False)
 
 	global title
 	title = 'Camera'

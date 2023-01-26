@@ -53,7 +53,7 @@ class UI():
 			for parent in parentList:
 
 				# Button Group Text
-				groupTextStart = x + buttonWidth + cellPadding + gutter
+				groupTextStart = x + cellPadding
 				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
 				globals.displaySurface.blit(groupText, (groupTextStart, y + buttonHeight))
 				
@@ -75,11 +75,11 @@ class UI():
 						print('recording')
 					
 					controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
-					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
+					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
 					controlIcon.set_colorkey(globals.chromaKey)
 					
 					
-					globals.displaySurface.blit(controlIcon, (itemX, itemY))
+					globals.displaySurface.blit(controlIcon, (itemX + cellPadding, itemY + cellPadding))
 
 					
 					tempButtonCollection.append(button)
