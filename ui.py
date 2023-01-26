@@ -19,7 +19,7 @@ class UI():
 		collapseButtonWidth = 42
 		collapseButtonHeight = 128
 		buttonCount = 11
-		buttonWidth = (globals.appWidth - collapseButtonWidth) / buttonCount
+		buttonWidth = (globals.appWidth - collapseButtonWidth - 5) / buttonCount
 		buttonWidth = int(buttonWidth)
 		buttonHeight = buttonWidth
 		labelHeight = 30
