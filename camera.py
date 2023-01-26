@@ -573,13 +573,17 @@ try:
 						encoder = H264Encoder(10000000)
 						encoder.output = FileOutput(filepath)
 						#controls.FrameRate = videoFramerate
+						camera.stop()
 						camera.configure('video')
+						camera.start()
 						camera.start_encoder(encoder)
 					else:
 						isRecording = False
 						globals.statusDictionary.update({'action': ''})
 						camera.stop_encoder()
+						camera.stop()
 						camera.configure('preview')
+						camera.start()
 						print(' Capture complete \n')
 						globals.statusDictionary.update({'message': ' Recording: Stopped '})
 						globals.buttonStateDictionary.update({'captureVideo': False})
