@@ -42,64 +42,65 @@ class UI():
 		# Hide / Collapse Button
 		expandIcon = pygame.image.load(os.path.join(globals.appRoot, 'images/menu-expand.png')).convert_alpha()	
 		collapseIcon = pygame.image.load(os.path.join(globals.appRoot, 'images/menu-collapse.png')).convert_alpha()
-		
+		globals.menuToggleRectangle = pygame.Rect(5, y, collapseButtonWidth, collapseButtonHeight)
 		if globals.menuCollapsed == True:
 			menuToggleIcon = pygame.transform.scale(expandIcon, (collapseButtonWidth - (cellPadding * 2), collapseButtonHeight - (cellPadding * 2)))
+			globals.displaySurface.blit(menuToggleIcon, (5, y))
 		else: 
 			menuToggleIcon = pygame.transform.scale(collapseIcon, (collapseButtonWidth - (cellPadding * 2), collapseButtonHeight - (cellPadding * 2)))
-		globals.displaySurface.blit(menuToggleIcon, (0, y))
+			globals.displaySurface.blit(menuToggleIcon, (5, y))
 	
 
-		if (len(globals.buttonData) == 0):
-			parentList = Data.getControls().parents
-		else:
-			parentList = globals.buttonData
+			if (len(globals.buttonData) == 0):
+				parentList = Data.getControls().parents
+			else:
+				parentList = globals.buttonData
 
-		
-		if len(parentList) > 0:
-			for parent in parentList:
-				groupTextX = x
-				groupTextY = y + buttonHeight
-				
-				itemCount = 0
-				for item in parent.itemList:
-					itemX = x
-					itemY = y
-					itemCount = itemCount + 1
-				
-					# Button
-					controlRectangle = pygame.Rect(itemX, itemY, buttonWidth, buttonHeight)
-					button = Button()
-					button.rect = controlRectangle
-					button.text = item.tooltip
-					button.type = 'launcher'
-					button.value = item.id
-					button.icon = item.icon
-
-					# Button Icon
-					if globals.statusDictionary['action'] == 'recording':
-						print('recording')
-					
-					controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
-					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
-					
-					globals.displaySurface.blit(controlIcon, (itemX + cellPadding, itemY + cellPadding))
-
-					
-					tempButtonCollection.append(button)
-				
-					x = itemX + buttonWidth + gutter
-					
-				# Button Group Text
-				groupTextRectangleWidth = (itemCount * (buttonWidth + gutter)) - gutter
-				groupTextRectangle = pygame.Rect(groupTextX, groupTextY, groupTextRectangleWidth, labelHeight)
-
-				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
-				globals.displaySurface.blit(groupText, groupText.get_rect(center = groupTextRectangle.center))
-				
-					
 			
-			globals.buttonCollection = tempButtonCollection
+			if len(parentList) > 0:
+				for parent in parentList:
+					groupTextX = x
+					groupTextY = y + buttonHeight
+					
+					itemCount = 0
+					for item in parent.itemList:
+						itemX = x
+						itemY = y
+						itemCount = itemCount + 1
+					
+						# Button
+						controlRectangle = pygame.Rect(itemX, itemY, buttonWidth, buttonHeight)
+						button = Button()
+						button.rect = controlRectangle
+						button.text = item.tooltip
+						button.type = 'launcher'
+						button.value = item.id
+						button.icon = item.icon
+
+						# Button Icon
+						if globals.statusDictionary['action'] == 'recording':
+							print('recording')
+						
+						controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
+						controlIcon = pygame.transform.scale(controlIcon, (buttonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
+						
+						globals.displaySurface.blit(controlIcon, (itemX + cellPadding, itemY + cellPadding))
+
+						
+						tempButtonCollection.append(button)
+					
+						x = itemX + buttonWidth + gutter
+						
+					# Button Group Text
+					groupTextRectangleWidth = (itemCount * (buttonWidth + gutter)) - gutter
+					groupTextRectangle = pygame.Rect(groupTextX, groupTextY, groupTextRectangleWidth, labelHeight)
+
+					groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
+					globals.displaySurface.blit(groupText, groupText.get_rect(center = groupTextRectangle.center))
+					
+						
+				
+				globals.buttonCollection = tempButtonCollection
 			return
 
 
@@ -115,3 +116,9 @@ class UI():
 						if rect.collidepoint(event.pos):
 							globals.buttonStateDictionary.update({button.value: True})
 							time.sleep(0.2)
+					
+					if globals.menuToggleRectangle.collidepoint(event.pos):
+						if globals.menuCollapsed == True:
+							globals.menuCollapsed = False
+						else:
+							globals.menuCollapsed = True

@@ -42,6 +42,9 @@ def initialize():
 
 	global menuCollapsed 
 	menuCollapsed = False
+
+	global menuToggleRectangle 
+	menuToggleRectangle = (0, 0, 1, 1)
 		
 	global buttonData
 	buttonData = []
