@@ -499,9 +499,12 @@ try:
 		
 		while True:
 			try:
+				globals.displaySurface.fill((0, 0, 0))
+
 				key = pygame.key.get_pressed()
 				if (key[pygame.K_q] or key[pygame.K_ESCAPE]) or (globals.buttonStateDictionary['exit'] == True):
-					# clear()
+					globals.displaySurface.fill((0, 0, 0))
+					camera.stop()
 					echoOn()
 					sys.exit(1)
 					
@@ -684,5 +687,6 @@ try:
 
 except KeyboardInterrupt:
 	camera.stop()
+	globals.displaySurface.fill((0, 0, 0))
 	echoOn()
 	sys.exit(1)
