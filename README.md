@@ -2,9 +2,7 @@
 
 This branch contains a work-in-progress migration to utilize the PiCamera 2 library.
 
-- This software is in the early stages of development and may include syntax or runtime issues
-- The ISO value cannot be currently set
-- The UI changes have not been started
+- This software is in the stages of development and may include syntax or runtime issues
 
 ---
 

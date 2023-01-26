@@ -235,7 +235,8 @@ def setISO(input, wait = 0):
 		elif iso > isoMax:
 			iso = isoMax	
 	try:	
-		#TODO: camera.iso = iso
+		analogGain = iso/100
+		controls.AnalogueGain = analogGain
 		# print(str(camera.iso) + '|' + str(iso))
 		if iso == 0:
 			print(' ISO: auto')
