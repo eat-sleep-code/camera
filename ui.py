@@ -24,7 +24,7 @@ class UI():
 		buttonHeight = buttonWidth
 		labelHeight = 32
 		cellPadding = 10
-		gutter = 0
+		gutter = 1
 		
 
 		# --- Control Rendering -------------------------------------------------
@@ -54,8 +54,10 @@ class UI():
 
 				# Button Group Text
 				groupTextStart = x + cellPadding
+				groupTextRectangleWidth = len(parent.itemList) * (buttonWidth + gutter)
+				groupTextRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0), (groupTextStart, y + buttonHeight), groupTextRectangleWidth)
 				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
-				globals.displaySurface.blit(groupText, (groupTextStart, y + buttonHeight))
+				globals.displaySurface.blit(groupText, groupText.get_rect(center = (groupTextStart, y + buttonHeight)))
 				
 				for item in parent.itemList:
 					itemX = x
