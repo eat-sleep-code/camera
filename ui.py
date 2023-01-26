@@ -16,14 +16,13 @@ class UI():
 	# === Create UI =======================================================
 
 	def render(self, running):
-
+		collapseButtonWidth = 42
 		buttonCount = 11
 		buttonWidth = (globals.appWidth - collapseButtonWidth) / buttonCount
 		buttonWidth = int(buttonWidth)
 		buttonHeight = buttonWidth
 		labelHeight = 30
 		cellPadding = 10
-		collapseButtonWidth = int(buttonHeight * 0.328125)
 		gutter = 1
 		tempButtonCollection = []
 
@@ -41,9 +40,9 @@ class UI():
 		collapseIcon = pygame.image.load(os.path.join(globals.appRoot, 'images/menu-collapse.png')).convert_alpha()
 		
 		if globals.menuCollapsed == True:
-			menuToggleIcon = pygame.transform.scale(expandIcon, (collapseButtonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
+			menuToggleIcon = pygame.transform.scale(expandIcon, (int(buttonHeight * 0.328125) - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
 		else: 
-			menuToggleIcon = pygame.transform.scale(collapseIcon, (collapseButtonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
+			menuToggleIcon = pygame.transform.scale(collapseIcon, (int(buttonHeight * 0.328125) - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
 		globals.displaySurface.blit(menuToggleIcon, (itemX + cellPadding, itemY + cellPadding))
 	
 
