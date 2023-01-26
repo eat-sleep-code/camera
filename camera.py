@@ -25,7 +25,6 @@ version = '2023.01.26'
 camera = Picamera2()
 controls = Controls(camera)
 camera.CAPTURE_TIMEOUT = 1500
-running = False
 
 # === UI Setup ================================================================
 
@@ -440,9 +439,7 @@ def drawDetectedAreas(request):
 # ------------------------------------------------------------------------------
 
 def createUI():
-	global running
-	running = True
-	ui.render(running)
+	ui.render()
 	
 # === Image Capture ============================================================
 
@@ -498,14 +495,15 @@ try:
 		
 		showInstructions(False, 0)
 		
-		while True:
+		while globals.running:
 			try:
 				globals.displaySurface.fill((0, 0, 0))
 
 				key = pygame.key.get_pressed()
 				if (key[pygame.K_q] or key[pygame.K_ESCAPE]) or (globals.buttonStateDictionary['exit'] == True):
-					globals.displaySurface.fill((0, 0, 0))
 					camera.stop()
+					globals.displaySurface.fill((0, 0, 0))
+					globals.running = False
 					echoOn()
 					sys.exit(1)
 					
@@ -546,7 +544,7 @@ try:
 						# Timelapse photo series
 						if timer < 0:
 							timer = 1
-						while True:
+						while globals.running:
 							filepath = getFilePath(False)
 							print(' Capturing timelapse image: ' + filepath + '\n')
 							captureImage(filepath, raw)
@@ -667,8 +665,6 @@ try:
 				globals.displaySurface.blit(previewFrame, (0, 0))
 				createUI()
 				pygame.display.update()
-				#uiThread = threading.Thread(target=createUI)
-				#uiThread.start()
 
 			except SystemExit:
 				time.sleep(5)				
@@ -693,5 +689,6 @@ try:
 except KeyboardInterrupt:
 	camera.stop()
 	globals.displaySurface.fill((0, 0, 0))
+	globals.running = False
 	echoOn()
 	sys.exit(1)

@@ -15,7 +15,7 @@ class UI():
 
 	# === Create UI =======================================================
 
-	def render(self, running):
+	def render(self):
 		collapseButtonWidth = 42
 		collapseButtonHeight = 128
 		buttonCount = 11
@@ -108,7 +108,7 @@ class UI():
 # === Button Click Event Handler ============================================
 
 	def buttonHandler(self):
-		while True:
+		while globals.running:
 			for event in pygame.event.get():
 				if event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.FINGERDOWN:
 					for button in globals.buttonCollection:

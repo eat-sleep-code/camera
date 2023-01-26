@@ -8,7 +8,7 @@ import pygame
 def initialize():
 	pygame.init()
 	pygame.mixer.init()
-
+	
 	global clock
 	clock = pygame.time.Clock()
 
@@ -17,6 +17,9 @@ def initialize():
 	appRoot = '/home/pi/camera/'
 	os.chdir(appRoot)
 
+	global running
+	running = True
+	
 	global displayInfo
 	displayInfo = pygame.display.Info()
 	
