@@ -78,10 +78,10 @@ class UI():
 						button.icon = item.icon
 
 						# Button Icon
-						if globals.statusDictionary['action'] == 'recording':
-							print('recording')
-						
-						controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
+						if globals.statusDictionary['action'] == 'recording' and button.value == 'captureVideo':
+							controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon.replace('.png', '-active.png'))).convert_alpha()
+						else:
+							controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
 						controlIcon = pygame.transform.scale(controlIcon, (buttonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
 						
 						globals.displaySurface.blit(controlIcon, (itemX + cellPadding, itemY + cellPadding))

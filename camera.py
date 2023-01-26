@@ -20,7 +20,7 @@ from picamera2.outputs import FileOutput
 import globals
 from ui import UI
 
-version = '2023.01.24'
+version = '2023.01.25'
 
 camera = Picamera2()
 controls = Controls(camera)
@@ -482,7 +482,6 @@ try:
 
 		camera.start()
 		# print(str(camera.resolution))
-		#camera.sensor_mode = 3
 
 		print('\n Camera ' + version )
 		print('\n ----------------------------------------------------------------------')
