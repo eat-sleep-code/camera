@@ -142,6 +142,7 @@ camera.video_configuration.buffer_count = 8
 camera.video_configuration.colour_space = ColorSpace.Rec709()
 
 
+
 # === Functions ================================================================
 
 def showInstructions(clearFirst = False, wait = 0):
@@ -411,6 +412,17 @@ def captureImage(filepath, raw = True):
 	return
 
 # ------------------------------------------------------------------------------
+
+def captureVideo(filepath):
+	global isRecording
+	
+	encoder = H264Encoder(bitrate=1000000)
+	camera.start_recording(encoder, filepath, config="video")
+	if isRecording == False:
+		camera.stop_recording()
+	return
+
+# ------------------------------------------------------------------------------
 """
 def detectAreas(detectionType = 'face'):
 	global previewVisible
@@ -565,31 +577,19 @@ try:
 					# Video
 					if isRecording == False:
 						isRecording = True
-						globals.statusDictionary.update({'action': 'recording'})
 						filepath = getFilePath(True, True)
-						print(' Capturing video: ' + filepath + '\n')
+						videoCaptureThread = threading.Thread(target=captureVideo, args=(filepath))
+						videoCaptureThread.start()
 						globals.statusDictionary.update({'message': ' Recording: Started '})
-						globals.buttonStateDictionary.update({'captureVideo': False})
-						encoder = H264Encoder(10000000)
-						encoder.output = FileOutput(filepath)
-						#controls.FrameRate = videoFramerate
-						camera.stop()
-						camera.configure('video')
-						camera.start()
-						camera.start_encoder(encoder)
+						globals.buttonStateDictionary.update({'captureVideo': True})
 					else:
-						isRecording = False
-						globals.statusDictionary.update({'action': ''})
-						camera.stop_encoder()
-						camera.stop()
-						camera.configure('preview')
-						camera.start()
+						isRecording == False
+						time.sleep = "True"
 						print(' Capture complete \n')
 						globals.statusDictionary.update({'message': ' Recording: Stopped '})
 						globals.buttonStateDictionary.update({'captureVideo': False})
 					
-					time.sleep(1)
-
+					
 				# Shutter Speed	
 				elif (key[pygame.K_s] and (pygame.key.get_mods() & pygame.KMOD_SHIFT)) or (globals.buttonStateDictionary['shutterUp'] == True):
 					if shutter == 0:
