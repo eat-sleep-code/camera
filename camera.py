@@ -20,7 +20,7 @@ from picamera2.outputs import FileOutput
 import globals
 from ui import UI
 
-version = '2023.01.25'
+version = '2023.01.26'
 
 camera = Picamera2()
 controls = Controls(camera)
@@ -399,14 +399,15 @@ def getFilePath(timestamped = True, isVideo = False):
 def captureImage(filepath, raw = True):
 	request = camera.switch_mode_and_capture_request('still')
 	request.save('main', filepath)
+	if raw == True:
+		filepathDNG = filepath.replace('.jpg', '.dng')
+		request.save_dng(filepathDNG)
 	array = request.make_array('main')
 	request.release()
 	capturedFrame = pygame.image.frombuffer(array.data, camera.sensor_resolution, 'RGB')
 	globals.displaySurface.blit(capturedFrame, (0, 0))
 	pygame.display.update()
-	if raw == True:
-		filepathDNG = filepath.replace('.jpg', '.dng')
-		capturedFrame.save_dng(filepathDNG)
+	
 	time.sleep(5)
 	return
 
