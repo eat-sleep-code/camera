@@ -25,6 +25,9 @@ class UI():
 		cellPadding = 10
 		gutter = 1
 		tempButtonCollection = []
+		x = collapseButtonWidth
+		y = globals.appHeight - buttonHeight - 100
+			
 
 		# --- Control Rendering -------------------------------------------------
 		# Status
@@ -43,7 +46,7 @@ class UI():
 			menuToggleIcon = pygame.transform.scale(expandIcon, (int(buttonHeight * 0.328125) - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
 		else: 
 			menuToggleIcon = pygame.transform.scale(collapseIcon, (int(buttonHeight * 0.328125) - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
-		globals.displaySurface.blit(menuToggleIcon, (itemX + cellPadding, itemY + cellPadding))
+		globals.displaySurface.blit(menuToggleIcon, (x, y))
 	
 
 		if (len(globals.buttonData) == 0):
@@ -53,9 +56,6 @@ class UI():
 
 		
 		if len(parentList) > 0:
-			x = collapseButtonWidth
-			y = globals.appHeight - buttonHeight - 100
-			
 			for parent in parentList:
 				groupTextX = x
 				groupTextY = y + buttonHeight
