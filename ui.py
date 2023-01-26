@@ -51,17 +51,14 @@ class UI():
 			y = globals.appHeight - buttonHeight - 100
 			
 			for parent in parentList:
-
-				# Button Group Text
-				groupTextStart = x + cellPadding
-				groupTextRectangleWidth = len(parent.itemList) * (buttonWidth + gutter)
-				groupTextRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0), (groupTextStart, y + buttonHeight), groupTextRectangleWidth)
-				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
-				globals.displaySurface.blit(groupText, groupText.get_rect(center = (groupTextStart, y + buttonHeight)))
+				groupTextX = x + cellPadding
+				groupTextY = y + buttonHeight
 				
+				itemCount = 0
 				for item in parent.itemList:
 					itemX = x
 					itemY = y
+					itemCount = itemCount + 1
 				
 					# Button
 					controlRectangle = pygame.draw.rect(globals.displaySurface, globals.chromaKey, [itemX, itemY, buttonWidth, buttonHeight])
@@ -88,6 +85,11 @@ class UI():
 				
 					x = itemX + buttonWidth + gutter
 					
+				# Button Group Text
+				groupTextRectangleWidth = itemCount * (buttonWidth + gutter)
+				groupTextRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0), (groupTextX, groupTextY), groupTextRectangleWidth)
+				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
+				globals.displaySurface.blit(groupText, groupText.get_rect(center = (groupTextX, groupTextY)))
 				
 					
 			
