@@ -47,7 +47,7 @@ class UI():
 			menuToggleIcon = pygame.transform.scale(expandIcon, (collapseButtonWidth - (cellPadding * 2), collapseButtonHeight - (cellPadding * 2)))
 		else: 
 			menuToggleIcon = pygame.transform.scale(collapseIcon, (collapseButtonWidth - (cellPadding * 2), collapseButtonHeight - (cellPadding * 2)))
-		globals.displaySurface.blit(menuToggleIcon, (x, y))
+		globals.displaySurface.blit(menuToggleIcon, (0, y))
 	
 
 		if (len(globals.buttonData) == 0):
