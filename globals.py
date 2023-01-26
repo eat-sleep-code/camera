@@ -28,7 +28,6 @@ def initialize():
 	
 	global displaySurface
 	displaySurface = pygame.display.set_mode((appWidth, appHeight), pygame.HWSURFACE | pygame.DOUBLEBUF, 32)   # pygame.FULLSCREEN | 
-	displaySurface.set_colorkey((255, 0, 255))
 
 	global fontDefault
 	fontDefault = pygame.font.SysFont('Helvetica', 20, bold=False)
@@ -41,6 +40,9 @@ def initialize():
 	iconDefault = pygame.image.load(os.path.join(appRoot, 'images/capture-photo.png')).convert_alpha()
 	pygame.display.set_icon(iconDefault)
 
+	global chromaKey 
+	chromaKey = (255, 0, 255)
+	
 	global buttonData
 	buttonData = []
 

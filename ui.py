@@ -51,13 +51,18 @@ class UI():
 			y = globals.appHeight - buttonHeight - 100
 			
 			for parent in parentList:
-				itemX = x
-				itemY = y
+
+				# Button Group Text
+				groupTextStart = x + buttonWidth + cellPadding + gutter
+				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
+				globals.displaySurface.blit(groupText, (groupTextStart, y + buttonHeight))
 				
 				for item in parent.itemList:
-					
+					itemX = x
+					itemY = y
+				
 					# Button
-					controlRectangle = pygame.draw.rect(globals.displaySurface, (255, 0, 255), [itemX, itemY, buttonWidth, buttonHeight])
+					controlRectangle = pygame.draw.rect(globals.displaySurface, globals.chromaKey, [itemX, itemY, buttonWidth, buttonHeight])
 					button = Button()
 					button.rect = controlRectangle
 					button.text = item.tooltip
@@ -65,13 +70,15 @@ class UI():
 					button.value = item.id
 					button.icon = item.icon
 
-
 					# Button Icon
 					if globals.statusDictionary['action'] == 'recording':
 						print('recording')
 					
 					controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
 					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth, buttonHeight))
+					controlIcon.set_colorkey(globals.chromaKey)
+					
+					
 					globals.displaySurface.blit(controlIcon, (itemX, itemY))
 
 					
@@ -79,10 +86,7 @@ class UI():
 				
 					x = itemX + buttonWidth + gutter
 					
-				# Button Group Text
-				groupTextStart = itemX + buttonWidth + cellPadding + gutter
-				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
-				globals.displaySurface.blit(groupText, (groupTextStart, itemY + buttonHeight))
+				
 					
 			
 			globals.buttonCollection = tempButtonCollection
