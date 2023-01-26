@@ -84,7 +84,7 @@
 			"title": "Capture",
 			"controls": [
 				{
-					"id": "capturePhoto", 
+					"id": "capture", 
 					"icon": "images/capture-photo.png",
 					"tooltip": "Capture Photo"
 				}
