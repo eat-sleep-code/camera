@@ -17,6 +17,7 @@ class UI():
 
 	def render(self, running):
 		collapseButtonWidth = 42
+		collapseButtonHeight = 128
 		buttonCount = 11
 		buttonWidth = (globals.appWidth - collapseButtonWidth) / buttonCount
 		buttonWidth = int(buttonWidth)
@@ -33,7 +34,7 @@ class UI():
 		# Status
 		try:
 			statusText = globals.fontDefault.render(str(globals.statusDictionary['message']), True, (255, 255, 255))
-			globals.displaySurface.blit(statusText, (collapseButtonWidth, 64))
+			globals.displaySurface.blit(statusText, (collapseButtonWidth, 42))
 		except:
 			print('Warning: Could not update on-screen status')
 			pass
@@ -43,9 +44,9 @@ class UI():
 		collapseIcon = pygame.image.load(os.path.join(globals.appRoot, 'images/menu-collapse.png')).convert_alpha()
 		
 		if globals.menuCollapsed == True:
-			menuToggleIcon = pygame.transform.scale(expandIcon, (int(buttonHeight * 0.328125) - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
+			menuToggleIcon = pygame.transform.scale(expandIcon, (collapseButtonWidth - (cellPadding * 2), collapseButtonHeight - (cellPadding * 2)))
 		else: 
-			menuToggleIcon = pygame.transform.scale(collapseIcon, (int(buttonHeight * 0.328125) - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
+			menuToggleIcon = pygame.transform.scale(collapseIcon, (collapseButtonWidth - (cellPadding * 2), collapseButtonHeight - (cellPadding * 2)))
 		globals.displaySurface.blit(menuToggleIcon, (x, y))
 	
 
@@ -67,7 +68,7 @@ class UI():
 					itemCount = itemCount + 1
 				
 					# Button
-					controlRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0, 40), [itemX, itemY, buttonWidth, buttonHeight])
+					controlRectangle = pygame.Rect(itemX, itemY, buttonWidth, buttonHeight)
 					button = Button()
 					button.rect = controlRectangle
 					button.text = item.tooltip
@@ -91,7 +92,7 @@ class UI():
 					
 				# Button Group Text
 				groupTextRectangleWidth = (itemCount * (buttonWidth + gutter)) - gutter
-				groupTextRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0, 50), [groupTextX, groupTextY, groupTextRectangleWidth, labelHeight])
+				groupTextRectangle = pygame.Rect(groupTextX, groupTextY, groupTextRectangleWidth, labelHeight)
 
 				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
 				globals.displaySurface.blit(groupText, groupText.get_rect(center = groupTextRectangle.center))

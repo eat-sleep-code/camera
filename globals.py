@@ -40,9 +40,6 @@ def initialize():
 	iconDefault = pygame.image.load(os.path.join(appRoot, 'images/capture-photo.png')).convert_alpha()
 	pygame.display.set_icon(iconDefault)
 
-	global chromaKey 
-	chromaKey = (255, 0, 255)
-
 	global menuCollapsed 
 	menuCollapsed = False
 		
