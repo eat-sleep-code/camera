@@ -486,7 +486,6 @@ try:
 
 		print('\n Camera ' + version )
 		print('\n ----------------------------------------------------------------------')
-		time.sleep(2)
 
 		
 		setShutter(shutter, 0)		

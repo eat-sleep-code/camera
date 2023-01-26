@@ -17,41 +17,48 @@ class UI():
 
 	def render(self, running):
 
-		collapseButtonWidth = 16
 		buttonCount = 11
 		buttonWidth = (globals.appWidth - collapseButtonWidth) / buttonCount
 		buttonWidth = int(buttonWidth)
 		buttonHeight = buttonWidth
-		labelHeight = 32
+		labelHeight = 30
 		cellPadding = 10
+		collapseButtonWidth = int(buttonHeight * 0.328125)
 		gutter = 1
-		
+		tempButtonCollection = []
 
 		# --- Control Rendering -------------------------------------------------
 		# Status
 		try:
 			statusText = globals.fontDefault.render(str(globals.statusDictionary['message']), True, (255, 255, 255))
-			globals.displaySurface.blit(statusText, (collapseButtonWidth, globals.appHeight - 50))
+			globals.displaySurface.blit(statusText, (collapseButtonWidth, 64))
 		except:
 			print('Warning: Could not update on-screen status')
 			pass
 
 		# Hide / Collapse Button
-		# TODO: Write logic to show/collapse controls
-
+		expandIcon = pygame.image.load(os.path.join(globals.appRoot, 'images/menu-expand.png')).convert_alpha()	
+		collapseIcon = pygame.image.load(os.path.join(globals.appRoot, 'images/menu-collapse.png')).convert_alpha()
+		
+		if globals.menuCollapsed == True:
+			menuToggleIcon = pygame.transform.scale(expandIcon, (collapseButtonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
+		else: 
+			menuToggleIcon = pygame.transform.scale(collapseIcon, (collapseButtonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
+		globals.displaySurface.blit(menuToggleIcon, (itemX + cellPadding, itemY + cellPadding))
+	
 
 		if (len(globals.buttonData) == 0):
 			parentList = Data.getControls().parents
 		else:
 			parentList = globals.buttonData
 
-		tempButtonCollection = []
+		
 		if len(parentList) > 0:
 			x = collapseButtonWidth
 			y = globals.appHeight - buttonHeight - 100
 			
 			for parent in parentList:
-				groupTextX = x + cellPadding
+				groupTextX = x
 				groupTextY = y + buttonHeight
 				
 				itemCount = 0
@@ -61,7 +68,7 @@ class UI():
 					itemCount = itemCount + 1
 				
 					# Button
-					controlRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0), [itemX, itemY, buttonWidth, buttonHeight])
+					controlRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0, 40), [itemX, itemY, buttonWidth, buttonHeight])
 					button = Button()
 					button.rect = controlRectangle
 					button.text = item.tooltip
@@ -75,8 +82,6 @@ class UI():
 					
 					controlIcon = pygame.image.load(os.path.join(globals.appRoot, button.icon)).convert_alpha()
 					controlIcon = pygame.transform.scale(controlIcon, (buttonWidth - (cellPadding * 2), buttonHeight - (cellPadding * 2)))
-					controlIcon.set_colorkey(globals.chromaKey)
-					
 					
 					globals.displaySurface.blit(controlIcon, (itemX + cellPadding, itemY + cellPadding))
 
@@ -86,9 +91,11 @@ class UI():
 					x = itemX + buttonWidth + gutter
 					
 				# Button Group Text
-				groupTextRectangleWidth = itemCount * (buttonWidth + gutter)
+				groupTextRectangleWidth = (itemCount * (buttonWidth + gutter)) - gutter
+				groupTextRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0, 50), [groupTextX, groupTextY, groupTextRectangleWidth, labelHeight])
+
 				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
-				globals.displaySurface.blit(groupText, [groupTextX, groupTextY, groupTextRectangleWidth, 50])
+				globals.displaySurface.blit(groupText, groupText.get_rect(center = groupTextRectangle.center))
 				
 					
 			
