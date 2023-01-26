@@ -61,7 +61,7 @@ class UI():
 					itemCount = itemCount + 1
 				
 					# Button
-					controlRectangle = pygame.draw.rect(globals.displaySurface, globals.chromaKey, [itemX, itemY, buttonWidth, buttonHeight])
+					controlRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0), [itemX, itemY, buttonWidth, buttonHeight])
 					button = Button()
 					button.rect = controlRectangle
 					button.text = item.tooltip
@@ -87,9 +87,8 @@ class UI():
 					
 				# Button Group Text
 				groupTextRectangleWidth = itemCount * (buttonWidth + gutter)
-				groupTextRectangle = pygame.draw.rect(globals.displaySurface, (0, 0, 0), (groupTextX, groupTextY), groupTextRectangleWidth)
 				groupText = globals.fontDefault.render(parent.title, True, (255, 255, 255))
-				globals.displaySurface.blit(groupText, groupText.get_rect(center = (groupTextX, groupTextY)))
+				globals.displaySurface.blit(groupText, [groupTextX, groupTextY, groupTextRectangleWidth, 50])
 				
 					
 			
